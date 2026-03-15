@@ -25,8 +25,30 @@
     "meta_stage_id_family": "MP#",
     "meta_stage_semantics": "Meta-plan stages orchestrate reduction of the D0:D5 objective set; they are not objective ids and do not replace them."
   },
+  "artifact_contracts": {
+    "input_objective_register": {
+      "handle": "authority://policy_first/objective_register",
+      "availability": "external_not_vendored",
+      "description": "Authoritative pre-existing D0:D5 objective register referenced by the summary and upstream policy-first analysis."
+    },
+    "normalized_objective_register": {
+      "produced_by": "MP1",
+      "description": "Normalized objective register emitted after MP1 derives canonical ordering and semantic analysis outputs."
+    },
+    "micro_deliverable_set_register": {
+      "set_id_family": "DS#",
+      "required_fields": [
+        "set_id",
+        "parent_objective_ref",
+        "acceptance_surface",
+        "blocking_dependencies",
+        "authority_boundary",
+        "recomposition_constraints"
+      ]
+    }
+  },
   "source_artifacts": {
-    "problem_set": {
+    "real_problem_set": {
       "handle": "authority://policy_first/real_problem_set",
       "availability": "external_not_vendored"
     },
@@ -73,10 +95,11 @@
       "inputs": [
         "dependency_tool_workflow_spec",
         "integration_repo_contract",
-        "real_problem_set"
+        "real_problem_set",
+        "input_objective_register"
       ],
       "outputs": [
-        "objective_register",
+        "normalized_objective_register",
         "objective_semantic_analysis",
         "objective_dependency_gap_analysis",
         "canonical_objective_order"
@@ -121,7 +144,17 @@
         "set_dependency_gap_analysis",
         "last_round_set_analysis"
       ],
-      "gate": "set-level ambiguity is reduced enough to support narrow plan packets"
+      "termination_predicate": {
+        "max_recursion_depth": 3,
+        "requires": [
+          "no_unresolved_hard_dependency_edges",
+          "no_new_set_splits_on_latest_pass",
+          "ambiguity_score_at_or_below_threshold",
+          "analysis_artifact_hash_stable_across_two_passes"
+        ],
+        "ambiguity_score_threshold": 0.2
+      },
+      "gate": "recursive set analysis stops only when the termination predicate is satisfied"
     },
     {
       "stage_id": "MP4",
@@ -140,7 +173,18 @@
       "outputs": [
         "per_set_plan_packets"
       ],
-      "gate": "each resulting PLAN packet validates and remains narrow enough for independent approval"
+      "validation_authority": {
+        "plan_packet_schema": "authority://plan/plan_packet.schema.json",
+        "plan_packet_validator": "authority://plan/validate_plan_packet",
+        "plan_skill_handle": "authority://plan/skill",
+        "plan_validation_version": "v1",
+        "narrowness_criteria": [
+          "single_composable_set_scope",
+          "explicit_inputs_outputs_and_gates",
+          "independent_approval_surface"
+        ]
+      },
+      "gate": "each resulting PLAN packet validates through the declared validation authority and remains narrow enough for independent approval"
     }
   ],
   "ordering_invariants": [
@@ -154,6 +198,33 @@
     "canonical_objective_order",
     "micro_deliverable_set_register",
     "last_round_set_analysis"
+  ],
+  "stage_dependency_dag": [
+    {
+      "from": "MP0",
+      "to": "MP1",
+      "artifact": "dependency_tool_workflow_spec"
+    },
+    {
+      "from": "MP0",
+      "to": "MP1",
+      "artifact": "integration_repo_contract"
+    },
+    {
+      "from": "MP1",
+      "to": "MP2",
+      "artifact": "canonical_objective_order"
+    },
+    {
+      "from": "MP2",
+      "to": "MP3",
+      "artifact": "micro_deliverable_set_register"
+    },
+    {
+      "from": "MP3",
+      "to": "MP4",
+      "artifact": "last_round_set_analysis"
+    }
   ],
   "success_condition": "The meta-plan is complete when the objective-analysis layer has been reduced into validated per-set PLAN packets with no authority-boundary collapse.",
   "next_artifact_family": "per_set_plan_packets"
