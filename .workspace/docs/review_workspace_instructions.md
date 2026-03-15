@@ -27,6 +27,17 @@ surface.
 
 Work in the same workspace where the archive is extracted.
 
+For `polyrepo_integration`, focus the review on the project-owned review surface:
+- `analysis/`
+- `modules/`
+- `tools/`
+
+Treat `.workspace/` as shared scaffold and contract context.
+
+Review scaffold files deeply only when:
+- a finding points to scaffold generation or schema contract behavior
+- the project-owned surface depends directly on scaffold behavior
+
 ## Priority Assets
 
 Priority review assets are defined by `.project.manifest.json.priority_assets`.
@@ -36,9 +47,9 @@ Use these manifest keys:
 - `entrypoint_files`
   Top-level files to read first.
 - `workspace_dirs`
-  Top-level shared scaffold directories to read recursively.
+  Top-level shared scaffold directories to use as contract/background context.
 - `top_level_project_dirs`
-  Top-level project-owned directories to read recursively.
+  Top-level project-owned directories to treat as the primary review surface.
 - `extra_paths`
   Additional repo-relative paths when a project needs narrow exceptions.
 
