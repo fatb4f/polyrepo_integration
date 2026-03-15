@@ -1,0 +1,141 @@
+{
+  "kind": "policy_first_meta_plan.v1",
+  "objective": "Reduce the policy-first polyrepo integration problem into execution-ready per-set PLAN packets without collapsing authority boundaries.",
+  "summary": "This meta-plan governs the transition from the top-level D0:D5 objective register to narrow, composable PLAN packets. It is a meta-planning layer for the bounded integration canvas, not an implementation plan for downstream authority repos.",
+  "scope": "meta_planning_only",
+  "authority_model": {
+    "policy_authority": "acm",
+    "workspace_contract_authority": "polyrepo_workspace",
+    "bootstrap_materialization_authority": "git_asset",
+    "bounded_integration_canvas": "polyrepo_integration"
+  },
+  "identifier_contract": {
+    "objective_id_family": "D#",
+    "objective_id_authority": "/home/_404/src/git_asset_worktree/PLAN/assets/objective_analysis_pipeline.json",
+    "meta_stage_id_family": "MP#",
+    "meta_stage_semantics": "Meta-plan stages orchestrate reduction of the D0:D5 objective set; they are not objective ids and do not replace them."
+  },
+  "source_artifacts": {
+    "problem_set": "/home/_404/src/git_asset_worktree/PLAN/assets/real_problem_set.json",
+    "objective_analysis_pipeline": "/home/_404/src/git_asset_worktree/PLAN/assets/objective_analysis_pipeline.json",
+    "integration_manifest": "/home/_404/src/polyrepo_integration/.project.manifest.json"
+  },
+  "stages": [
+    {
+      "stage_id": "MP0",
+      "objective_refs": [
+        "D0"
+      ],
+      "title": "Fix D0 authority and workflow",
+      "purpose": "Freeze the dependency-workflow toolchain and the bounded integration-canvas contract before ordering any downstream objective.",
+      "inputs": [
+        "real_problem_set",
+        "objective_analysis_pipeline",
+        "integration_manifest"
+      ],
+      "outputs": [
+        "dependency_tool_workflow_spec",
+        "integration_repo_contract"
+      ],
+      "gate": "tool authority boundaries and bounded integration-canvas scope are explicit"
+    },
+    {
+      "stage_id": "MP1",
+      "objective_refs": [
+        "D0",
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5"
+      ],
+      "title": "Derive canonical objective ordering",
+      "purpose": "Treat D0:D5 as objectives, then derive canonical ordering for D1:D5 through semantic analysis plus dependency and gap analysis.",
+      "inputs": [
+        "dependency_tool_workflow_spec",
+        "integration_repo_contract",
+        "real_problem_set"
+      ],
+      "outputs": [
+        "objective_register",
+        "objective_semantic_analysis",
+        "objective_dependency_gap_analysis",
+        "canonical_objective_order"
+      ],
+      "gate": "objective ordering is analysis-derived rather than assumed"
+    },
+    {
+      "stage_id": "MP2",
+      "objective_refs": [
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5"
+      ],
+      "title": "Reduce objectives into micro-deliverable sets",
+      "purpose": "Reduce each ordered objective into bounded, composable micro-deliverable sets with clear semantic purpose and acceptance surfaces.",
+      "inputs": [
+        "canonical_objective_order"
+      ],
+      "outputs": [
+        "micro_deliverable_set_register"
+      ],
+      "gate": "every ordered objective has one or more bounded micro-deliverable sets"
+    },
+    {
+      "stage_id": "MP3",
+      "objective_refs": [
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5"
+      ],
+      "title": "Run recursive set analysis",
+      "purpose": "Apply the same semantic, dependency, and gap analysis to each micro-deliverable set until the final analysis layer is stable enough for plan generation.",
+      "inputs": [
+        "micro_deliverable_set_register"
+      ],
+      "outputs": [
+        "set_semantic_analysis",
+        "set_dependency_gap_analysis",
+        "last_round_set_analysis"
+      ],
+      "gate": "set-level ambiguity is reduced enough to support narrow plan packets"
+    },
+    {
+      "stage_id": "MP4",
+      "objective_refs": [
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5"
+      ],
+      "title": "Generate per-set PLAN packets",
+      "purpose": "Use the last-round set-analysis artifacts as direct inputs to the PLAN skill and generate one validated PLAN packet per composable set.",
+      "inputs": [
+        "last_round_set_analysis"
+      ],
+      "outputs": [
+        "per_set_plan_packets"
+      ],
+      "gate": "each resulting PLAN packet validates and remains narrow enough for independent approval"
+    }
+  ],
+  "ordering_invariants": [
+    "D0 is always first because objective ordering depends on the dependency-workflow and bounded integration-canvas contract.",
+    "No consumer-repo migration can start before semantic ownership, reconciliation, and policy-evaluation closure are reduced into approved micro-deliverable sets.",
+    "PLAN packets are downstream artifacts emitted only after recursive analysis stabilizes."
+  ],
+  "blocked_until": [
+    "dependency_tool_workflow_spec",
+    "integration_repo_contract",
+    "canonical_objective_order",
+    "micro_deliverable_set_register",
+    "last_round_set_analysis"
+  ],
+  "success_condition": "The meta-plan is complete when the objective-analysis layer has been reduced into validated per-set PLAN packets with no authority-boundary collapse.",
+  "next_artifact_family": "per_set_plan_packets"
+}
