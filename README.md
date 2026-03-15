@@ -14,7 +14,8 @@ This repo is not:
 - the `git_asset` bootstrap authority
 
 Current seeded tool:
-- `tools/json_tool`
+- `tools/json_tool/stack.md`
 
-Scaffold command:
-- `./.workspace/scripts/build_overrides.sh`
+Review and manifest templates:
+- `.workspace/templates/manifests`
+- `.workspace/templates/reviews`

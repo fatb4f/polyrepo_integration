@@ -13,7 +13,6 @@
   "paths": {
     "root": ".",
     "workspace_docs": ".workspace/docs",
-    "build_script": ".workspace/scripts/build_overrides.sh",
     "review_instructions": ".workspace/docs/review_workspace_instructions.md",
     "review_templates": ".workspace/templates/reviews"
   },
@@ -22,9 +21,7 @@
       ".project.manifest.json",
       "AGENTS.md"
     ],
-    "workspace_dirs": [
-      ".workspace"
-    ],
+    "workspace_dirs": [],
     "top_level_project_dirs": [
       "docs",
       "src"
@@ -34,18 +31,19 @@
     ]
   },
   "scaffold": {
-    "generated_files": [
-      "AGENTS.md",
+    "template_files": [
+      ".workspace/templates/manifests/project_manifest.schema.json",
+      ".workspace/templates/manifests/project.manifest.json.template",
+      ".workspace/templates/reviews/artifact_review.schema.json",
       ".workspace/templates/reviews/example_project.review.schema.json",
       ".workspace/templates/reviews/review.schema.json",
       ".workspace/templates/reviews/review.json.template"
     ],
-    "idempotent": true
+    "generator_present": false
   },
   "agent_contract": {
     "required_behavior": [
       "read .workspace/docs/review_workspace_instructions.md for the full review workflow and output contract",
-      "regenerate scaffolded files with .workspace/scripts/build_overrides.sh after scaffold or manifest changes",
       "use the project review contract under .workspace/templates/reviews"
     ]
   },

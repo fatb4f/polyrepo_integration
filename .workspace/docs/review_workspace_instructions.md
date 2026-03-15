@@ -7,18 +7,14 @@ are entrypoint and contract surfaces, not the full operator instructions.
 
 - `.project.manifest.json`
   Canonical project definitions, scaffold paths, and the project review contract.
-- `.workspace/scripts/build_overrides.sh`
-  Idempotent scaffold generator for `AGENTS.md` and the project-specific review
-  schema/template files.
 - `AGENTS.md`
   Thin repo entrypoint that points to the manifest, this instructions file, and
-  the scaffold generator.
+  the template authorities.
 - `.workspace/templates/reviews/artifact_review.schema.json`
   Generic base review schema. This file is a hand-maintained source, not a
-  manifest-generated artifact.
+  generated artifact.
 - `.workspace/templates/reviews/{project-profile,compatibility-schema,review-template}`
-  Idempotent project-specific scaffold outputs generated from the manifest by
-  `.workspace/scripts/build_overrides.sh`.
+  Hand-maintained project review artifacts used directly by this repo.
 
 ## Review Surface
 
@@ -35,7 +31,7 @@ For `polyrepo_integration`, focus the review on the project-owned review surface
 Treat `.workspace/` as shared scaffold and contract context.
 
 Review scaffold files deeply only when:
-- a finding points to scaffold generation or schema contract behavior
+- a finding points to template or schema contract behavior
 - the project-owned surface depends directly on scaffold behavior
 
 ## Priority Assets
@@ -109,6 +105,5 @@ Findings first. Summary second.
 - keep the generic base schema reusable
 - keep the project profile project-specific
 - preserve compatibility when practical
-- after scaffold changes, rerun `./.workspace/scripts/build_overrides.sh`
 
 Be concise and exact.

@@ -63,7 +63,6 @@
       },
       "required": [
         "root",
-        "build_script",
         "review_instructions",
         "review_templates"
       ],
@@ -112,17 +111,17 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "generated_files",
-        "idempotent"
+        "template_files",
+        "generator_present"
       ],
       "properties": {
-        "generated_files": {
+        "template_files": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/repo_relative_path"
           }
         },
-        "idempotent": {
+        "generator_present": {
           "type": "boolean"
         }
       }

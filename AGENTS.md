@@ -1,17 +1,14 @@
 # AGENTS
 
-This file is scaffolded from [.project.manifest.json](./.project.manifest.json) by [build_overrides.sh](./.workspace/scripts/build_overrides.sh).
+This repo is driven by [.project.manifest.json](./.project.manifest.json) and the hand-maintained templates under [`.workspace/templates`](/home/_404/src/polyrepo_integration/.workspace/templates).
 
 Read [.project.manifest.json](./.project.manifest.json) first before doing review, runtime, schema, or planning work in this repo.
 
 Use [review_workspace_instructions.md](./.workspace/docs/review_workspace_instructions.md) for the full review workflow and output contract.
 
-Regenerate scaffolded files with [build_overrides.sh](./.workspace/scripts/build_overrides.sh).
-
 ## Required behavior
 
 - read .workspace/docs/review_workspace_instructions.md for the full review workflow and output contract
-- regenerate scaffolded files with .workspace/scripts/build_overrides.sh after scaffold or manifest changes
 - use the project review contract under .workspace/templates/reviews
 - treat this repo as a bounded integration canvas for cross-repo analysis and validation, not as a semantic authority surface
 
