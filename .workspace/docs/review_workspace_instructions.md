@@ -25,10 +25,6 @@ are entrypoint and contract surfaces, not the full operator instructions.
 Treat the uploaded archive and its extracted workspace as the primary review
 surface.
 
-Do not assume an installed `codex` runtime exists, and do not default to
-runtime execution unless the required runtime is explicitly present and the task
-asks for it.
-
 Work in the same workspace where the archive is extracted.
 
 ## Priority Assets
