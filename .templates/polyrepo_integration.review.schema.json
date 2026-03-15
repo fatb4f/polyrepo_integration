@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fatb4f.github.io/polyrepo_integration/schemas/polyrepo_integration.review.schema.json",
+  "title": "Polyrepo Integration Artifact Review Profile",
+  "allOf": [
+    {
+      "$ref": "./artifact_review.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "artifact_review": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "polyrepo_integration.artifact_review.v1"
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "artifact_name": {
+                  "pattern": "^polyrepo_integration-.*\\.zip$"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

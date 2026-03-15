@@ -5,6 +5,11 @@ Write review outputs to file in the internal `/mnt` workspace, archive them ther
 Prefer machine-readable output first.
 Validate review outputs against the project review schema before finalizing.
 Keep findings severity-ordered.
+The bundled review contract lives under `.templates/`:
+- `.templates/artifact_review.schema.json`
+- `.templates/polyrepo_integration.review.schema.json`
+- `.templates/review.schema.json`
+- `.templates/review.json.template`
 
 For patch-based follow-up review:
 - treat the uploaded diff as a proposed change against the current packaged review surface
