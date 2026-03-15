@@ -11,14 +11,23 @@
   },
   "identifier_contract": {
     "objective_id_family": "D#",
-    "objective_id_authority": "/home/_404/src/git_asset_worktree/PLAN/assets/objective_analysis_pipeline.json",
+    "objective_id_authority": "authority://policy_first/objective_analysis_pipeline",
     "meta_stage_id_family": "MP#",
     "meta_stage_semantics": "Meta-plan stages orchestrate reduction of the D0:D5 objective set; they are not objective ids and do not replace them."
   },
   "source_artifacts": {
-    "problem_set": "/home/_404/src/git_asset_worktree/PLAN/assets/real_problem_set.json",
-    "objective_analysis_pipeline": "/home/_404/src/git_asset_worktree/PLAN/assets/objective_analysis_pipeline.json",
-    "integration_manifest": "/home/_404/src/polyrepo_integration/.project.manifest.json"
+    "problem_set": {
+      "handle": "authority://policy_first/real_problem_set",
+      "availability": "external_not_vendored"
+    },
+    "objective_analysis_pipeline": {
+      "handle": "authority://policy_first/objective_analysis_pipeline",
+      "availability": "external_not_vendored"
+    },
+    "integration_manifest": {
+      "handle": "repo://.project.manifest.json",
+      "availability": "bundled"
+    }
   },
   "stages": [
     {

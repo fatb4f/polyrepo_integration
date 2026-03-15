@@ -27,7 +27,7 @@ def build_local_registry(schema_path: Path) -> Registry:
     if isinstance(root_id, str) and "/" in root_id:
         root_base = root_id.rsplit("/", 1)[0] + "/"
 
-    for candidate in schema_dir.glob("*.json"):
+    for candidate in schema_dir.rglob("*.json"):
         try:
             doc = load_json(candidate)
             resource = Resource.from_contents(doc)
@@ -38,7 +38,8 @@ def build_local_registry(schema_path: Path) -> Registry:
         if isinstance(doc_id, str) and doc_id:
             resources[doc_id] = resource
         if root_base:
-            resources[root_base + candidate.name] = resource
+            relative_path = candidate.relative_to(schema_dir).as_posix()
+            resources[root_base + relative_path] = resource
 
     return Registry().with_resources(resources.items())
 
@@ -52,9 +53,12 @@ def validate(schema_path: Path, data_path: Path) -> list[str]:
         registry=build_local_registry(schema_path),
     )
     errors = []
-    for error in sorted(validator.iter_errors(data), key=lambda e: list(e.path)):
-        loc = '/'.join(str(p) for p in error.path) or '<root>'
-        errors.append(f'{data_path}: {loc}: {error.message}')
+    try:
+        for error in sorted(validator.iter_errors(data), key=lambda e: list(e.path)):
+            loc = '/'.join(str(p) for p in error.path) or '<root>'
+            errors.append(f'{data_path}: {loc}: {error.message}')
+    except Exception as exc:
+        errors.append(f'{data_path}: <validator>: {exc}')
     return errors
 
 

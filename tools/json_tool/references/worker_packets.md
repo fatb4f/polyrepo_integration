@@ -1,12 +1,15 @@
 # Worker Packets
 
 Canonical packet authority:
-- `/home/_404/src/worker_packets`
+- `authority://worker_packets`
 
 Important subpaths:
-- contracts: `/home/_404/src/worker_packets/contracts`
-- fixtures: `/home/_404/src/worker_packets/fixtures`
-- instances: `/home/_404/src/worker_packets/instances`
+- contracts: `authority://worker_packets/contracts`
+- fixtures: `authority://worker_packets/fixtures`
+- instances: `authority://worker_packets/instances`
+
+Availability:
+- external authority, not bundled into this repo by default
 
 Use this repo for:
 - worker request/result/review/decision schemas

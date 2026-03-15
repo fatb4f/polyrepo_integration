@@ -27,7 +27,7 @@ Use this skill when the task is primarily JSON contract work rather than ad hoc 
 - `CEL` computes local invariants and `validation_facts`; it does not replace `jq` or `OPA/Rego`.
 - `OPA/Rego` decides authorization over valid state plus facts; do not duplicate low-level object checks in policy.
 - `MiniJinja` renders outputs only; it must not become the contract or policy authority.
-- Canonical worker packet contracts and packet instances live in `/home/_404/src/worker_packets`.
+- Canonical worker packet contracts and packet instances live behind the `authority://worker_packets` handle.
 
 ## Execution Shape
 

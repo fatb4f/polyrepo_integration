@@ -99,7 +99,7 @@
       "exit_condition": "session.trace.v1 emitted",
       "notes": [
         "Grouping keys and ordering rules must be versioned and deterministic.",
-        "Canonical keys for the pilot are session_id, run_id, request_id, sequence_no, and ts_observed as pinned in agent_spawn_worker.mapping.v1.json."
+        "Canonical keys for the pilot are session_id, run_id, request_id, sequence_no, and ts_observed as pinned in authority://worker_packets/agent_spawn_worker.mapping.v1.json."
       ]
     },
     {
