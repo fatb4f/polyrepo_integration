@@ -1,8 +1,18 @@
 {
   "kind": "policy_first_meta_plan.v1",
   "objective": "Reduce the policy-first polyrepo integration problem into execution-ready per-set PLAN packets without collapsing authority boundaries.",
-  "summary": "This meta-plan governs the transition from the top-level D0:D5 objective register to narrow, composable PLAN packets. It is a meta-planning layer for the bounded integration canvas, not an implementation plan for downstream authority repos.",
+  "summary": "This meta-plan governs the transition from the top-level D0:D5 objective register to narrow, composable PLAN packets. It is a meta-planning layer for the bounded integration canvas, not an implementation plan for downstream authority repos. In trimmed archive form, it should be reviewed for internal rigor rather than for the presence of omitted repo surfaces or vendored authorities.",
   "scope": "meta_planning_only",
+  "review_boundary": {
+    "trimmed_archive": true,
+    "missing_path_items_are_not_findings": true,
+    "review_focus": [
+      "internal_stage_rigor",
+      "gate_definition_quality",
+      "output_contract_clarity",
+      "authority_boundary_consistency"
+    ]
+  },
   "authority_model": {
     "policy_authority": "acm",
     "workspace_contract_authority": "polyrepo_workspace",
@@ -26,7 +36,7 @@
     },
     "integration_manifest": {
       "handle": "repo://.project.manifest.json",
-      "availability": "bundled"
+      "availability": "not_packaged_in_trimmed_archive"
     }
   },
   "stages": [
