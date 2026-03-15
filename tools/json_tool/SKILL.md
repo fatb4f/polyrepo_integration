@@ -1,7 +1,7 @@
 ---
 name: json-tool
-description: "Use this skill for contract-first JSON operations: normalize or validate JSON artifacts, derive downstream JSON with jq/jaq, evaluate invariant facts, prepare policy inputs, and render human-facing outputs from schema-bound contracts."
-compatibility: "Best for JSON-first workflows with canonical JSON Schema contracts. Uses worker_packets as the packet-contract authority and treats CUE/CEL/OPA/MiniJinja as layered support, not co-equal authorities."
+description: "Use this skill for validation-first JSON contract work: normalize candidate JSON when needed, validate against canonical schemas, and emit durable validation artifacts."
+compatibility: "Best for JSON-first workflows with canonical JSON Schema contracts. The bundled execution surface in this repo is validation-first and centers on JSON Schema plus a local validator."
 metadata:
   author: _404
   version: "0.1"
@@ -9,25 +9,21 @@ metadata:
 
 # JSON Tool
 
-Use this skill when the task is primarily JSON contract work rather than ad hoc prose processing.
+Use this skill when the task is primarily JSON contract validation work rather than ad hoc prose processing.
 
 ## Trigger
 
-- Define or revise JSON contracts, envelopes, traces, signals, or packet schemas.
-- Normalize machine-generated JSON/JSONL into canonical internal types.
-- Derive downstream JSON artifacts with deterministic transforms.
-- Prepare validation facts or policy inputs over already-shaped objects.
-- Render Markdown or payload outputs from accepted JSON artifacts.
+- Define or revise JSON contracts and validation envelopes.
+- Normalize candidate JSON when the input is not already in contract shape.
+- Validate JSON artifacts against canonical schemas.
+- Emit durable validation reports and accepted-json artifacts.
 
 ## Rules
 
 - `JSON Schema` is the canonical accepted-artifact authority.
-- `CUE` is optional and upstream only: use it for incomplete-state unification or interlingua work when required.
-- `jq` is the default wrangling engine; use `jaq` only when Rust embedding is required.
-- `CEL` computes local invariants and `validation_facts`; it does not replace `jq` or `OPA/Rego`.
-- `OPA/Rego` decides authorization over valid state plus facts; do not duplicate low-level object checks in policy.
-- `MiniJinja` renders outputs only; it must not become the contract or policy authority.
-- Canonical worker packet contracts and packet instances live behind the `authority://worker_packets` handle.
+- The bundled executable surface in this repo is `scripts/validate_json_contract.py`.
+- Candidate extraction is optional and upstream of schema validation.
+- Do not claim bundled `unify`, `derive`, `check`, `authorize`, or `render` execution unless those operators are explicitly added to this repo.
 
 ## Execution Shape
 
@@ -35,22 +31,18 @@ Use this skill when the task is primarily JSON contract work rather than ad hoc 
 2. `assets/workflow.json`
 3. `assets/sequence_dag.md`
 4. `assets/operator_surface.json`
-5. `assets/telemetry_artifacts.json`
-6. `assets/telemetry_pipeline.json`
-7. `references/stack.md`
-8. `references/worker_packets.md`
-9. `references/telemetry_profile.md`
-10. `scripts/validate_json_contract.py`
+5. `references/stack.md`
+6. `scripts/validate_json_contract.py`
 
 ## Output guidance
 
 Choose the minimal operator path that matches the task:
-- unstructured ingress: `extract -> unify -> validate -> derive -> check -> authorize -> render`
-- structured ingress: `unify|validate -> derive -> check -> authorize -> render`
+- unstructured ingress: `extract -> validate`
+- structured ingress: `validate`
 
 When `scripts/validate_json_contract.py` is used for the validate step, pass output
 paths when you need durable artifacts:
 - `--report-out <path>` for the machine-readable validation report
 - `--accepted-json-out <path>` for the accepted JSON artifact when validating a single file
 
-Prefer JSON outputs first. Render Markdown only after the JSON artifacts and validation reports are stable.
+Prefer JSON outputs first.

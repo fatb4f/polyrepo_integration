@@ -7,7 +7,6 @@ Layered contract-first JSON stack:
 - invariant facts: `CEL`
 - authorization: `OPA/Rego`
 - rendering: `MiniJinja`
-- runtime binding: `Pydantic`
 
 Rules:
 - keep `JSON Schema` as canonical accepted-artifact authority

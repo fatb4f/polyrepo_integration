@@ -10,17 +10,10 @@ Machine-readable equivalent:
 - Only for unstructured or mixed-source ingress.
 - Emit `candidate_envelope`.
 
-3. `J2_unify_validate`
-- Constrain if needed.
+3. `J2_validate`
 - Validate accepted JSON against canonical contracts.
+- Use `scripts/validate_json_contract.py` to emit durable validation artifacts.
 
-4. `J3_derive`
-- Use `jq` as the default wrangling engine.
-- Emit downstream JSON artifacts.
-
-5. `J5_check` / `J6_authorize` (optional)
-- Compute `validation_facts` with CEL-style logic.
-- Authorize guarded transitions with OPA/Rego-style policy.
-
-6. `J7_render` (optional)
-- Render Markdown or payload outputs after contracts and facts are stable.
+4. `J3_exit`
+- Exit after validation.
+- Do not force validated inputs through derive or policy stages that are not bundled here.

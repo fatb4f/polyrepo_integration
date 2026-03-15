@@ -1,7 +1,7 @@
 {
   "version": "1.0",
   "workflow": "json-tool",
-  "description": "Minimal workflow router for contract-first JSON operations.",
+  "description": "Minimal workflow router for the bundled validation-first JSON contract surface.",
   "start": "J0_route",
   "nodes": [
     {
@@ -20,7 +20,7 @@
         },
         "structured": {
           "when": "input_kind == json_instance",
-          "goto": "J2_unify_validate"
+          "goto": "J2_validate"
         }
       }
     },
@@ -32,108 +32,28 @@
         "candidate_envelope"
       ],
       "next": [
-        "J2_unify_validate"
+        "J2_validate"
       ]
     },
     {
-      "id": "J2_unify_validate",
+      "id": "J2_validate",
       "phase": "JSON_TOOL",
-      "action": "unify_and_validate",
+      "action": "validate_contract",
       "uses_script": "scripts/validate_json_contract.py",
       "notes": [
-        "When output paths are provided, the validator materializes both validation_report_ref and accepted_json_ref artifacts."
+        "Use the bundled validator to emit validation_report_ref.",
+        "When a single file is validated and output paths are provided, the validator can also materialize accepted_json_ref."
       ],
       "outputs": [
         "accepted_json_ref",
         "validation_report_ref"
       ],
       "next": [
-        "J3_derive"
+        "J3_exit"
       ]
     },
     {
-      "id": "J3_derive",
-      "phase": "JSON_TOOL",
-      "action": "derive_json_artifacts",
-      "outputs": [
-        "derived_artifact_refs"
-      ],
-      "next": [
-        "J4_check_or_render"
-      ]
-    },
-    {
-      "id": "J4_check_or_render",
-      "phase": "JSON_TOOL",
-      "action": "check_authorize_render",
-      "guards": {
-        "check": {
-          "when": "requested_operations contains check or authorize",
-          "goto": "J5_check"
-        },
-        "render": {
-          "when": "requested_operations contains render and not (requested_operations contains check or authorize)",
-          "goto": "J7_render"
-        },
-        "exit": {
-          "when": "not (requested_operations contains check or authorize or render)",
-          "goto": "J8_exit"
-        }
-      }
-    },
-    {
-      "id": "J5_check",
-      "phase": "JSON_TOOL",
-      "action": "evaluate_validation_facts",
-      "outputs": [
-        "validation_facts_ref"
-      ],
-      "guards": {
-        "authorize": {
-          "when": "requested_operations contains authorize",
-          "goto": "J6_authorize"
-        },
-        "render": {
-          "when": "requested_operations contains render",
-          "goto": "J7_render"
-        },
-        "exit": {
-          "when": "not (requested_operations contains authorize or render)",
-          "goto": "J8_exit"
-        }
-      }
-    },
-    {
-      "id": "J6_authorize",
-      "phase": "JSON_TOOL",
-      "action": "authorize_transition",
-      "outputs": [
-        "policy_decision_ref"
-      ],
-      "guards": {
-        "render": {
-          "when": "requested_operations contains render",
-          "goto": "J7_render"
-        },
-        "exit": {
-          "when": "not (requested_operations contains render)",
-          "goto": "J8_exit"
-        }
-      }
-    },
-    {
-      "id": "J7_render",
-      "phase": "JSON_TOOL",
-      "action": "render_outputs",
-      "outputs": [
-        "rendered_output_refs"
-      ],
-      "next": [
-        "J8_exit"
-      ]
-    },
-    {
-      "id": "J8_exit",
+      "id": "J3_exit",
       "phase": "JSON_TOOL",
       "action": "emit_json_tool_outputs",
       "outputs": [],
@@ -142,7 +62,7 @@
   ],
   "invariants": [
     "json_schema_is_canonical_authority",
-    "jq_is_default_wrangling_engine",
-    "render_is_last_when_requested"
+    "bundled_execution_surface_is_validation_first",
+    "validated_inputs_exit_without_forced_derive"
   ]
 }

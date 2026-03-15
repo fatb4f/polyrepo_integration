@@ -15,7 +15,7 @@
     },
     {
       "name": "requested_operations",
-      "type": "list(enum(extract|unify|validate|derive|check|authorize|render))",
+      "type": "list(enum(extract|validate))",
       "required": true
     }
   ],
@@ -27,33 +27,14 @@
     {
       "name": "validation_report_ref",
       "type": "path"
-    },
-    {
-      "name": "derived_artifact_refs",
-      "type": "path[]"
-    },
-    {
-      "name": "validation_facts_ref",
-      "type": "path"
-    },
-    {
-      "name": "policy_decision_ref",
-      "type": "path"
-    },
-    {
-      "name": "rendered_output_refs",
-      "type": "path[]"
     }
   ],
   "capabilities": [
     "contract_first_json_ops",
-    "json_schema_validation",
-    "jq_derivation",
-    "telemetry_normalization"
+    "json_schema_validation"
   ],
   "side_effects": [
-    "writes_json_artifacts",
-    "may_read_worker_packets_authority"
+    "writes_json_artifacts"
   ],
   "mutations": {
     "repo": true,

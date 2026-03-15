@@ -42,6 +42,17 @@ Review scaffold files deeply only when:
 
 Priority review assets are defined by `.project.manifest.json.priority_assets`.
 
+Review must span the full indicated asset set before finalizing.
+
+Do not stop after the first high-signal surface if additional indicated assets
+remain unread or unassessed.
+
+For `polyrepo_integration`, that means the review should cover:
+- entrypoint files
+- shared scaffold/context files as needed for contract interpretation
+- every top-level project directory named by the manifest
+- any manifest-listed extra paths
+
 Use these manifest keys:
 
 - `entrypoint_files`
@@ -67,6 +78,7 @@ Use these manifest keys:
 - keep findings severity-ordered
 - separate verified execution from static review and recommendation
 - do not overclaim coverage
+- do not finalize a review after only partial traversal of the indicated asset set
 - if something was not executed, say so explicitly
 - if the runtime is unavailable, state that as an execution boundary, not as a failure
 
