@@ -45,20 +45,15 @@ remain unread or unassessed.
 
 For `polyrepo_integration`, that means the review should cover:
 - entrypoint files
-- shared scaffold/context files as needed for contract interpretation
-- every top-level project directory named by the manifest
-- any manifest-listed extra paths
+- every project directory named by the manifest
+- `.workspace/` as contract/context when needed for interpretation
 
 Use these manifest keys:
 
 - `entrypoint_files`
   Top-level files to read first.
-- `workspace_dirs`
-  Top-level shared scaffold directories to use as contract/background context.
-- `top_level_project_dirs`
+- `project_dirs`
   Top-level project-owned directories to treat as the primary review surface.
-- `extra_paths`
-  Additional repo-relative paths when a project needs narrow exceptions.
 
 ## Output Rules
 

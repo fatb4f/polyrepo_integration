@@ -10,36 +10,15 @@
       "Do not assume a project runtime exists unless the task explicitly requires it."
     ]
   },
-  "paths": {
-    "root": ".",
-    "workspace_docs": ".workspace/docs",
-    "review_instructions": ".workspace/docs/review_workspace_instructions.md",
-    "review_templates": ".workspace/templates/reviews"
-  },
   "priority_assets": {
     "entrypoint_files": [
       ".project.manifest.json",
       "AGENTS.md"
     ],
-    "workspace_dirs": [],
-    "top_level_project_dirs": [
+    "project_dirs": [
       "docs",
       "src"
-    ],
-    "extra_paths": [
-      "README.md"
     ]
-  },
-  "scaffold": {
-    "template_files": [
-      ".workspace/templates/manifests/project_manifest.schema.json",
-      ".workspace/templates/manifests/project.manifest.json.template",
-      ".workspace/templates/reviews/artifact_review.schema.json",
-      ".workspace/templates/reviews/example_project.review.schema.json",
-      ".workspace/templates/reviews/review.schema.json",
-      ".workspace/templates/reviews/review.json.template"
-    ],
-    "generator_present": false
   },
   "agent_contract": {
     "required_behavior": [

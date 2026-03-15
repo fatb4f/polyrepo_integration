@@ -9,9 +9,7 @@
     "project_id",
     "scope",
     "authority",
-    "paths",
     "priority_assets",
-    "scaffold",
     "agent_contract",
     "review_rules",
     "execution_states",
@@ -56,29 +54,12 @@
         }
       }
     },
-    "paths": {
-      "type": "object",
-      "additionalProperties": {
-        "$ref": "#/$defs/repo_relative_path"
-      },
-      "required": [
-        "root",
-        "review_instructions",
-        "review_templates"
-      ],
-      "properties": {
-        "root": {
-          "const": "."
-        }
-      }
-    },
     "priority_assets": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "entrypoint_files",
-        "workspace_dirs",
-        "top_level_project_dirs"
+        "project_dirs"
       ],
       "properties": {
         "entrypoint_files": {
@@ -87,42 +68,11 @@
             "$ref": "#/$defs/top_level_name"
           }
         },
-        "workspace_dirs": {
+        "project_dirs": {
           "type": "array",
           "items": {
             "$ref": "#/$defs/top_level_name"
           }
-        },
-        "top_level_project_dirs": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/top_level_name"
-          }
-        },
-        "extra_paths": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/repo_relative_path"
-          }
-        }
-      }
-    },
-    "scaffold": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "template_files",
-        "generator_present"
-      ],
-      "properties": {
-        "template_files": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/repo_relative_path"
-          }
-        },
-        "generator_present": {
-          "type": "boolean"
         }
       }
     },
@@ -184,12 +134,6 @@
     },
     "review_template": {
       "type": "object"
-    },
-    "priority_files": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/repo_relative_path"
-      }
     }
   },
   "$defs": {
