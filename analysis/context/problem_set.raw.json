@@ -1,0 +1,414 @@
+{
+  "delimiter": "# The problem_set We need to define and integrate a policy first, streamline polyrepo workspace with repo bootstrapping.",
+  "document": {
+    "preplan_tooling_objective": {
+      "objective_id": "D0",
+      "summary": "Before semantic objective ordering begins, the system needs a dedicated dependency-workflow toolset and a bounded integration canvas that can establish dependency taxonomy, dependency data structures, and dependency ordering across repos.",
+      "required_capabilities": [
+        "establish dependency taxonomy",
+        "establish dependency data structure",
+        "establish dependency ordering",
+        "establish a bounded integration canvas for cross-repo indexing and validation"
+      ],
+      "tool_workflow": {
+        "scip": {
+          "role": "semantic cross-repo linking evidence",
+          "responsibility": [
+            "provide symbol-level semantic linking across repos",
+            "surface definition/reference relationships as evidence inputs",
+            "support cross-repo semantic edge discovery"
+          ]
+        },
+        "ast_grep": {
+          "role": "structural extraction and pattern evidence",
+          "responsibility": [
+            "extract structural relationship candidates",
+            "find policy object, anchor, and manifest patterns",
+            "provide lightweight supplemental dependency evidence"
+          ]
+        },
+        "json_tool": {
+          "role": "canonical dependency contract actuator",
+          "responsibility": [
+            "define and emit dependency taxonomy artifacts",
+            "define and emit dependency graph data structures",
+            "emit canonical dependency ordering artifacts",
+            "own JSON-first validation and derivation"
+          ],
+          "augmentation": "CUE-validated DAG narrowing and cross-field constraint checks"
+        },
+        "networkx": {
+          "role": "dependency ordering engine",
+          "responsibility": [
+            "detect cycles",
+            "compute SCC reductions",
+            "compute topological and layered orderings",
+            "emit explainable ordering proofs"
+          ]
+        },
+        "integration_repo": {
+          "role": "bounded integration canvas",
+          "responsibility": [
+            "host a pinned cross-repo indexing and validation surface",
+            "carry the shared scaffold used to bootstrap review and analysis assets",
+            "provide one execution root for SCIP, ast-grep, json-tool, and networkx outputs",
+            "remain non-authoritative and avoid redefining upstream policy or workspace meaning"
+          ]
+        }
+      },
+      "ordering_rule": "D0 is the fixed pre-plan objective because canonical ordering of D1:D5 depends on a defined workflow and bounded integration canvas for dependency taxonomy, dependency data structures, and dependency ordering."
+    },
+    "problem_set": {
+      "statement": "We need to define and integrate a policy-first, streamlined polyrepo workspace with repo bootstrapping.",
+      "expanded": "The system must establish policy as the controlling layer, make that policy drive the polyrepo workspace structure, and make repo creation/bootstrap a native outcome of that policy layer so scaffold, workspace control, and consumer repo setup converge on one control model.",
+      "one_line": "We need a policy-first polyrepo architecture in which workspace control and repo bootstrapping are integrated into one streamlined, reproducible system."
+    },
+    "cross_asset_application": {
+      "summary": "The three repos contribute to the same semantic state space but operate at different layers.",
+      "assets": {
+        "acm": {
+          "role": "policy authority source",
+          "responsibility": [
+            "define the governing policy/state model",
+            "define ontology and anchor semantics",
+            "define canonical schema authority",
+            "define delegation rules",
+            "define policy objects and hierarchy",
+            "define adaptation and reconciliation strategies"
+          ],
+          "compression": "ACM defines meaning, policy structure, and the rules for change and conflict."
+        },
+        "polyrepo_workspace": {
+          "role": "workspace authority target",
+          "responsibility": [
+            "define the desired functionality of the workspace",
+            "define required workspace atomics",
+            "define workspace-level interop semantics",
+            "define cross-repo lifecycle, registry, relations, lineage, and promotion semantics"
+          ],
+          "compression": "polyrepo_workspace defines what the workspace is and what it must know."
+        },
+        "git_asset": {
+          "role": "bootstrap integrator and materialization surface",
+          "responsibility": [
+            "define the requirements surface for materializing policy and workspace design into repo state",
+            "define bootstrap input/output contract",
+            "define generated asset packaging semantics",
+            "define repo-local file emission contract",
+            "define manifest instantiation mechanics"
+          ],
+          "compression": "git_asset defines what must be supplied, emitted, and validated to instantiate the model into repo reality."
+        }
+      },
+      "integrated_statement": "ACM governs the model, polyrepo_workspace defines the operating contract, and git_asset generates that contract into real repos and workspace assets."
+    },
+    "bigger_picture": {
+      "points": [
+        "All repos contribute to the same state space.",
+        "They are all still at an initial planning iteration.",
+        "Future costly refactors can be avoided if the three are semantically integrated at the policy plane."
+      ],
+      "implication": "Semantic integration should happen upstream at the level of policy objects, schemas, manifests, anchors, and relationship semantics rather than later through downstream file/layout refactors."
+    },
+    "core_model": {
+      "ontology_and_policy": {
+        "summary": "The integration problem is fundamentally ontology plus policy.",
+        "ontology_defines": [
+          "object types",
+          "identity",
+          "metadata anchors",
+          "allowed relationships",
+          "semantic roles across repos"
+        ],
+        "policy_defines": [
+          "required objects",
+          "required anchors",
+          "validation rules",
+          "promotion rules",
+          "controller behavior",
+          "admissible state transitions"
+        ]
+      },
+      "anchor_purpose": {
+        "summary": "Anchors are the semantic glue that keep manifests, schemas, policy objects, and generated assets machine-relatable across the workspace.",
+        "questions_answered": [
+          "which policy object governs this manifest",
+          "which workspace object this repo belongs to",
+          "which seed generated this artifact",
+          "which schema validates this object family",
+          "which relationships are declared vs derived",
+          "what promotion lineage produced this state"
+        ]
+      }
+    },
+    "acm_properties": {
+      "required_properties": [
+        "modularity",
+        "composability",
+        "adaptability"
+      ],
+      "modularity": {
+        "goal": "Refactoring a seed or implementing a new asset type does not require costly redactors.",
+        "design_rules": [
+          "use stable anchor schemas",
+          "use small scoped policy modules",
+          "use capability registration for asset types"
+        ],
+        "effect": "new asset types should be additive rather than requiring global rewrites"
+      },
+      "composability": {
+        "goal": "Policy stacks must compose safely.",
+        "design_rules": [
+          "policies must declare scope, inputs, outputs, dependencies, precedence, and conflict rules",
+          "kernel invariants always win",
+          "deny overrides allow",
+          "overlays cannot violate kernel or core invariants",
+          "unresolved conflict is invalid state"
+        ],
+        "effect": "policy growth remains coherent instead of becoming a policy pile"
+      },
+      "adaptability": {
+        "goal": "The system can adapt itself in a closed feedback loop under supervision.",
+        "design_rules": [
+          "adaptation targets should be parameters, module selection, bounded extensions, and registrations before kernel semantics",
+          "observe downstream failures and friction",
+          "evaluate against expected invariants and performance goals",
+          "propose bounded changes",
+          "gate changes through validation, replay/regression checks, and promotion"
+        ],
+        "effect": "ACM evolves without losing authority over system meaning"
+      },
+      "tight_formulation": "Modularity keeps ACM changeable, composability keeps ACM coherent, and adaptability keeps ACM alive."
+    },
+    "acm_layering": {
+      "target_shape": [
+        {
+          "layer": "semantic_kernel",
+          "purpose": "stable ontology and metadata anchors",
+          "contents": [
+            "object families",
+            "required identities",
+            "required anchors",
+            "relationship types",
+            "lifecycle states",
+            "always-on invariants"
+          ]
+        },
+        {
+          "layer": "policy_modules",
+          "purpose": "small bounded policy units operating on the semantic kernel",
+          "contents": [
+            "scope",
+            "inputs",
+            "outputs",
+            "invariants",
+            "dependencies",
+            "conflict rules"
+          ]
+        },
+        {
+          "layer": "supervisory_adaptation",
+          "purpose": "observe outcomes and propose bounded policy adjustments under promotion gates",
+          "contents": [
+            "drift_detection",
+            "missing-anchor detection",
+            "policy/module change proposals",
+            "gated promotion"
+          ]
+        }
+      ]
+    },
+    "polyrepo_workspace_requirements": {
+      "desired_functionality": [
+        "represent a multi-repo workspace as one controlled system",
+        "register repos and repo classes",
+        "express cross-repo dependencies and lineage",
+        "track workspace-local authority and generated state",
+        "support bootstrap, migration, validation, and promotion flows",
+        "preserve workspace observability and change history"
+      ],
+      "required_atomics": [
+        "workspace",
+        "repo",
+        "repo_class",
+        "seed",
+        "asset",
+        "manifest",
+        "schema",
+        "policy_reference",
+        "relationship",
+        "lineage_edge",
+        "validation_result",
+        "promotion_state",
+        "journal_or_observation_event"
+      ],
+      "summary": "polyrepo_workspace must define what the workspace must do and what irreducible objects it must know about to do it."
+    },
+    "git_asset_requirements_surface": {
+      "required_definitions": [
+        "required inputs",
+        "required metadata",
+        "required anchors",
+        "required schemas",
+        "required policy bindings",
+        "required outputs",
+        "required validation steps",
+        "required generated file families",
+        "required lineage and provenance capture"
+      ],
+      "summary": "git_asset is the actuation contract that defines what must be present so that a repo or asset can be safely generated, migrated, or refreshed."
+    },
+    "governed_negotiation_contract": {
+      "summary": "The system resembles a governed consensus negotiation contract under asymmetric authority.",
+      "authority_structure": {
+        "acm": "governing authority surface",
+        "polyrepo_workspace": "constrained implementer for workspace semantics",
+        "git_asset": "constrained implementer/materializer for repo bootstrap"
+      },
+      "consensus_layers": [
+        "ontological consensus",
+        "policy consensus",
+        "operational consensus"
+      ],
+      "coordination_model": "shared state-space contract with a policy-mediated coordination layer and a bounded renegotiation loop for adaptation"
+    },
+    "semantic_ownership": {
+      "summary": "Each controller must scope its semantic surface ownership.",
+      "semantic_surface": {
+        "first_degree_atoms": "atoms directly defined by a controller",
+        "second_degree_atoms": "atoms composing interop dependencies"
+      },
+      "examples_of_second_degree_atoms": [
+        "git commit semantics",
+        "github projects seeds",
+        "codeql seeds",
+        "git hooks"
+      ],
+      "ownership_rule": "A controller touching an atom is not the same as a controller owning its semantics.",
+      "first_degree_invariant": "A controller that owns a 1st-degree atom owns its authoritative schema by default, subject to any explicit delegated ownership defined by the governing policy layer.",
+      "authoritative_schema_invariant": {
+        "owner": "ACM",
+        "statement": "ACM owns the authoritative schema unless some bounded sub-surface is formally delegated for operational ownership.",
+        "delegation": "ACM can delegate operational ownership without transferring canonical schema authority unless explicitly stated."
+      },
+      "semantic_ownership_matrix_requirement": "The initial plan should include a semantic ownership matrix for each atom family recording degree, authoritative owner, subordinate/materializer, governing ACM anchors, allowed extensions, forbidden redefinitions, and reconciliation strategy."
+    },
+    "reconciliation_strategies": {
+      "required": true,
+      "reason": "Competing ownership will occur in a governed negotiation contract and must be resolved explicitly.",
+      "strategies": [
+        {
+          "name": "subordinate",
+          "description": "broader controller owns semantics; narrower controller may materialize or reference but cannot redefine anchors or invariants"
+        },
+        {
+          "name": "assimilate",
+          "description": "smaller controller is absorbed into the larger semantic surface when overlap becomes persistent and structural"
+        },
+        {
+          "name": "partition",
+          "description": "controllers own different dimensions of the same atom family, such as semantic meaning vs materialization mechanics"
+        },
+        {
+          "name": "delegate",
+          "description": "one controller owns the atom but formally delegates bounded sub-semantics to another"
+        },
+        {
+          "name": "deny_or_incompatible",
+          "description": "overlap is not admissible and must be rejected"
+        }
+      ],
+      "example": {
+        "atom_family": [
+          "git commit semantics",
+          "github projects/codeql seed relationships",
+          "git hooks"
+        ],
+        "owner": "polyrepo_workspace",
+        "competing_controller": "git_asset",
+        "recommended_strategy": "subordinate",
+        "alternative": "assimilate if git_asset overlap grows enough to justify absorption into polyrepo_workspace"
+      }
+    },
+    "policy_object_system": {
+      "policy_object_types": [
+        "schema",
+        "manifest",
+        "anchor"
+      ],
+      "schema": "defines structural admissibility, required fields, required anchors, allowed relationships, delegation surface, and invariants",
+      "manifest": "defines declared instance state, applied schemas, policy stacks, dependencies, and ownership claims",
+      "anchor": "defines identity, semantic linkage, cross-object references, ownership attachment, lineage, delegation, and policy binding",
+      "hierarchy": [
+        "kernel",
+        "core_policy",
+        "domain_policy",
+        "overlay_or_operational_policy"
+      ],
+      "required_strategies": [
+        "adaptive",
+        "reconciliation"
+      ]
+    },
+    "policy_evaluation_dag": {
+      "requirement": "Applied policy must be expressible as an evaluation DAG.",
+      "why": [
+        "ordered evaluation",
+        "no circular authority",
+        "mechanical replay",
+        "explainability",
+        "safe composition"
+      ],
+      "node_classes": [
+        "schema_nodes",
+        "manifest_nodes",
+        "anchor_resolution_nodes",
+        "policy_evaluation_nodes",
+        "derived_decision_nodes",
+        "supervisory_feedback_nodes"
+      ],
+      "edge_semantics": [
+        "depends_on",
+        "governed_by",
+        "validated_by",
+        "resolved_through",
+        "composed_with",
+        "reconciled_by",
+        "promoted_after"
+      ],
+      "evaluation_phases": [
+        "structural_admissibility",
+        "semantic_binding",
+        "policy_application",
+        "decision_emission",
+        "supervisory_feedback"
+      ],
+      "summary": "Applied policy must be reducible to a deterministic evaluation DAG in which declared state is structurally validated, semantically bound through anchors, evaluated against ownership/delegation/composition/reconciliation policy, and reduced to governed decisions."
+    },
+    "initial_plan_requirements": {
+      "summary": "A solid initial plan should lock semantic ownership, ontology, policy objects, anchors, evaluation order, and reconciliation before implementation expands.",
+      "first_deliverables": [
+        "D0 dependency-workflow specification composed from SCIP, ast-grep, json-tool plus CUE DAG validation, and networkx",
+        "ACM policy state space that fixes downstream seeds and relationships in advance",
+        "schema dictating required metadata anchors across manifests, schemas, and policy objects",
+        "ACM shaping contract for modularity, composability, and adaptability",
+        "polyrepo_workspace desired functionality and required atomics",
+        "git_asset requirements surface",
+        "semantic ownership matrix and reconciliation strategy catalog",
+        "policy object collection, hierarchy, and evaluation DAG"
+      ],
+      "minimum_outputs": [
+        "dependency workflow spec for taxonomy, dependency graph structure, and ordering",
+        "cross-repo anchor schema or policy-plane ontology schema",
+        "ACM shaping contract",
+        "polyrepo_workspace atomics and functionality contract",
+        "git_asset requirements surface",
+        "semantic ownership matrix",
+        "policy object model",
+        "policy evaluation DAG",
+        "controller responsibility split across ACM, polyrepo_workspace, and git_asset"
+      ],
+      "ordering_principle": "First define the dependency-workflow toolchain and authority boundaries, then define policy state space and anchors, then shape ACM, then define workspace and bootstrap contracts, then define semantic ownership, then define who emits files."
+    }
+  }
+}

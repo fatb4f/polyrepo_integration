@@ -1,0 +1,66 @@
+{
+  "kind": "project_review_pipeline.v1",
+  "project_id": "polyrepo_integration",
+  "generated_at": "2026-03-15T18:48:51+00:00",
+  "source_markdown": "/home/_404/src/ops/control_plane/tracker/review_pipeline.md",
+  "entries": [
+    {
+      "sequence": 1,
+      "source_heading": "polyrepo_integration",
+      "status": "initial_main_branch_review_generated",
+      "assessment": "An initial contract-valid main-branch review artifact was generated for the trimmed archive review surface.",
+      "artifact_path": "/home/_404/Downloads/polyrepo_integration-main-review/review.json",
+      "subject_archive": "polyrepo_integration-main.zip",
+      "head_commit": "ab56264",
+      "findings": [
+        "stage_output_contracts_underdefined",
+        "mp2_discards_upstream_analysis_dependencies",
+        "mp3_termination_predicate_not_machine_recoverable"
+      ],
+      "severity_counts": {
+        "high": 2,
+        "medium": 1,
+        "low": 0
+      }
+    },
+    {
+      "sequence": 2,
+      "source_heading": "polyrepo_integration",
+      "status": "review_corrected_and_tracker_linked",
+      "assessment": "The review was corrected after identifying analytical overreach on contract coverage and is preserved locally with a tracker symlink.",
+      "artifact_path": "/home/_404/Downloads/polyrepo_integration-main-review/review.json",
+      "tracker_link": "/home/_404/src/ops/control_plane/tracker/polyrepo_integration/main_review",
+      "corrections_applied": [
+        "narrowed F1 from blocker-level defect to medium contract-coverage gap",
+        "kept F2 as the main blocking traceability issue",
+        "kept F3 as a medium reproducibility issue around MP3 termination"
+      ],
+      "findings": [
+        "stage_output_contract_coverage_incomplete",
+        "mp2_discards_upstream_analysis_dependencies",
+        "mp3_termination_predicate_not_machine_recoverable"
+      ],
+      "severity_counts": {
+        "high": 1,
+        "medium": 2,
+        "low": 0
+      },
+      "final_judgment": "The corrected review is contract-valid, locally preserved, and tracker-linked."
+    },
+    {
+      "sequence": 3,
+      "source_heading": "polyrepo_integration",
+      "status": "evolving_review_object_established",
+      "assessment": "The in-repo review object is now the evolving review history for submitted HEAD reviews, with each new review appended as a new entry rather than replacing the prior assessment.",
+      "object_path": "/home/_404/src/polyrepo_integration/review/review_pipeline.json",
+      "counterpart_git_log_object": "/home/_404/src/polyrepo_integration/review/git_log.json",
+      "append_rule": "append_one_entry_per_submitted_head_review",
+      "head_anchor": "ab56264",
+      "storage_model": [
+        "keep the evolving review object in-repo under review/",
+        "keep the concrete review artifact local",
+        "link the local artifact into the tracker surface when useful"
+      ]
+    }
+  ]
+}

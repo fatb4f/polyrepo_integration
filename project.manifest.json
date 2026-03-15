@@ -1,0 +1,170 @@
+{
+  "kind": "project_manifest.v1",
+  "project_id": "polyrepo_integration",
+  "repo": {
+    "path": "/home/_404/src/polyrepo_integration",
+    "role": "bounded_integration_canvas",
+    "summary": "Trimmed integration repo for meta-planning, review artifacts, and cross-repo contract context.",
+    "primary_surfaces": [
+      "analysis/",
+      "review/",
+      ".templates/"
+    ],
+    "authorities": {
+      "policy": "acm",
+      "workspace": "polyrepo_workspace",
+      "bootstrap": "git_asset"
+    }
+  },
+  "review_anchors": [
+    {
+      "id": "problem_statement",
+      "kind": "objective",
+      "description": "The normalized problem statement is the primary objective anchor for review and planning.",
+      "source_path": "analysis/context/problem_set.clean.json",
+      "selector": "document.problem_set.one_line"
+    },
+    {
+      "id": "acm_modularity",
+      "kind": "quality",
+      "description": "ACM must preserve modularity as a required shaping quality.",
+      "source_path": "analysis/context/problem_set.clean.json",
+      "selector": "document.acm_properties.modularity.goal"
+    },
+    {
+      "id": "acm_composability",
+      "kind": "quality",
+      "description": "ACM must preserve composability as a required shaping quality.",
+      "source_path": "analysis/context/problem_set.clean.json",
+      "selector": "document.acm_properties.composability.goal"
+    },
+    {
+      "id": "acm_adaptability",
+      "kind": "quality",
+      "description": "ACM must preserve adaptability as a required shaping quality.",
+      "source_path": "analysis/context/problem_set.clean.json",
+      "selector": "document.acm_properties.adaptability.goal"
+    },
+    {
+      "id": "workspace_required_atomics",
+      "kind": "object_property",
+      "description": "polyrepo_workspace must retain the required workspace atomics named by the normalized problem-set context.",
+      "source_path": "analysis/context/problem_set.clean.json",
+      "selector": "document.polyrepo_workspace_requirements.required_atomics"
+    },
+    {
+      "id": "git_asset_required_definitions",
+      "kind": "object_property",
+      "description": "git_asset must remain constrained to its declared requirements-surface definitions.",
+      "source_path": "analysis/context/problem_set.clean.json",
+      "selector": "document.git_asset_requirements_surface.required_definitions"
+    }
+  ],
+  "workflow": {
+    "kind": "artifact_dag.v1",
+    "entry_nodes": [
+      "problem_set_raw",
+      "problem_set_context",
+      "objective_analysis_context"
+    ],
+    "nodes": [
+      {
+        "id": "problem_set_raw",
+        "kind": "artifact",
+        "path": "analysis/context/problem_set.raw.json"
+      },
+      {
+        "id": "problem_set_context",
+        "kind": "artifact",
+        "path": "analysis/context/problem_set.clean.json"
+      },
+      {
+        "id": "objective_analysis_context",
+        "kind": "artifact",
+        "path": "analysis/meta_plan.json"
+      },
+      {
+        "id": "review_history",
+        "kind": "artifact",
+        "path": "review/review_pipeline.json"
+      },
+      {
+        "id": "git_log_context",
+        "kind": "artifact",
+        "path": "review/git_log.json"
+      },
+      {
+        "id": "draft_meta_plan",
+        "kind": "stage",
+        "requires": [
+          "problem_set_raw",
+          "problem_set_context",
+          "objective_analysis_context",
+          "review_history",
+          "git_log_context"
+        ],
+        "produces": [
+          "analysis/meta_plan.json"
+        ]
+      },
+      {
+        "id": "review_submitted_head",
+        "kind": "stage",
+        "requires": [
+          "draft_meta_plan",
+          "review_history",
+          "git_log_context"
+        ],
+        "produces": [
+          "review/review_pipeline.json"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "problem_set_raw",
+        "to": "problem_set_context"
+      },
+      {
+        "from": "problem_set_context",
+        "to": "draft_meta_plan"
+      },
+      {
+        "from": "problem_set_raw",
+        "to": "draft_meta_plan"
+      },
+      {
+        "from": "objective_analysis_context",
+        "to": "draft_meta_plan"
+      },
+      {
+        "from": "review_history",
+        "to": "draft_meta_plan"
+      },
+      {
+        "from": "git_log_context",
+        "to": "draft_meta_plan"
+      },
+      {
+        "from": "draft_meta_plan",
+        "to": "review_submitted_head"
+      },
+      {
+        "from": "review_history",
+        "to": "review_submitted_head"
+      },
+      {
+        "from": "git_log_context",
+        "to": "review_submitted_head"
+      }
+    ],
+    "determinism": {
+      "rule": "a stage may run only when all inbound dependencies are present",
+      "context_rule": "raw context may preserve source ambiguity; planning and review anchors should read the normalized context artifact",
+      "append_only_artifacts": [
+        "review/review_pipeline.json",
+        "review/git_log.json"
+      ]
+    }
+  }
+}

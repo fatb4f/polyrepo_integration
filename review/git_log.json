@@ -1,0 +1,126 @@
+{
+  "kind": "project_git_log_tracker.v1",
+  "project_id": "polyrepo_integration",
+  "generated_at": "2026-03-15T18:48:51+00:00",
+  "repo_path": "/home/_404/src/polyrepo_integration",
+  "remote_url": "https://github.com/fatb4f/polyrepo_integration.git",
+  "head_commit": {
+    "commit": "ab56264abd6cf108b1a638673a0b5a70c8deba6b",
+    "short": "ab56264",
+    "date": "2026-03-15T14:30:07-04:00",
+    "subject": "review templates"
+  },
+  "timeline": [
+    {
+      "ordinal": 1,
+      "commit": "a7ea87639cb294d0afa1e155e39743db46936ac8",
+      "short": "a7ea876",
+      "date": "2026-03-15T01:22:58-04:00",
+      "subject": "Simplify integration scaffold and json tool surface",
+      "classification": "scaffold_reset",
+      "effects": [
+        "Narrowed the repo to the trimmed integration surface.",
+        "Reduced the packaged project-owned files to analysis, modules, and tools."
+      ]
+    },
+    {
+      "ordinal": 2,
+      "commit": "def15762bc7b88a748e045396165445e1300b6d1",
+      "short": "def1576",
+      "date": "2026-03-15T01:38:36-04:00",
+      "subject": "Simplify manifest review contract",
+      "classification": "review_contract",
+      "effects": [
+        "Simplified the review contract around the trimmed integration surface."
+      ]
+    },
+    {
+      "ordinal": 3,
+      "commit": "008484c3ecaa6682098eea59887ee4150ea0507f",
+      "short": "008484c",
+      "date": "2026-03-15T01:43:32-04:00",
+      "subject": "Clarify review handling for missing path items",
+      "classification": "review_boundary",
+      "effects": [
+        "Made absent or future-reserved path items non-findings by review contract."
+      ]
+    },
+    {
+      "ordinal": 4,
+      "commit": "26873625e0e71df9bb089a7b3041d73884bb993f",
+      "short": "2687362",
+      "date": "2026-03-15T02:00:27-04:00",
+      "subject": "Clarify trimmed archive review boundary",
+      "classification": "review_boundary",
+      "effects": [
+        "Explicitly scoped the trimmed archive review surface to internal rigor rather than omitted files."
+      ]
+    },
+    {
+      "ordinal": 5,
+      "commit": "0fe014f37c5da266904ede666a069db11f7c7342",
+      "short": "0fe014f",
+      "date": "2026-03-15T02:11:12-04:00",
+      "subject": "Tighten meta plan control contracts",
+      "classification": "meta_plan_contract",
+      "effects": [
+        "Added objective-register provenance, micro-deliverable set contract fields, and stage dependency DAG.",
+        "Added MP3 termination predicate and MP4 validation authority."
+      ]
+    },
+    {
+      "ordinal": 6,
+      "commit": "bd367287413ad799d3d04f73d7797c25f67fa02c",
+      "short": "bd36728",
+      "date": "2026-03-15T02:12:15-04:00",
+      "subject": "Rename meta plan diff to commit hash",
+      "classification": "artifact_hygiene",
+      "effects": [
+        "Aligned the stored diff artifact name with the originating commit hash."
+      ]
+    },
+    {
+      "ordinal": 7,
+      "commit": "da741d4d085e495a4508aea99820bc3abd7cb04c",
+      "short": "da741d4",
+      "date": "2026-03-15T02:24:26-04:00",
+      "subject": "Harden patch review artifact contract",
+      "classification": "review_contract",
+      "effects": [
+        "Required patch-review artifacts to stay on the shipped project review schema.",
+        "Positioned annotated diff patches as supplemental artifacts."
+      ]
+    },
+    {
+      "ordinal": 8,
+      "commit": "ab56264abd6cf108b1a638673a0b5a70c8deba6b",
+      "short": "ab56264",
+      "date": "2026-03-15T14:30:07-04:00",
+      "subject": "review templates",
+      "classification": "review_contract",
+      "effects": [
+        "Bundled the review schema and template surface into the trimmed repo archive."
+      ]
+    }
+  ],
+  "current_state": {
+    "status": "active",
+    "phase": "review_objects_in_repo",
+    "summary": "The repo now carries an evolving review pipeline object and a companion git-log object under review/ while concrete review artifacts remain local.",
+    "authoritative_artifacts": [
+      "/home/_404/src/polyrepo_integration/AGENTS.md",
+      "/home/_404/src/polyrepo_integration/.templates/artifact_review.schema.json",
+      "/home/_404/src/polyrepo_integration/.templates/polyrepo_integration.review.schema.json",
+      "/home/_404/src/polyrepo_integration/.templates/review.schema.json",
+      "/home/_404/src/polyrepo_integration/.templates/review.json.template",
+      "/home/_404/src/polyrepo_integration/analysis/meta_plan.json",
+      "/home/_404/src/polyrepo_integration/review/review_pipeline.json",
+      "/home/_404/src/polyrepo_integration/review/git_log.json"
+    ],
+    "open_items": [
+      "Append one review_pipeline entry per submitted HEAD review instead of replacing prior entries.",
+      "Keep the local review artifact and tracker symlink aligned with the latest appended review entry.",
+      "Promote the git-log object as the canonical incremental context surface for future review corrections."
+    ]
+  }
+}

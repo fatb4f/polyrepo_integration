@@ -48,8 +48,8 @@
     }
   },
   "source_artifacts": {
-    "real_problem_set": {
-      "handle": "authority://policy_first/real_problem_set",
+    "problem_set": {
+      "handle": "authority://policy_first/problem_set",
       "availability": "external_not_vendored"
     },
     "objective_analysis_pipeline": {
@@ -59,6 +59,10 @@
     "integration_manifest": {
       "handle": "repo://.project.manifest.json",
       "availability": "not_packaged_in_trimmed_archive"
+    },
+    "review_rationale_log": {
+      "handle": "repo://review/review_pipeline.json",
+      "availability": "bundled"
     }
   },
   "stages": [
@@ -70,7 +74,7 @@
       "title": "Fix D0 authority and workflow",
       "purpose": "Freeze the dependency-workflow toolchain and the bounded integration-canvas contract before ordering any downstream objective.",
       "inputs": [
-        "real_problem_set",
+        "problem_set",
         "objective_analysis_pipeline",
         "integration_manifest"
       ],
@@ -95,7 +99,7 @@
       "inputs": [
         "dependency_tool_workflow_spec",
         "integration_repo_contract",
-        "real_problem_set",
+        "problem_set",
         "input_objective_register"
       ],
       "outputs": [
@@ -118,7 +122,8 @@
       "title": "Reduce objectives into micro-deliverable sets",
       "purpose": "Reduce each ordered objective into bounded, composable micro-deliverable sets with clear semantic purpose and acceptance surfaces.",
       "inputs": [
-        "canonical_objective_order"
+        "canonical_objective_order",
+        "review_rationale_log"
       ],
       "outputs": [
         "micro_deliverable_set_register"
