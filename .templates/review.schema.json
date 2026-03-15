@@ -1,5 +1,0 @@
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://fatb4f.github.io/polyrepo_integration/schemas/review.schema.json",
-  "$ref": "./polyrepo_integration.review.schema.json"
-}
