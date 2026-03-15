@@ -11,6 +11,7 @@ Use [review_workspace_instructions.md](./.workspace/docs/review_workspace_instru
 - read .workspace/docs/review_workspace_instructions.md for the full review workflow and output contract
 - use the project review contract under .workspace/templates/reviews
 - treat this repo as a bounded integration canvas for cross-repo analysis and validation, not as a semantic authority surface
+- do not treat absent, empty, or future-reserved path items as defects unless the repo explicitly claims they must exist now
 
 ## Review contract
 

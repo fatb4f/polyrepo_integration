@@ -48,6 +48,15 @@ For `polyrepo_integration`, that means the review should cover:
 - every project directory named by the manifest
 - `.workspace/` as contract/context when needed for interpretation
 
+Missing path items are not findings by themselves.
+
+Do not treat any of the following as defects unless the repo explicitly claims
+the item must exist now:
+- an empty project directory
+- an unpopulated future mount point
+- a missing vendored external authority
+- the absence of files that are not declared as bundled repo assets
+
 Use these manifest keys:
 
 - `entrypoint_files`
@@ -70,6 +79,7 @@ Use these manifest keys:
 - separate verified execution from static review and recommendation
 - do not overclaim coverage
 - do not finalize a review after only partial traversal of the indicated asset set
+- do not file findings solely because a path is absent, empty, or reserved for future population
 - if something was not executed, say so explicitly
 - if the runtime is unavailable, state that as an execution boundary, not as a failure
 

@@ -38,7 +38,8 @@
     "validate_against_schema_before_finalize": true,
     "findings_order": "severity_desc",
     "separate_verified_execution_from_inference": true,
-    "do_not_overclaim_coverage": true
+    "do_not_overclaim_coverage": true,
+    "missing_path_items_are_not_findings": true
   },
   "execution_states": [
     "passed",
