@@ -1,0 +1,122 @@
+{
+  "kind": "example_project.project_manifest.v1",
+  "project_id": "example_project",
+  "scope": "archive_and_workspace_review",
+  "authority": {
+    "primary_surface": "extracted_workspace",
+    "runtime_install_required_by_default": false,
+    "notes": [
+      "Treat the uploaded archive and its extracted workspace as the primary review surface.",
+      "Do not assume a project runtime exists unless the task explicitly requires it."
+    ]
+  },
+  "paths": {
+    "root": ".",
+    "workspace_docs": ".workspace/docs",
+    "build_script": ".workspace/scripts/build_overrides.sh",
+    "review_instructions": ".workspace/docs/review_workspace_instructions.md",
+    "review_templates": ".workspace/templates/reviews"
+  },
+  "priority_assets": {
+    "entrypoint_files": [
+      ".project.manifest.json",
+      "AGENTS.md"
+    ],
+    "workspace_dirs": [
+      ".workspace"
+    ],
+    "top_level_project_dirs": [
+      "docs",
+      "src"
+    ],
+    "extra_paths": [
+      "README.md"
+    ]
+  },
+  "scaffold": {
+    "generated_files": [
+      "AGENTS.md",
+      ".workspace/templates/reviews/example_project.review.schema.json",
+      ".workspace/templates/reviews/review.schema.json",
+      ".workspace/templates/reviews/review.json.template"
+    ],
+    "idempotent": true
+  },
+  "agent_contract": {
+    "required_behavior": [
+      "read .workspace/docs/review_workspace_instructions.md for the full review workflow and output contract",
+      "regenerate scaffolded files with .workspace/scripts/build_overrides.sh after scaffold or manifest changes",
+      "use the project review contract under .workspace/templates/reviews"
+    ]
+  },
+  "review_rules": {
+    "full_review_in_chat_ui": false,
+    "write_artifacts_to_internal_mnt": true,
+    "archive_outputs_in_mnt": true,
+    "ui_response_mode": "link_only_with_minimal_status",
+    "machine_readable_first": true,
+    "validate_against_schema_before_finalize": true,
+    "findings_order": "severity_desc",
+    "separate_verified_execution_from_inference": true,
+    "do_not_overclaim_coverage": true
+  },
+  "execution_states": [
+    "passed",
+    "partial",
+    "failed",
+    "not_executed",
+    "not_selected"
+  ],
+  "schema_contract": {
+    "generic_base_schema": ".workspace/templates/reviews/artifact_review.schema.json",
+    "project_profile_schema": ".workspace/templates/reviews/example_project.review.schema.json",
+    "compatibility_schema": ".workspace/templates/reviews/review.schema.json",
+    "project_template": ".workspace/templates/reviews/review.json.template",
+    "profile_schema_id": "https://example.invalid/schemas/example_project.review.schema.json",
+    "compatibility_schema_id": "https://example.invalid/schemas/review.schema.json",
+    "profile_title": "Example Project Artifact Review Profile",
+    "project_review_kind": "example_project.artifact_review.v1",
+    "artifact_name_pattern": "^example_project-.*\\.zip$"
+  },
+  "review_template": {
+    "artifact_review": {
+      "kind": "example_project.artifact_review.v1",
+      "metadata": {
+        "artifact_name": "example_project-main.zip",
+        "review_pass": 1,
+        "assessment": "initial_review"
+      },
+      "execution_context": {
+        "can_run_end_to_end_here": false,
+        "blocking_reason": "runtime_unavailable",
+        "checked": [
+          "archive_unpacked"
+        ]
+      },
+      "summary": {
+        "overall": "initial_assessment",
+        "maturity": "early",
+        "main_remaining_risk": "unreviewed_surface"
+      },
+      "finding_summary": {
+        "confirmed_fix_count": 0,
+        "open_finding_count": 0,
+        "severity_counts": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "confirmed_fixes": [],
+      "findings": [],
+      "verdict": {
+        "status": "needs_review",
+        "reasons": [
+          "populate_from_actual_review"
+        ]
+      },
+      "next_patch_set": []
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "artifact_review": {
+    "kind": "polyrepo_integration.artifact_review.v1",
+    "metadata": {
+      "artifact_name": "polyrepo_integration-main.zip",
+      "review_pass": 1,
+      "assessment": "initial_review"
+    },
+    "execution_context": {
+      "can_run_end_to_end_here": false,
+      "blocking_reason": "runtime_unavailable",
+      "checked": [
+        "archive_unpacked"
+      ]
+    },
+    "summary": {
+      "overall": "initial_assessment",
+      "maturity": "early",
+      "main_remaining_risk": "unreviewed_surface"
+    },
+    "finding_summary": {
+      "confirmed_fix_count": 0,
+      "open_finding_count": 0,
+      "severity_counts": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      }
+    },
+    "confirmed_fixes": [],
+    "findings": [],
+    "verdict": {
+      "status": "needs_review",
+      "reasons": [
+        "populate_from_actual_review"
+      ]
+    },
+    "next_patch_set": []
+  }
+}

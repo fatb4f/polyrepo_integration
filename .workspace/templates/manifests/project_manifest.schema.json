@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fatb4f.github.io/schemas/project_manifest.schema.json",
+  "title": "Project Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "project_id",
+    "scope",
+    "authority",
+    "paths",
+    "priority_assets",
+    "scaffold",
+    "agent_contract",
+    "review_rules",
+    "execution_states",
+    "schema_contract",
+    "review_template"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+\\.project_manifest\\.v[0-9]+$"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary_surface",
+        "runtime_install_required_by_default",
+        "notes"
+      ],
+      "properties": {
+        "primary_surface": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtime_install_required_by_default": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/repo_relative_path"
+      },
+      "required": [
+        "root",
+        "build_script",
+        "review_instructions",
+        "review_templates"
+      ],
+      "properties": {
+        "root": {
+          "const": "."
+        }
+      }
+    },
+    "priority_assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entrypoint_files",
+        "workspace_dirs",
+        "top_level_project_dirs"
+      ],
+      "properties": {
+        "entrypoint_files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/top_level_name"
+          }
+        },
+        "workspace_dirs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/top_level_name"
+          }
+        },
+        "top_level_project_dirs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/top_level_name"
+          }
+        },
+        "extra_paths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/repo_relative_path"
+          }
+        }
+      }
+    },
+    "scaffold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generated_files",
+        "idempotent"
+      ],
+      "properties": {
+        "generated_files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/repo_relative_path"
+          }
+        },
+        "idempotent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "agent_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_behavior"
+      ],
+      "properties": {
+        "required_behavior": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "review_rules": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "execution_states": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "schema_contract": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "generic_base_schema",
+        "project_profile_schema",
+        "compatibility_schema",
+        "project_template",
+        "profile_schema_id",
+        "compatibility_schema_id",
+        "profile_title",
+        "project_review_kind",
+        "artifact_name_pattern"
+      ],
+      "properties": {
+        "generic_base_schema": {
+          "$ref": "#/$defs/repo_relative_path"
+        },
+        "project_profile_schema": {
+          "$ref": "#/$defs/repo_relative_path"
+        },
+        "compatibility_schema": {
+          "$ref": "#/$defs/repo_relative_path"
+        },
+        "project_template": {
+          "$ref": "#/$defs/repo_relative_path"
+        }
+      }
+    },
+    "review_template": {
+      "type": "object"
+    },
+    "priority_files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/repo_relative_path"
+      }
+    }
+  },
+  "$defs": {
+    "repo_relative_path": {
+      "type": "string",
+      "pattern": "^(?!$)(?!/)(?!~)(?!\\.\\.?($|/))(?!.*//)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "top_level_name": {
+      "type": "string",
+      "pattern": "^(?!$)(?!/)(?!.*//)(?!.*\\/).+$"
+    }
+  }
+}

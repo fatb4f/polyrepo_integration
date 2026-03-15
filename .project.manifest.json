@@ -1,0 +1,128 @@
+{
+  "kind": "polyrepo_integration.project_manifest.v1",
+  "project_id": "polyrepo_integration",
+  "scope": "bounded_integration_canvas",
+  "authority": {
+    "primary_surface": "extracted_workspace",
+    "runtime_install_required_by_default": false,
+    "notes": [
+      "Treat the extracted workspace as the primary review and validation surface.",
+      "Do not assume optional runtimes or external toolchains exist unless the task explicitly requires them.",
+      "This repo is a bounded integration canvas for cross-repo analysis and validation, not a semantic authority surface."
+    ]
+  },
+  "paths": {
+    "root": ".",
+    "workspace_docs": ".workspace/docs",
+    "build_script": ".workspace/scripts/build_overrides.sh",
+    "review_instructions": ".workspace/docs/review_workspace_instructions.md",
+    "review_templates": ".workspace/templates/reviews",
+    "analysis": "analysis",
+    "modules": "modules",
+    "tools": "tools"
+  },
+  "priority_assets": {
+    "entrypoint_files": [
+      ".project.manifest.json",
+      "AGENTS.md"
+    ],
+    "workspace_dirs": [
+      ".workspace"
+    ],
+    "top_level_project_dirs": [
+      "analysis",
+      "modules",
+      "tools"
+    ],
+    "extra_paths": [
+      "README.md"
+    ]
+  },
+  "scaffold": {
+    "generated_files": [
+      "AGENTS.md",
+      ".workspace/templates/reviews/polyrepo_integration.review.schema.json",
+      ".workspace/templates/reviews/review.schema.json",
+      ".workspace/templates/reviews/review.json.template"
+    ],
+    "idempotent": true
+  },
+  "agent_contract": {
+    "required_behavior": [
+      "read .workspace/docs/review_workspace_instructions.md for the full review workflow and output contract",
+      "regenerate scaffolded files with .workspace/scripts/build_overrides.sh after scaffold or manifest changes",
+      "use the project review contract under .workspace/templates/reviews",
+      "treat this repo as a bounded integration canvas for cross-repo analysis and validation, not as a semantic authority surface"
+    ]
+  },
+  "review_rules": {
+    "full_review_in_chat_ui": false,
+    "write_artifacts_to_internal_mnt": true,
+    "archive_outputs_in_mnt": true,
+    "ui_response_mode": "link_only_with_minimal_status",
+    "machine_readable_first": true,
+    "validate_against_schema_before_finalize": true,
+    "findings_order": "severity_desc",
+    "separate_verified_execution_from_inference": true,
+    "do_not_overclaim_coverage": true
+  },
+  "execution_states": [
+    "passed",
+    "partial",
+    "failed",
+    "not_executed",
+    "not_selected"
+  ],
+  "schema_contract": {
+    "generic_base_schema": ".workspace/templates/reviews/artifact_review.schema.json",
+    "project_profile_schema": ".workspace/templates/reviews/polyrepo_integration.review.schema.json",
+    "compatibility_schema": ".workspace/templates/reviews/review.schema.json",
+    "project_template": ".workspace/templates/reviews/review.json.template",
+    "profile_schema_id": "https://fatb4f.github.io/polyrepo_integration/schemas/polyrepo_integration.review.schema.json",
+    "compatibility_schema_id": "https://fatb4f.github.io/polyrepo_integration/schemas/review.schema.json",
+    "profile_title": "Polyrepo Integration Artifact Review Profile",
+    "project_review_kind": "polyrepo_integration.artifact_review.v1",
+    "artifact_name_pattern": "^polyrepo_integration-.*\\.zip$"
+  },
+  "review_template": {
+    "artifact_review": {
+      "kind": "polyrepo_integration.artifact_review.v1",
+      "metadata": {
+        "artifact_name": "polyrepo_integration-main.zip",
+        "review_pass": 1,
+        "assessment": "initial_review"
+      },
+      "execution_context": {
+        "can_run_end_to_end_here": false,
+        "blocking_reason": "runtime_unavailable",
+        "checked": [
+          "archive_unpacked"
+        ]
+      },
+      "summary": {
+        "overall": "initial_assessment",
+        "maturity": "early",
+        "main_remaining_risk": "unreviewed_surface"
+      },
+      "finding_summary": {
+        "confirmed_fix_count": 0,
+        "open_finding_count": 0,
+        "severity_counts": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0
+        }
+      },
+      "confirmed_fixes": [],
+      "findings": [],
+      "verdict": {
+        "status": "needs_review",
+        "reasons": [
+          "populate_from_actual_review"
+        ]
+      },
+      "next_patch_set": []
+    }
+  }
+}
