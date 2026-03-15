@@ -5,6 +5,8 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/../.." && pwd)"
 manifest_path="${1:-$repo_root/.project.manifest.json}"
 workspace_root="$repo_root"
+git_root=""
+schema_id_mode="archive_local"
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "jq is required" >&2
@@ -19,6 +21,14 @@ fi
 if [[ "$script_dir" != "$repo_root/.workspace/scripts" ]]; then
   echo "build_overrides.sh must live at .workspace/scripts under the workspace root" >&2
   exit 1
+fi
+
+if command -v git >/dev/null 2>&1; then
+  if git_root="$(git -C "$repo_root" rev-parse --show-toplevel 2>/dev/null)" && [[ "$git_root" == "$repo_root" ]]; then
+    schema_id_mode="canonical"
+  else
+    git_root=""
+  fi
 fi
 
 write_if_changed() {
@@ -130,10 +140,27 @@ review_templates_path="$(require_manifest_string '.paths.review_templates')"
 full_instructions_file="$(require_manifest_string '.paths.review_instructions')"
 agents_path="$repo_root/AGENTS.md"
 
+effective_profile_schema_id="$profile_schema_id"
+effective_compatibility_schema_id="$compatibility_schema_id"
+if [[ "$schema_id_mode" == "archive_local" ]]; then
+  effective_profile_schema_id="$(python3 - <<'PY' "$repo_root" "$project_profile_schema"
+from pathlib import Path
+import sys
+print((Path(sys.argv[1]) / sys.argv[2]).resolve().as_uri())
+PY
+)"
+  effective_compatibility_schema_id="$(python3 - <<'PY' "$repo_root" "$compatibility_schema"
+from pathlib import Path
+import sys
+print((Path(sys.argv[1]) / sys.argv[2]).resolve().as_uri())
+PY
+)"
+fi
+
 profile_schema_tmp="$(mktemp)"
 jq -n \
   --arg schema "https://json-schema.org/draft/2020-12/schema" \
-  --arg id "$profile_schema_id" \
+  --arg id "$effective_profile_schema_id" \
   --arg title "$profile_title" \
   --arg base_ref "./$(basename "$generic_base_schema")" \
   --arg kind "$review_kind" \
@@ -174,7 +201,7 @@ write_if_changed "$repo_root/$project_profile_schema" "$profile_schema_tmp"
 compat_schema_tmp="$(mktemp)"
 jq -n \
   --arg schema "https://json-schema.org/draft/2020-12/schema" \
-  --arg id "$compatibility_schema_id" \
+  --arg id "$effective_compatibility_schema_id" \
   --arg ref "./$(basename "$project_profile_schema")" \
   '{
     "$schema": $schema,
@@ -228,3 +255,4 @@ printf '  %s\n' \
   "$workspace_root/$project_profile_schema" \
   "$workspace_root/$compatibility_schema" \
   "$workspace_root/$project_template"
+echo "Schema id mode: $schema_id_mode"

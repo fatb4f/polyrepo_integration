@@ -40,6 +40,9 @@
       "phase": "JSON_TOOL",
       "action": "unify_and_validate",
       "uses_script": "scripts/validate_json_contract.py",
+      "notes": [
+        "When output paths are provided, the validator materializes both validation_report_ref and accepted_json_ref artifacts."
+      ],
       "outputs": [
         "accepted_json_ref",
         "validation_report_ref"

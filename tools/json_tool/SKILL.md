@@ -48,4 +48,9 @@ Choose the minimal operator path that matches the task:
 - unstructured ingress: `extract -> unify -> validate -> derive -> check -> authorize -> render`
 - structured ingress: `unify|validate -> derive -> check -> authorize -> render`
 
+When `scripts/validate_json_contract.py` is used for the validate step, pass output
+paths when you need durable artifacts:
+- `--report-out <path>` for the machine-readable validation report
+- `--accepted-json-out <path>` for the accepted JSON artifact when validating a single file
+
 Prefer JSON outputs first. Render Markdown only after the JSON artifacts and validation reports are stable.
