@@ -1,0 +1,42 @@
+{
+  "artifact_family": "commit_observations",
+  "schema_version": "v1",
+  "instance_authority": "local_manifest",
+  "workspace_id": "ws-main",
+  "registry_id": "commit-observations.main",
+  "observations": [
+    {
+      "observation_id": "OBS-20260314-001",
+      "change_id": "WC-20260314-001",
+      "repo_id": "api",
+      "commit_oid": "abc1234",
+      "patch_id": "p_api_001",
+      "branch": "feat/WC-20260314-001",
+      "base_ref": "origin/main",
+      "observed_at": "2026-03-14T15:00:00Z",
+      "status": "superseded"
+    },
+    {
+      "observation_id": "OBS-20260314-002",
+      "change_id": "WC-20260314-001",
+      "repo_id": "api",
+      "commit_oid": "def5678",
+      "patch_id": "p_api_002",
+      "branch": "feat/WC-20260314-001",
+      "base_ref": "origin/main",
+      "observed_at": "2026-03-14T15:12:00Z",
+      "status": "current"
+    },
+    {
+      "observation_id": "OBS-20260314-003",
+      "change_id": "WC-20260314-001",
+      "repo_id": "web",
+      "commit_oid": "fedcba9",
+      "patch_id": "p_web_001",
+      "branch": "feat/WC-20260314-001",
+      "base_ref": "origin/main",
+      "observed_at": "2026-03-14T15:15:00Z",
+      "status": "current"
+    }
+  ]
+}

@@ -1,0 +1,367 @@
+{
+  "kind": "asset_control_model.proposal_register.v1",
+  "generated_at_utc": "2026-03-10T16:47:36Z",
+  "subject": "proposal_register/asset-control-model",
+  "source": "proposal_register/asset-control-model/spec_draft.v1.json",
+  "gate_policy": {
+    "rule": "FAIL if any required field missing/empty OR status != defined OR underspecified not empty",
+    "required_fields": [
+      "id",
+      "title",
+      "plane",
+      "owner",
+      "owning_process",
+      "execution",
+      "inputs",
+      "outputs",
+      "contracts",
+      "evidence_artifacts",
+      "failure_policy",
+      "should_be_skill",
+      "status"
+    ]
+  },
+  "proposals": [
+    {
+      "id": "ACM-001",
+      "title": "Per-Asset Authority Chain Model",
+      "plane": [
+        "contract"
+      ],
+      "owner": "spawn+tooling-policy",
+      "owning_process": "proposal-gated control inventory",
+      "execution": {
+        "mode": "proposal+gate",
+        "transport": "pull",
+        "trigger": [
+          "new control-oriented asset model requested"
+        ],
+        "entrypoint": "define a singular authority chain per controlled asset using the frozen asset_control_entry minimum field set, including authority, promotion, runtime source/projection, assurance, and rollback metadata"
+      },
+      "inputs": [
+        "session-context proposal family",
+        "session-context-runtime proposal family",
+        "runtime-trace-model proposal family",
+        "tooling-policy"
+      ],
+      "outputs": [
+        "asset-control-model proposal packet",
+        "gate result"
+      ],
+      "contracts": [
+        "proposal_register/asset-control-model/spec_draft.v1.json"
+      ],
+      "evidence_artifacts": [
+        "proposal_register/session-context/proposal_register.v1.json",
+        "proposal_register/session-context-runtime/proposal_register.v1.json"
+      ],
+      "failure_policy": "FAIL until the minimum asset_control_entry field set is frozen and treated as mandatory for controlled assets",
+      "should_be_skill": {
+        "value": false
+      },
+      "status": "defined",
+      "underspecified": [],
+      "completeness": {
+        "required_fields": [
+          "id",
+          "title",
+          "plane",
+          "owner",
+          "owning_process",
+          "execution",
+          "inputs",
+          "outputs",
+          "contracts",
+          "evidence_artifacts",
+          "failure_policy",
+          "should_be_skill",
+          "status"
+        ],
+        "missing_fields": [],
+        "empty_fields": [],
+        "is_complete": true
+      },
+      "gate": "PASS",
+      "concerns": [
+        "promotion",
+        "governance"
+      ]
+    },
+    {
+      "id": "ACM-002",
+      "title": "Policy Contract Runtime Plane Separation",
+      "plane": [
+        "policy",
+        "contract",
+        "runtime"
+      ],
+      "owner": "spawn+tooling-policy",
+      "owning_process": "proposal-gated control bundle design",
+      "execution": {
+        "mode": "proposal+gate",
+        "transport": "pull",
+        "trigger": [
+          "control planes need formal separation"
+        ],
+        "entrypoint": "define policy, contract, and runtime as the only primary planes and move secondary labels into concerns so generated prompt projections remain runtime artifacts, not authority surfaces"
+      },
+      "inputs": [
+        "artifact-contract-pattern proposal family",
+        "session-context-runtime proposal family",
+        "tooling-policy"
+      ],
+      "outputs": [
+        "three-plane control bundle model",
+        "gate result"
+      ],
+      "contracts": [
+        "proposal_register/asset-control-model/spec_draft.v1.json"
+      ],
+      "evidence_artifacts": [
+        "proposal_register/artifact-contract-pattern/proposal_register.v1.json",
+        "proposal_register/session-context-runtime/proposal_register.v1.json"
+      ],
+      "failure_policy": "FAIL until primary plane vocabulary is frozen and secondary labels are separated from plane assignment",
+      "should_be_skill": {
+        "value": false
+      },
+      "status": "defined",
+      "underspecified": [],
+      "completeness": {
+        "required_fields": [
+          "id",
+          "title",
+          "plane",
+          "owner",
+          "owning_process",
+          "execution",
+          "inputs",
+          "outputs",
+          "contracts",
+          "evidence_artifacts",
+          "failure_policy",
+          "should_be_skill",
+          "status"
+        ],
+        "missing_fields": [],
+        "empty_fields": [],
+        "is_complete": true
+      },
+      "gate": "PASS",
+      "concerns": [
+        "governance",
+        "projection"
+      ]
+    },
+    {
+      "id": "ACM-003",
+      "title": "Control Bundle Operationalization via .control",
+      "plane": [
+        "contract",
+        "runtime"
+      ],
+      "owner": "spawn+json-tool",
+      "owning_process": "proposal-gated control bundle",
+      "execution": {
+        "mode": "proposal+gate",
+        "transport": "pull",
+        "trigger": [
+          "git-root control bundle requested"
+        ],
+        "entrypoint": "define the .control v1 bundle inventory explicitly, including authored control objects, generated reports, and self-governance rules for the bundle itself"
+      },
+      "inputs": [
+        "asset-control-model proposal family",
+        "artifact-contract-pattern proposal family",
+        "json-tool proposal family"
+      ],
+      "outputs": [
+        "control bundle artifact family definition",
+        "gate result"
+      ],
+      "contracts": [
+        "proposal_register/asset-control-model/spec_draft.v1.json"
+      ],
+      "evidence_artifacts": [
+        "proposal_register/artifact-contract-pattern/proposal_register.v1.json",
+        "proposal_register/json-tool/proposal_register.v1.json"
+      ],
+      "failure_policy": "FAIL until the .control v1 authored/generated inventory and self-governance rules are explicit",
+      "should_be_skill": {
+        "value": false
+      },
+      "status": "defined",
+      "underspecified": [],
+      "completeness": {
+        "required_fields": [
+          "id",
+          "title",
+          "plane",
+          "owner",
+          "owning_process",
+          "execution",
+          "inputs",
+          "outputs",
+          "contracts",
+          "evidence_artifacts",
+          "failure_policy",
+          "should_be_skill",
+          "status"
+        ],
+        "missing_fields": [],
+        "empty_fields": [],
+        "is_complete": true
+      },
+      "gate": "PASS",
+      "concerns": [
+        "artifact",
+        "governance"
+      ]
+    },
+    {
+      "id": "ACM-004",
+      "title": "CUE Assertion Layer and Wrapped Validator Contract",
+      "plane": [
+        "contract",
+        "runtime"
+      ],
+      "owner": "json-tool+spawn",
+      "owning_process": "proposal-gated control validator",
+      "execution": {
+        "mode": "proposal+gate",
+        "transport": "pull",
+        "trigger": [
+          "cross-object control assertions requested"
+        ],
+        "entrypoint": "define spawnctl as the wrapped validator owner, pin severity classes and exit-code mapping, and require generation of control.report.v1.json after JSON Schema and CUE validation"
+      },
+      "inputs": [
+        "control bundle authored objects",
+        "cue assertion policy",
+        "severity policy"
+      ],
+      "outputs": [
+        "control validator contract",
+        "control report contract",
+        "gate result"
+      ],
+      "contracts": [
+        "proposal_register/asset-control-model/spec_draft.v1.json"
+      ],
+      "evidence_artifacts": [
+        "proposal_register/artifact-contract-pattern/proposal_register.v1.json",
+        "/home/_404/src/dotfiles/config/codex/skills/json-tool/SKILL.md"
+      ],
+      "failure_policy": "FAIL until wrapped validator ownership, severity classes, exit-code mapping, and report emission contract are pinned",
+      "should_be_skill": {
+        "value": false
+      },
+      "status": "defined",
+      "underspecified": [],
+      "completeness": {
+        "required_fields": [
+          "id",
+          "title",
+          "plane",
+          "owner",
+          "owning_process",
+          "execution",
+          "inputs",
+          "outputs",
+          "contracts",
+          "evidence_artifacts",
+          "failure_policy",
+          "should_be_skill",
+          "status"
+        ],
+        "missing_fields": [],
+        "empty_fields": [],
+        "is_complete": true
+      },
+      "gate": "PASS",
+      "concerns": [
+        "validation",
+        "interop"
+      ]
+    },
+    {
+      "id": "ACM-005",
+      "title": "Initial Scoped Asset Set for Control Assessment",
+      "plane": [
+        "runtime",
+        "contract",
+        "policy"
+      ],
+      "owner": "spawn+tooling-policy",
+      "owning_process": "proposal-gated control inventory rollout",
+      "execution": {
+        "mode": "proposal+gate",
+        "transport": "pull",
+        "trigger": [
+          "initial control assessment requested"
+        ],
+        "entrypoint": "bind the first control-assessed assets: session_context, prompt seeds and composed prompt, service-assurance triggers, git policy surface, and skill registry lifecycle, with session_context as the first fully populated exemplar"
+      },
+      "inputs": [
+        "asset-control-model proposal family",
+        "session-context proposal family",
+        "session-context-runtime proposal family",
+        "tooling-policy"
+      ],
+      "outputs": [
+        "initial asset set statement with a populated session_context control entry",
+        "gate result"
+      ],
+      "contracts": [
+        "proposal_register/asset-control-model/spec_draft.v1.json"
+      ],
+      "evidence_artifacts": [
+        "proposal_register/session-context/proposal_register.v1.json",
+        "proposal_register/session-context-runtime/proposal_register.v1.json",
+        "worker_packets/contracts/session_context_runtime/session_context_runtime.sync_surface.v1.json",
+        "dotfiles/units/user/spawnd-codex-session-refresh.path",
+        "dotfiles/units/user/spawnd-codex-session-refresh.service",
+        "/home/_404/src/dotfiles/config/codex/skills/tooling-policy/SKILL.md"
+      ],
+      "failure_policy": "FAIL until the initial scoped assets are explicit and session_context is fully populated as the first exemplar with severity and assurance action classification",
+      "should_be_skill": {
+        "value": false
+      },
+      "status": "defined",
+      "underspecified": [],
+      "completeness": {
+        "required_fields": [
+          "id",
+          "title",
+          "plane",
+          "owner",
+          "owning_process",
+          "execution",
+          "inputs",
+          "outputs",
+          "contracts",
+          "evidence_artifacts",
+          "failure_policy",
+          "should_be_skill",
+          "status"
+        ],
+        "missing_fields": [],
+        "empty_fields": [],
+        "is_complete": true
+      },
+      "gate": "PASS",
+      "concerns": [
+        "artifact",
+        "inventory",
+        "assurance"
+      ]
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "defined": 5,
+    "partial": 0,
+    "PASS": 5,
+    "FAIL": 0
+  }
+}

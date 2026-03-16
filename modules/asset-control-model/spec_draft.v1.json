@@ -1,0 +1,283 @@
+{
+  "kind": "asset_control_model.spec_draft.v1",
+  "generated_at_utc": "2026-03-10T16:47:36Z",
+  "draft_id": "ACM-DRAFT-001",
+  "source_refs": [
+    "proposal_register/session-context/spec_draft.v1.json",
+    "proposal_register/session-context/proposal_register.v1.json",
+    "proposal_register/session-context-runtime/spec_draft.v1.json",
+    "proposal_register/session-context-runtime/proposal_register.v1.json",
+    "proposal_register/runtime-trace-model/spec_draft.v1.json",
+    "proposal_register/artifact-contract-pattern/spec_draft.v1.json",
+    "worker_packets/contracts/session_context_runtime/session_context_runtime.sync_surface.v1.json",
+    "dotfiles/units/user/spawnd-codex-session-refresh.path",
+    "dotfiles/units/user/spawnd-codex-session-refresh.service",
+    "spawn/README.md",
+    "/home/_404/src/dotfiles/config/codex/skills/tooling-policy/SKILL.md"
+  ],
+  "objective": "Define a control-oriented asset model that formalizes singular authority, promotion, runtime projection, and assurance for critical repo and runtime surfaces, then operationalize that model through a structured $git_root/.control bundle with authored JSON control objects, CUE assertions, and generated validation reports.",
+  "scope": {
+    "in": [
+      "per-asset authority chain from proposal gate to rollback shape",
+      "hard separation of policy, contract, and runtime planes",
+      "runtime source versus runtime projection modeling",
+      "assurance trigger, severity, and action classification",
+      "the .control bundle as the operationalized control surface for a git root",
+      "self-governance rules for the control bundle itself",
+      "initial scoped assets: session_context, prompt seeds and composed prompt, service-assurance triggers, git policy surface, and skill registry lifecycle"
+    ],
+    "out": [
+      "runtime implementation of spawn assurance or prompt composition",
+      "replacing JSON Schema as canonical leaf contract authority",
+      "granting workflow skills ownership of global policy surfaces",
+      "broad mutation from .path triggers without prior policy and contract definition",
+      "full host rollout beyond the initial scoped assets"
+    ]
+  },
+  "entities": [
+    {
+      "name": "asset_control_entry",
+      "role": "one controlled asset with singular authority, promotion, runtime, and assurance metadata"
+    },
+    {
+      "name": "control_bundle",
+      "role": "the .control directory containing authored control objects, assertions, and generated reports"
+    },
+    {
+      "name": "control_policy",
+      "role": "policy-plane object defining norms, allowed operations, and enforcement classes"
+    },
+    {
+      "name": "control_contracts",
+      "role": "contract-plane object defining controlled assets, promotion semantics, and schema references"
+    },
+    {
+      "name": "control_runtime",
+      "role": "runtime-plane object defining projections, triggers, assurance checks, and rollback behavior"
+    },
+    {
+      "name": "control_assertions",
+      "role": "CUE assertion layer that validates cross-object consistency without becoming the primary source of truth"
+    },
+    {
+      "name": "control_report",
+      "role": "generated validation and drift report emitted by the wrapped validator"
+    }
+  ],
+  "events": [
+    "control.bundle.validated",
+    "control.bundle.rejected",
+    "control.assurance.triggered",
+    "control.assurance.reported",
+    "control.drift.detected",
+    "control.rollback.requested"
+  ],
+  "constraints": [
+    "each controlled asset must have one singular authority owner and one explicit authority chain",
+    "policy, contract, and runtime are the only primary planes in v1; secondary labels must be expressed as concerns",
+    "runtime projection must be distinguished from runtime source for every controlled asset",
+    "authored control objects and generated control reports must be explicitly separated",
+    "promotion semantics must be represented in addition to promotion paths",
+    "the .control bundle must govern itself and must not become a self-exempt escape hatch",
+    "JSON Schema remains canonical for control object validity, while CUE assertions validate cross-object admissibility and consistency",
+    "spawnctl owns wrapped validation in v1; validation must occur before assurance actions",
+    "service assurance triggers must default to report/reconcile semantics and must not perform broad mutation unless pre-approved and deterministic",
+    "initial scoped assets must be listed explicitly, and session_context must be fully populated as the first control exemplar before later assets graduate into fully populated control entries",
+    "any root-level ACM extension must explicitly separate live-fact mutation from promotion-gated fidelity review before defining current and delta artifact families",
+    "any root-level ACM extension must freeze root-authority precedence and controller conflict resolution before drafting root-scoped schemas",
+    "any root-level ACM extension that defines current or delta artifact families must also define recomputation, tombstone, idempotence, ordering, and partial-failure behavior"
+  ],
+  "acceptance_criteria": [
+    "the proposal defines the only primary planes and separates secondary concerns from plane assignment",
+    "the proposal freezes the minimum asset_control_entry field set required for operational control",
+    "the proposal defines the .control authored/generated bundle inventory explicitly",
+    "the proposal pins validator ownership, severity classes, exit-code behavior, and report emission contract",
+    "the proposal names session_context as the first exemplar asset and fully populates its control entry without broadening into runtime implementation"
+  ],
+  "open_questions": [
+    "whether runtime should consume a promoted projection instead of the live worktree for all high-drift assets in v1",
+    "which of the remaining initially scoped assets should receive the second fully populated control entry after session_context"
+  ],
+  "plane_model": {
+    "primary_planes": [
+      "policy",
+      "contract",
+      "runtime"
+    ],
+    "concern_tags": [
+      "validation",
+      "interop",
+      "artifact",
+      "promotion",
+      "assurance",
+      "inventory",
+      "projection",
+      "governance"
+    ],
+    "rule": "Use only primary_planes for top-level plane assignment. Put secondary labels in concerns."
+  },
+  "asset_control_entry_minimum_fields": [
+    "asset_id",
+    "asset_class",
+    "authority_owner",
+    "writer",
+    "promotion_gate",
+    "promotion_path",
+    "promotion_actor",
+    "promotion_method",
+    "promotion_preconditions",
+    "runtime_consumer",
+    "runtime_source",
+    "runtime_projection",
+    "source_kind",
+    "projection_kind",
+    "projection_mutability",
+    "assurance_trigger",
+    "assurance_checks",
+    "failure_severity",
+    "assurance_action",
+    "rollback_shape"
+  ],
+  "promotion_semantics_fields": [
+    "promotion_gate",
+    "promotion_path",
+    "promotion_actor",
+    "promotion_method",
+    "promotion_preconditions"
+  ],
+  "control_bundle_v1": {
+    "bundle_root": "$git_root/.control",
+    "kind": "structured_control_bundle",
+    "authored": [
+      "control.meta.v1.json",
+      "control.index.v1.json",
+      "control.policy.v1.json",
+      "control.contracts.v1.json",
+      "control.runtime.v1.json",
+      "control.assertions.v1.cue"
+    ],
+    "generated": [
+      "control.report.v1.json"
+    ],
+    "rule": "The .control bundle is structured and versioned; generated reports are evidence only and not authority surfaces."
+  },
+  "validator_contract": {
+    "wrapper_owner": "spawnctl",
+    "non_owner_dependencies": [
+      "json-tool",
+      "cue"
+    ],
+    "severity_classes": [
+      "info",
+      "warn",
+      "block",
+      "critical"
+    ],
+    "exit_code_map": {
+      "info": 0,
+      "warn": 0,
+      "block": 2,
+      "critical": 3
+    },
+    "execution_order": [
+      "validate_authored_json_against_json_schema",
+      "evaluate_cue_assertions",
+      "emit_normalized_findings",
+      "write_control.report.v1.json",
+      "exit_by_highest_severity"
+    ],
+    "report_emission": {
+      "artifact": "control.report.v1.json",
+      "kind": "generated_evidence",
+      "required": true
+    }
+  },
+  "first_exemplar_asset": {
+    "asset_id": "session_context",
+    "why": "session_context is the first fully proposal-gated control exemplar and should be used to prove the asset-control model before broader rollout.",
+    "population_status": "fully_populated"
+  },
+  "initial_scoped_assets": {
+    "population_rule": "Each initial scoped asset must be explicitly listed. session_context is fully populated in v1 as the first control exemplar; the remaining scoped assets are declared now and require follow-on packets before they may graduate to fully populated control entries.",
+    "assets": [
+      {
+        "asset_id": "session_context",
+        "population_status": "fully_populated",
+        "control_entry": {
+          "asset_id": "session_context",
+          "asset_class": "spawn-owned operational context artifact family",
+          "authority_owner": "spawn",
+          "writer": "spawn session-context reconciler",
+          "promotion_gate": "proposal_register",
+          "promotion_path": [
+            "proposal_register/session-context/proposal_register.v1.json",
+            "proposal_register/session-context-runtime/proposal_register.v1.json",
+            "worker_packets/contracts/session_context/session_context_schema_deliverables.v1.json",
+            "worker_packets/contracts/session_context_runtime/session_context_runtime_contract_deliverables.v1.json"
+          ],
+          "promotion_actor": "spawn+json-tool",
+          "promotion_method": "proposal-gated packet acceptance followed by review-clean contract publication",
+          "promotion_preconditions": [
+            "proposal_register/session-context/proposal_register.v1.json remains PASS",
+            "proposal_register/session-context-runtime/proposal_register.v1.json remains PASS",
+            "worker_packets session_context schema and semantic regression fixtures remain green",
+            "runtime reconciliation continues to treat live thread authority as non-mutable in place"
+          ],
+          "runtime_consumer": "spawn session-context reconciler, fresh-session bootstrap, and downstream artifact consumers such as daily-reports",
+          "runtime_source": "spawn-owned authoritative operational session context, with ~/.config/codex/sessions and ~/.local/state/codex/meta/effective_prompt.txt treated as candidate inputs to reconciliation",
+          "runtime_projection": "CODEX_STATE/session_context/{current/session_context.v1.json,latest.json,diffs/,sync_events/,loader_reports/}",
+          "source_kind": "authoritative_runtime_state_with_candidate_file_inputs",
+          "projection_kind": "filesystem_projection_artifact_family",
+          "projection_mutability": "spawn-authoritative projection; current state is atomically replaced, evidence directories are append-only, and on-disk edits remain candidate inputs only",
+          "assurance_trigger": [
+            "manual: spawnctl codex-session refresh --wait",
+            "path: dotfiles/units/user/spawnd-codex-session-refresh.path",
+            "timer: proposal-pinned scheduled reconciliation trigger for the next spawn implementation slice"
+          ],
+          "assurance_checks": [
+            "validate the session_context contract family and runtime semantic rules before accepting projected state",
+            "emit session_context.sync_event.v1 for every reconcile request",
+            "emit fresh_session_loader_report.v1 for every fresh-session load, including no-op and failure cases",
+            "preserve the authority boundary that forbids in-place mutation of live thread authority"
+          ],
+          "failure_severity": "block",
+          "assurance_action": "report_and_reconcile",
+          "rollback_shape": "restore the last accepted CODEX_STATE/session_context/current/session_context.v1.json and latest.json pointer while preserving append-only sync_event and loader_report evidence",
+          "evidence_refs": [
+            "proposal_register/session-context/spec_draft.v1.json",
+            "proposal_register/session-context-runtime/spec_draft.v1.json",
+            "worker_packets/contracts/session_context_runtime/session_context_runtime.sync_surface.v1.json",
+            "worker_packets/contracts/session_context_runtime/session_context_runtime.emit_policy.v1.json",
+            "dotfiles/units/user/spawnd-codex-session-refresh.path",
+            "dotfiles/units/user/spawnd-codex-session-refresh.service",
+            "spawn/README.md"
+          ],
+          "notes": [
+            "the current operational refresh baseline already exists through spawnctl codex-session refresh and the spawnd session refresh units",
+            "this exemplar formalizes that baseline for control assessment and does not introduce a parallel refresh mechanism"
+          ]
+        }
+      },
+      {
+        "asset_id": "prompt_seeds_and_composed_prompt",
+        "population_status": "declared_initial_scope",
+        "why": "Prompt seeds and the composed prompt are already operationally tied to session refresh and should be assessed immediately after the session_context exemplar is accepted."
+      },
+      {
+        "asset_id": "service_assurance_triggers",
+        "population_status": "declared_initial_scope",
+        "why": "Service assurance triggers govern when report/reconcile behavior fires and must be modeled explicitly before broader automatic mutation is allowed."
+      },
+      {
+        "asset_id": "git_policy_surface",
+        "population_status": "declared_initial_scope",
+        "why": "Git policy defines promotion and rollback boundaries for controlled assets and is part of the first operational control perimeter."
+      },
+      {
+        "asset_id": "skill_registry_lifecycle",
+        "population_status": "declared_initial_scope",
+        "why": "Skill registry lifecycle affects tool and skill availability and should be controlled after session_context proves the model."
+      }
+    ]
+  }
+}

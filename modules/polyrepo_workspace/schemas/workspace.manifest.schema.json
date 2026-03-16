@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "polyrepo_workspace/schemas/workspace.manifest.schema.json",
+  "title": "workspace.manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_family",
+    "schema_version",
+    "instance_authority",
+    "workspace_id",
+    "engine",
+    "tracking",
+    "policies",
+    "registries"
+  ],
+  "properties": {
+    "artifact_family": {
+      "const": "workspace.manifest"
+    },
+    "schema_version": {
+      "const": "v1"
+    },
+    "instance_authority": {
+      "const": "local_manifest"
+    },
+    "workspace_id": {
+      "type": "string",
+      "pattern": "^ws-[a-z0-9][a-z0-9_-]*$"
+    },
+    "engine": {
+      "const": "gitopolis"
+    },
+    "tracking": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "projection_mode"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "projection_mode": {
+          "type": "string",
+          "enum": [
+            "projection_only",
+            "proposed_writeback"
+          ]
+        }
+      }
+    },
+    "policies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allow_dirty",
+        "continue_on_error",
+        "rollback_mode"
+      ],
+      "properties": {
+        "allow_dirty": {
+          "type": "boolean"
+        },
+        "continue_on_error": {
+          "type": "boolean"
+        },
+        "rollback_mode": {
+          "type": "string",
+          "enum": [
+            "none",
+            "compensating"
+          ]
+        }
+      }
+    },
+    "registries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repo_registry",
+        "repo_relations",
+        "change_lineage",
+        "commit_observations",
+        "run_journal"
+      ],
+      "properties": {
+        "repo_registry": {
+          "type": "string",
+          "const": "repo_registry.json"
+        },
+        "repo_relations": {
+          "type": "string",
+          "const": "repo_relations.json"
+        },
+        "change_lineage": {
+          "type": "string",
+          "const": "change_lineage.json"
+        },
+        "commit_observations": {
+          "type": "string",
+          "const": "commit_observations.json"
+        },
+        "run_journal": {
+          "type": "string",
+          "const": "run_journal.json"
+        }
+      }
+    }
+  }
+}

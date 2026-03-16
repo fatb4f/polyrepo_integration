@@ -1,0 +1,21 @@
+{
+  "artifact_family": "repo_relations",
+  "schema_version": "v1",
+  "instance_authority": "local_manifest",
+  "workspace_id": "ws-main",
+  "registry_id": "repo-relations.main",
+  "relations": [
+    {
+      "relation_id": "REL-001",
+      "type": "depends_on",
+      "from_repo_id": "web",
+      "to_repo_id": "api"
+    },
+    {
+      "relation_id": "REL-002",
+      "type": "mirrors",
+      "from_repo_id": "docs",
+      "to_repo_id": "api"
+    }
+  ]
+}

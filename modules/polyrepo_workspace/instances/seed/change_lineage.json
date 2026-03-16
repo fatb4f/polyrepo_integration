@@ -1,0 +1,23 @@
+{
+  "artifact_family": "change_lineage",
+  "schema_version": "v1",
+  "instance_authority": "local_manifest",
+  "workspace_id": "ws-main",
+  "registry_id": "change-lineage.main",
+  "changes": [
+    {
+      "change_id": "WC-20260314-001",
+      "item_id": "org/platform#123",
+      "title": "Add cross-repo auth envelope",
+      "tracking_ids": [
+        "GH-PROJ-12:ITEM-44"
+      ],
+      "repo_ids": [
+        "api",
+        "web"
+      ],
+      "status": "active",
+      "current_run_id": "RUN-20260314-002"
+    }
+  ]
+}

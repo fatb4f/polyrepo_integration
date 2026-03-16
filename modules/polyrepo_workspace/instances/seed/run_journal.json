@@ -1,0 +1,90 @@
+{
+  "artifact_family": "run_journal",
+  "schema_version": "v1",
+  "instance_authority": "local_manifest",
+  "workspace_id": "ws-main",
+  "registry_id": "run-journal.main",
+  "runs": [
+    {
+      "run_id": "RUN-20260314-001",
+      "operation_class": "READ",
+      "operation_name": "workspace.inspect",
+      "status": "succeeded",
+      "requested_change_ids": [
+        "WC-20260314-001"
+      ],
+      "targeted_repo_ids": [
+        "api",
+        "web",
+        "docs"
+      ],
+      "preflight": [
+        {
+          "repo_id": "api",
+          "state": "CLEAN"
+        },
+        {
+          "repo_id": "web",
+          "state": "CLEAN"
+        },
+        {
+          "repo_id": "docs",
+          "state": "CLEAN"
+        }
+      ],
+      "completed_repo_ids": [
+        "api",
+        "web",
+        "docs"
+      ],
+      "pending_repo_ids": [],
+      "failures": [],
+      "emitted_observation_ids": [
+        "OBS-20260314-001",
+        "OBS-20260314-002",
+        "OBS-20260314-003"
+      ],
+      "rollback_mode": "none",
+      "started_at": "2026-03-14T15:05:00Z",
+      "completed_at": "2026-03-14T15:05:03Z"
+    },
+    {
+      "run_id": "RUN-20260314-002",
+      "operation_class": "WRITE",
+      "operation_name": "branch.prepare",
+      "status": "blocked",
+      "requested_change_ids": [
+        "WC-20260314-001"
+      ],
+      "targeted_repo_ids": [
+        "api",
+        "web"
+      ],
+      "preflight": [
+        {
+          "repo_id": "api",
+          "state": "CLEAN"
+        },
+        {
+          "repo_id": "web",
+          "state": "DIRTY"
+        }
+      ],
+      "completed_repo_ids": [],
+      "pending_repo_ids": [
+        "api",
+        "web"
+      ],
+      "failures": [
+        {
+          "repo_id": "web",
+          "reason": "dirty_worktree"
+        }
+      ],
+      "emitted_observation_ids": [],
+      "rollback_mode": "none",
+      "started_at": "2026-03-14T15:20:00Z",
+      "completed_at": "2026-03-14T15:20:02Z"
+    }
+  ]
+}

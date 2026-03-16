@@ -1,18 +1,73 @@
 {
   "kind": "project_git_log_tracker.v1",
   "project_id": "polyrepo_integration",
-  "generated_at": "2026-03-15T18:48:51+00:00",
+  "generated_at": "2026-03-15T19:26:14.043211+00:00",
   "repo_path": "/home/_404/src/polyrepo_integration",
   "remote_url": "https://github.com/fatb4f/polyrepo_integration.git",
   "head_commit": {
-    "commit": "ab56264abd6cf108b1a638673a0b5a70c8deba6b",
-    "short": "ab56264",
-    "date": "2026-03-15T14:30:07-04:00",
-    "subject": "review templates"
+    "commit": "0eb5a581b03e74be572049b2d9b37c2a1291e6c5",
+    "short": "0eb5a58",
+    "date": "2026-03-15T15:24:04-04:00",
+    "subject": "Add context and review manifest surfaces"
   },
   "timeline": [
     {
       "ordinal": 1,
+      "commit": "037ba692f46d56a67eafaebca3773045a0c9d2de",
+      "short": "037ba69",
+      "date": "2026-03-15T00:19:16-04:00",
+      "subject": "Add bounded integration meta-plan",
+      "classification": "unclassified",
+      "effects": [
+        "Add bounded integration meta-plan"
+      ]
+    },
+    {
+      "ordinal": 2,
+      "commit": "51fc41839ff1097afe1a804508453a3b3f342aff",
+      "short": "51fc418",
+      "date": "2026-03-15T00:28:59-04:00",
+      "subject": "Fix offline review validation and validator outputs",
+      "classification": "unclassified",
+      "effects": [
+        "Fix offline review validation and validator outputs"
+      ]
+    },
+    {
+      "ordinal": 3,
+      "commit": "7e26bf87a74d2b3db0339be60761dc2499c21c7b",
+      "short": "7e26bf8",
+      "date": "2026-03-15T00:45:17-04:00",
+      "subject": "Apply review corrections to integration bundle",
+      "classification": "unclassified",
+      "effects": [
+        "Apply review corrections to integration bundle"
+      ]
+    },
+    {
+      "ordinal": 4,
+      "commit": "2f157d7121497728246cba1403b1a5a59cfcca97",
+      "short": "2f157d7",
+      "date": "2026-03-15T00:58:22-04:00",
+      "subject": "Refocus review instructions on project surface",
+      "classification": "scaffold_reset",
+      "effects": [
+        "Refocus review instructions on project surface"
+      ]
+    },
+    {
+      "ordinal": 5,
+      "commit": "22c5c34410cc386ddd67b2285e2ba5372023fcc2",
+      "short": "22c5c34",
+      "date": "2026-03-15T01:10:49-04:00",
+      "subject": "Tighten review coverage and prune json_tool surface",
+      "classification": "scaffold_reset",
+      "effects": [
+        "Tighten review coverage and prune json_tool surface"
+      ]
+    },
+    {
+      "ordinal": 6,
       "commit": "a7ea87639cb294d0afa1e155e39743db46936ac8",
       "short": "a7ea876",
       "date": "2026-03-15T01:22:58-04:00",
@@ -24,7 +79,7 @@
       ]
     },
     {
-      "ordinal": 2,
+      "ordinal": 7,
       "commit": "def15762bc7b88a748e045396165445e1300b6d1",
       "short": "def1576",
       "date": "2026-03-15T01:38:36-04:00",
@@ -35,7 +90,7 @@
       ]
     },
     {
-      "ordinal": 3,
+      "ordinal": 8,
       "commit": "008484c3ecaa6682098eea59887ee4150ea0507f",
       "short": "008484c",
       "date": "2026-03-15T01:43:32-04:00",
@@ -46,7 +101,29 @@
       ]
     },
     {
-      "ordinal": 4,
+      "ordinal": 9,
+      "commit": "c94100d72ef16bf2f999addddbd188047814018d",
+      "short": "c94100d",
+      "date": "2026-03-15T01:48:42-04:00",
+      "subject": "ETJmYRJANRTG",
+      "classification": "unclassified",
+      "effects": [
+        "ETJmYRJANRTG"
+      ]
+    },
+    {
+      "ordinal": 10,
+      "commit": "9f7ec6e027ef10aedfc619a1696b3ea8e701a318",
+      "short": "9f7ec6e",
+      "date": "2026-03-15T01:58:40-04:00",
+      "subject": "tjtjym",
+      "classification": "unclassified",
+      "effects": [
+        "tjtjym"
+      ]
+    },
+    {
+      "ordinal": 11,
       "commit": "26873625e0e71df9bb089a7b3041d73884bb993f",
       "short": "2687362",
       "date": "2026-03-15T02:00:27-04:00",
@@ -57,7 +134,7 @@
       ]
     },
     {
-      "ordinal": 5,
+      "ordinal": 12,
       "commit": "0fe014f37c5da266904ede666a069db11f7c7342",
       "short": "0fe014f",
       "date": "2026-03-15T02:11:12-04:00",
@@ -69,7 +146,7 @@
       ]
     },
     {
-      "ordinal": 6,
+      "ordinal": 13,
       "commit": "bd367287413ad799d3d04f73d7797c25f67fa02c",
       "short": "bd36728",
       "date": "2026-03-15T02:12:15-04:00",
@@ -80,7 +157,7 @@
       ]
     },
     {
-      "ordinal": 7,
+      "ordinal": 14,
       "commit": "da741d4d085e495a4508aea99820bc3abd7cb04c",
       "short": "da741d4",
       "date": "2026-03-15T02:24:26-04:00",
@@ -92,7 +169,7 @@
       ]
     },
     {
-      "ordinal": 8,
+      "ordinal": 15,
       "commit": "ab56264abd6cf108b1a638673a0b5a70c8deba6b",
       "short": "ab56264",
       "date": "2026-03-15T14:30:07-04:00",
@@ -100,6 +177,17 @@
       "classification": "review_contract",
       "effects": [
         "Bundled the review schema and template surface into the trimmed repo archive."
+      ]
+    },
+    {
+      "ordinal": 16,
+      "commit": "0eb5a581b03e74be572049b2d9b37c2a1291e6c5",
+      "short": "0eb5a58",
+      "date": "2026-03-15T15:24:04-04:00",
+      "subject": "Add context and review manifest surfaces",
+      "classification": "review_contract",
+      "effects": [
+        "Add context and review manifest surfaces"
       ]
     }
   ],

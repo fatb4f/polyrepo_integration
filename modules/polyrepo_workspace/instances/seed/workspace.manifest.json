@@ -1,0 +1,23 @@
+{
+  "artifact_family": "workspace.manifest",
+  "schema_version": "v1",
+  "instance_authority": "local_manifest",
+  "workspace_id": "ws-main",
+  "engine": "gitopolis",
+  "tracking": {
+    "project_id": "GH-PROJ-12",
+    "projection_mode": "projection_only"
+  },
+  "policies": {
+    "allow_dirty": false,
+    "continue_on_error": false,
+    "rollback_mode": "none"
+  },
+  "registries": {
+    "repo_registry": "repo_registry.json",
+    "repo_relations": "repo_relations.json",
+    "change_lineage": "change_lineage.json",
+    "commit_observations": "commit_observations.json",
+    "run_journal": "run_journal.json"
+  }
+}

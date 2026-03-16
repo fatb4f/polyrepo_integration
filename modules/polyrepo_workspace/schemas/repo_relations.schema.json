@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "polyrepo_workspace/schemas/repo_relations.schema.json",
+  "title": "repo_relations",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_family",
+    "schema_version",
+    "instance_authority",
+    "workspace_id",
+    "registry_id",
+    "relations"
+  ],
+  "properties": {
+    "artifact_family": {
+      "const": "repo_relations"
+    },
+    "schema_version": {
+      "const": "v1"
+    },
+    "instance_authority": {
+      "const": "local_manifest"
+    },
+    "workspace_id": {
+      "type": "string",
+      "pattern": "^ws-[a-z0-9][a-z0-9_-]*$"
+    },
+    "registry_id": {
+      "type": "string",
+      "pattern": "^repo-relations\\.[a-z0-9_-]+$"
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "relation_id",
+          "type",
+          "from_repo_id",
+          "to_repo_id"
+        ],
+        "properties": {
+          "relation_id": {
+            "type": "string",
+            "pattern": "^REL-[0-9]{3}$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "depends_on",
+              "uses_schema_from",
+              "publishes_to",
+              "mirrors",
+              "owned_with"
+            ]
+          },
+          "from_repo_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "to_repo_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          }
+        }
+      }
+    }
+  }
+}

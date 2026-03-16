@@ -1,0 +1,10 @@
+{
+  "schema": "/mnt/data/review_work/.templates/review.schema.json",
+  "valid": true,
+  "error_count": 0,
+  "errors": [],
+  "reviewed_archive": {
+    "uploaded_filename": "polyrepo_workspace-HEAD.zip",
+    "normalized_artifact_name": "polyrepo_integration-polyrepo_workspace-HEAD.zip"
+  }
+}

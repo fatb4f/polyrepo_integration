@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "polyrepo_workspace/schemas/repo_registry.schema.json",
+  "title": "repo_registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_family",
+    "schema_version",
+    "instance_authority",
+    "workspace_id",
+    "registry_id",
+    "repos"
+  ],
+  "properties": {
+    "artifact_family": {
+      "const": "repo_registry"
+    },
+    "schema_version": {
+      "const": "v1"
+    },
+    "instance_authority": {
+      "const": "local_manifest"
+    },
+    "workspace_id": {
+      "type": "string",
+      "pattern": "^ws-[a-z0-9][a-z0-9_-]*$"
+    },
+    "registry_id": {
+      "type": "string",
+      "pattern": "^repo-registry\\.[a-z0-9_-]+$"
+    },
+    "repos": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "repo_id",
+          "name",
+          "path",
+          "remote",
+          "default_branch",
+          "engine",
+          "active",
+          "tracked_branch",
+          "base_ref",
+          "tags"
+        ],
+        "properties": {
+          "repo_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "remote": {
+            "type": "string",
+            "minLength": 1
+          },
+          "default_branch": {
+            "type": "string",
+            "minLength": 1
+          },
+          "engine": {
+            "const": "gitopolis"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "tracked_branch": {
+            "type": "string",
+            "minLength": 1
+          },
+          "base_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

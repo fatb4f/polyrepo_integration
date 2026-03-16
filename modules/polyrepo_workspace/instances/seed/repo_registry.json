@@ -1,0 +1,52 @@
+{
+  "artifact_family": "repo_registry",
+  "schema_version": "v1",
+  "instance_authority": "local_manifest",
+  "workspace_id": "ws-main",
+  "registry_id": "repo-registry.main",
+  "repos": [
+    {
+      "repo_id": "api",
+      "name": "api",
+      "path": "~/ws/api",
+      "remote": "git@github.com:org/api.git",
+      "default_branch": "main",
+      "engine": "gitopolis",
+      "active": true,
+      "tracked_branch": "feat/WC-20260314-001",
+      "base_ref": "origin/main",
+      "tags": [
+        "backend",
+        "core"
+      ]
+    },
+    {
+      "repo_id": "web",
+      "name": "web",
+      "path": "~/ws/web",
+      "remote": "git@github.com:org/web.git",
+      "default_branch": "main",
+      "engine": "gitopolis",
+      "active": true,
+      "tracked_branch": "feat/WC-20260314-001",
+      "base_ref": "origin/main",
+      "tags": [
+        "frontend"
+      ]
+    },
+    {
+      "repo_id": "docs",
+      "name": "docs",
+      "path": "~/ws/docs",
+      "remote": "git@github.com:org/docs.git",
+      "default_branch": "main",
+      "engine": "gitopolis",
+      "active": true,
+      "tracked_branch": "docs/WC-20260314-001",
+      "base_ref": "origin/main",
+      "tags": [
+        "docs"
+      ]
+    }
+  ]
+}

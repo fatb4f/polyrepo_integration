@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "polyrepo_workspace/schemas/run_journal.schema.json",
+  "title": "run_journal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_family",
+    "schema_version",
+    "instance_authority",
+    "workspace_id",
+    "registry_id",
+    "runs"
+  ],
+  "properties": {
+    "artifact_family": {
+      "const": "run_journal"
+    },
+    "schema_version": {
+      "const": "v1"
+    },
+    "instance_authority": {
+      "const": "local_manifest"
+    },
+    "workspace_id": {
+      "type": "string",
+      "pattern": "^ws-[a-z0-9][a-z0-9_-]*$"
+    },
+    "registry_id": {
+      "type": "string",
+      "pattern": "^run-journal\\.[a-z0-9_-]+$"
+    },
+    "runs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "run_id",
+          "operation_class",
+          "operation_name",
+          "status",
+          "requested_change_ids",
+          "targeted_repo_ids",
+          "preflight",
+          "completed_repo_ids",
+          "pending_repo_ids",
+          "failures",
+          "emitted_observation_ids",
+          "rollback_mode",
+          "started_at",
+          "completed_at"
+        ],
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "pattern": "^RUN-[0-9]{8}-[0-9]{3}$"
+          },
+          "operation_class": {
+            "type": "string",
+            "enum": [
+              "READ",
+              "WRITE"
+            ]
+          },
+          "operation_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "started",
+              "succeeded",
+              "blocked",
+              "failed",
+              "partial"
+            ]
+          },
+          "requested_change_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^WC-[0-9]{8}-[0-9]{3}$"
+            }
+          },
+          "targeted_repo_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            }
+          },
+          "preflight": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "repo_id",
+                "state"
+              ],
+              "properties": {
+                "repo_id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]*$"
+                },
+                "state": {
+                  "type": "string",
+                  "enum": [
+                    "CLEAN",
+                    "DIRTY",
+                    "DETACHED",
+                    "DIVERGED",
+                    "MISSING",
+                    "UNBORN",
+                    "CONFLICTED"
+                  ]
+                }
+              }
+            }
+          },
+          "completed_repo_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            }
+          },
+          "pending_repo_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            }
+          },
+          "failures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "repo_id",
+                "reason"
+              ],
+              "properties": {
+                "repo_id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]*$"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "emitted_observation_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^OBS-[0-9]{8}-[0-9]{3}$"
+            }
+          },
+          "rollback_mode": {
+            "type": "string",
+            "enum": [
+              "none",
+              "compensating"
+            ]
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}
