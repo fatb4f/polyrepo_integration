@@ -1,0 +1,60 @@
+{
+  "kind": "polyrepo_plan_revision_summary.v1",
+  "request": "Revise the plan for a two-repo initial integration surface and prune traces of git_asset(s).",
+  "scope": {
+    "kept_repos": [
+      "acm",
+      "polyrepo_workspace"
+    ],
+    "removed_from_initial_integration_surface": [
+      "git_asset"
+    ]
+  },
+  "modified_files": [
+    {
+      "path": "analysis/meta_plan.json",
+      "changes": [
+        "Removed git_asset from authority_model and rewrote the plan around ACM + polyrepo_workspace only.",
+        "Bound MP2 to MP1 semantic/dependency outputs.",
+        "Defined explicit ambiguity-score and normalized-hash contracts for MP3 termination."
+      ]
+    },
+    {
+      "path": "project.manifest.json",
+      "changes": [
+        "Removed bootstrap authority and git_asset review anchor.",
+        "Split workflow modeling into bootstrap_meta_plan and revise_meta_plan modes.",
+        "Bound integration_manifest to bundled project.manifest.json."
+      ]
+    },
+    {
+      "path": "analysis/context/problem_set.clean.json",
+      "changes": [
+        "Reframed the normalized problem statement around ACM + polyrepo_workspace only.",
+        "Removed git_asset sections and updated reconciliation/example text."
+      ]
+    },
+    {
+      "path": "analysis/context/problem_set.raw.json",
+      "changes": [
+        "Pruned git_asset references from the packaged raw planning context to match the revised two-repo surface.",
+        "Updated initial-plan deliverables and reconciliation example accordingly."
+      ]
+    },
+    {
+      "path": "analysis/review_baseline/toolstack_review.md",
+      "changes": [
+        "Removed the git_asset authority section and aligned the baseline note to the two-repo surface."
+      ]
+    }
+  ],
+  "validation": {
+    "json_parse_validated": [
+      "analysis/meta_plan.json",
+      "project.manifest.json",
+      "analysis/context/problem_set.clean.json",
+      "analysis/context/problem_set.raw.json"
+    ],
+    "git_asset_trace_count_workspace": 0
+  }
+}

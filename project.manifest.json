@@ -4,7 +4,7 @@
   "repo": {
     "path": "/home/_404/src/polyrepo_integration",
     "role": "bounded_integration_canvas",
-    "summary": "Trimmed integration repo for meta-planning, review artifacts, and cross-repo contract context.",
+    "summary": "Trimmed integration repo for two-repo meta-planning, review artifacts, and cross-repo contract context.",
     "primary_surfaces": [
       "analysis/",
       "review/",
@@ -12,8 +12,7 @@
     ],
     "authorities": {
       "policy": "acm",
-      "workspace": "polyrepo_workspace",
-      "bootstrap": "git_asset"
+      "workspace": "polyrepo_workspace"
     }
   },
   "review_anchors": [
@@ -51,13 +50,6 @@
       "description": "polyrepo_workspace must retain the required workspace atomics named by the normalized problem-set context.",
       "source_path": "analysis/context/problem_set.clean.json",
       "selector": "document.polyrepo_workspace_requirements.required_atomics"
-    },
-    {
-      "id": "git_asset_required_definitions",
-      "kind": "object_property",
-      "description": "git_asset must remain constrained to its declared requirements-surface definitions.",
-      "source_path": "analysis/context/problem_set.clean.json",
-      "selector": "document.git_asset_requirements_surface.required_definitions"
     }
   ],
   "workflow": {
@@ -65,7 +57,9 @@
     "entry_nodes": [
       "problem_set_raw",
       "problem_set_context",
-      "objective_analysis_context"
+      "project_manifest_context",
+      "review_history",
+      "git_log_context"
     ],
     "nodes": [
       {
@@ -79,9 +73,9 @@
         "path": "analysis/context/problem_set.clean.json"
       },
       {
-        "id": "objective_analysis_context",
+        "id": "project_manifest_context",
         "kind": "artifact",
-        "path": "analysis/meta_plan.json"
+        "path": "project.manifest.json"
       },
       {
         "id": "review_history",
@@ -94,12 +88,31 @@
         "path": "review/git_log.json"
       },
       {
-        "id": "draft_meta_plan",
+        "id": "current_meta_plan",
+        "kind": "artifact",
+        "path": "analysis/meta_plan.json"
+      },
+      {
+        "id": "bootstrap_meta_plan",
         "kind": "stage",
         "requires": [
           "problem_set_raw",
           "problem_set_context",
-          "objective_analysis_context",
+          "project_manifest_context",
+          "review_history",
+          "git_log_context"
+        ],
+        "produces": [
+          "analysis/meta_plan.json"
+        ]
+      },
+      {
+        "id": "revise_meta_plan",
+        "kind": "stage",
+        "requires": [
+          "current_meta_plan",
+          "problem_set_context",
+          "project_manifest_context",
           "review_history",
           "git_log_context"
         ],
@@ -111,7 +124,7 @@
         "id": "review_submitted_head",
         "kind": "stage",
         "requires": [
-          "draft_meta_plan",
+          "revise_meta_plan",
           "review_history",
           "git_log_context"
         ],
@@ -123,30 +136,46 @@
     "edges": [
       {
         "from": "problem_set_raw",
-        "to": "problem_set_context"
+        "to": "bootstrap_meta_plan"
       },
       {
         "from": "problem_set_context",
-        "to": "draft_meta_plan"
+        "to": "bootstrap_meta_plan"
       },
       {
-        "from": "problem_set_raw",
-        "to": "draft_meta_plan"
-      },
-      {
-        "from": "objective_analysis_context",
-        "to": "draft_meta_plan"
+        "from": "project_manifest_context",
+        "to": "bootstrap_meta_plan"
       },
       {
         "from": "review_history",
-        "to": "draft_meta_plan"
+        "to": "bootstrap_meta_plan"
       },
       {
         "from": "git_log_context",
-        "to": "draft_meta_plan"
+        "to": "bootstrap_meta_plan"
       },
       {
-        "from": "draft_meta_plan",
+        "from": "current_meta_plan",
+        "to": "revise_meta_plan"
+      },
+      {
+        "from": "problem_set_context",
+        "to": "revise_meta_plan"
+      },
+      {
+        "from": "project_manifest_context",
+        "to": "revise_meta_plan"
+      },
+      {
+        "from": "review_history",
+        "to": "revise_meta_plan"
+      },
+      {
+        "from": "git_log_context",
+        "to": "revise_meta_plan"
+      },
+      {
+        "from": "revise_meta_plan",
         "to": "review_submitted_head"
       },
       {
@@ -161,6 +190,7 @@
     "determinism": {
       "rule": "a stage may run only when all inbound dependencies are present",
       "context_rule": "raw context may preserve source ambiguity; planning and review anchors should read the normalized context artifact",
+      "mode_rule": "bootstrap_meta_plan derives the first packaged plan from context; revise_meta_plan operates only when a current meta plan is already present",
       "append_only_artifacts": [
         "review/review_pipeline.json",
         "review/git_log.json"

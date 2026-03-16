@@ -1,7 +1,7 @@
 {
   "kind": "policy_first_meta_plan.v1",
   "objective": "Reduce the policy-first polyrepo integration problem into execution-ready per-set PLAN packets without collapsing authority boundaries.",
-  "summary": "This meta-plan governs the transition from the top-level D0:D5 objective register to narrow, composable PLAN packets. It is a meta-planning layer for the bounded integration canvas, not an implementation plan for downstream authority repos. In trimmed archive form, it should be reviewed for internal rigor rather than for the presence of omitted repo surfaces or vendored authorities.",
+  "summary": "This meta-plan governs the transition from the top-level D0:D5 objective register to narrow, composable PLAN packets for the initial two-repo integration surface. It is a meta-planning layer for the bounded integration canvas spanning ACM and polyrepo_workspace, not an implementation plan for downstream consumer repos. In trimmed archive form, it should be reviewed for internal rigor rather than for the presence of omitted repo surfaces or vendored authorities.",
   "scope": "meta_planning_only",
   "review_boundary": {
     "trimmed_archive": true,
@@ -16,7 +16,6 @@
   "authority_model": {
     "policy_authority": "acm",
     "workspace_contract_authority": "polyrepo_workspace",
-    "bootstrap_materialization_authority": "git_asset",
     "bounded_integration_canvas": "polyrepo_integration"
   },
   "identifier_contract": {
@@ -33,7 +32,7 @@
     },
     "normalized_objective_register": {
       "produced_by": "MP1",
-      "description": "Normalized objective register emitted after MP1 derives canonical ordering and semantic analysis outputs."
+      "description": "Normalized objective register emitted after MP1 derives canonical ordering plus semantic and dependency analysis for the two-repo integration surface."
     },
     "micro_deliverable_set_register": {
       "set_id_family": "DS#",
@@ -44,7 +43,22 @@
         "blocking_dependencies",
         "authority_boundary",
         "recomposition_constraints"
-      ]
+      ],
+      "description": "Register of bounded composable sets reduced from the ordered objectives using the normalized register together with semantic and dependency analysis evidence."
+    },
+    "set_analysis_evidence": {
+      "produced_by": "MP3",
+      "required_fields": [
+        "set_id",
+        "semantic_findings",
+        "dependency_findings",
+        "ambiguity_score",
+        "hard_dependency_edge_count",
+        "split_decision",
+        "normalized_hash"
+      ],
+      "normalization_rule": "canonical_json_sorted_keys_utf8_no_whitespace",
+      "ambiguity_score_rule": "open_questions_count / max(total_required_decisions, 1)"
     }
   },
   "source_artifacts": {
@@ -57,8 +71,8 @@
       "availability": "external_not_vendored"
     },
     "integration_manifest": {
-      "handle": "repo://.project.manifest.json",
-      "availability": "not_packaged_in_trimmed_archive"
+      "handle": "repo://project.manifest.json",
+      "availability": "bundled"
     },
     "review_rationale_log": {
       "handle": "repo://review/review_pipeline.json",
@@ -71,18 +85,19 @@
       "objective_refs": [
         "D0"
       ],
-      "title": "Fix D0 authority and workflow",
-      "purpose": "Freeze the dependency-workflow toolchain and the bounded integration-canvas contract before ordering any downstream objective.",
+      "title": "Fix D0 authority boundary for the two-repo surface",
+      "purpose": "Freeze the ACM-to-polyrepo_workspace authority boundary, planning mode contract, and bounded integration-canvas scope before ordering any downstream objective.",
       "inputs": [
         "problem_set",
         "objective_analysis_pipeline",
         "integration_manifest"
       ],
       "outputs": [
-        "dependency_tool_workflow_spec",
+        "policy_workspace_authority_contract",
+        "planning_mode_contract",
         "integration_repo_contract"
       ],
-      "gate": "tool authority boundaries and bounded integration-canvas scope are explicit"
+      "gate": "ACM policy authority, polyrepo_workspace contract authority, and planning mode semantics are explicit"
     },
     {
       "stage_id": "MP1",
@@ -95,9 +110,10 @@
         "D5"
       ],
       "title": "Derive canonical objective ordering",
-      "purpose": "Treat D0:D5 as objectives, then derive canonical ordering for D1:D5 through semantic analysis plus dependency and gap analysis.",
+      "purpose": "Treat D0:D5 as objectives, then derive canonical ordering for D1:D5 through semantic analysis plus dependency and gap analysis under the ACM/polyrepo_workspace boundary contract.",
       "inputs": [
-        "dependency_tool_workflow_spec",
+        "policy_workspace_authority_contract",
+        "planning_mode_contract",
         "integration_repo_contract",
         "problem_set",
         "input_objective_register"
@@ -120,8 +136,11 @@
         "D5"
       ],
       "title": "Reduce objectives into micro-deliverable sets",
-      "purpose": "Reduce each ordered objective into bounded, composable micro-deliverable sets with clear semantic purpose and acceptance surfaces.",
+      "purpose": "Reduce each ordered objective into bounded, composable micro-deliverable sets using the normalized register together with semantic and dependency analysis so acceptance surfaces and authority boundaries remain explicit.",
       "inputs": [
+        "normalized_objective_register",
+        "objective_semantic_analysis",
+        "objective_dependency_gap_analysis",
         "canonical_objective_order",
         "review_rationale_log"
       ],
@@ -157,9 +176,26 @@
           "ambiguity_score_at_or_below_threshold",
           "analysis_artifact_hash_stable_across_two_passes"
         ],
-        "ambiguity_score_threshold": 0.2
+        "ambiguity_score_threshold": 0.2,
+        "ambiguity_score_contract": {
+          "formula": "open_questions_count / max(total_required_decisions, 1)",
+          "range": [
+            0,
+            1
+          ],
+          "decision_basis": "latest normalized set analysis artifacts"
+        },
+        "analysis_artifact_hash_contract": {
+          "artifact_family": [
+            "set_semantic_analysis",
+            "set_dependency_gap_analysis",
+            "last_round_set_analysis"
+          ],
+          "normalization_rule": "canonical_json_sorted_keys_utf8_no_whitespace",
+          "stability_rule": "all artifact hashes identical across the two most recent passes for the same set_id set"
+        }
       },
-      "gate": "recursive set analysis stops only when the termination predicate is satisfied"
+      "gate": "recursive set analysis stops only when the declared ambiguity and normalized-hash stability contracts are satisfied"
     },
     {
       "stage_id": "MP4",
@@ -193,12 +229,13 @@
     }
   ],
   "ordering_invariants": [
-    "D0 is always first because objective ordering depends on the dependency-workflow and bounded integration-canvas contract.",
-    "No consumer-repo migration can start before semantic ownership, reconciliation, and policy-evaluation closure are reduced into approved micro-deliverable sets.",
+    "D0 is always first because objective ordering depends on the ACM-to-polyrepo_workspace authority boundary, planning mode contract, and bounded integration-canvas contract.",
+    "No downstream migration or promotion work can start before semantic ownership, reconciliation, and policy-evaluation closure are reduced into approved micro-deliverable sets.",
     "PLAN packets are downstream artifacts emitted only after recursive analysis stabilizes."
   ],
   "blocked_until": [
-    "dependency_tool_workflow_spec",
+    "policy_workspace_authority_contract",
+    "planning_mode_contract",
     "integration_repo_contract",
     "canonical_objective_order",
     "micro_deliverable_set_register",
@@ -208,12 +245,32 @@
     {
       "from": "MP0",
       "to": "MP1",
-      "artifact": "dependency_tool_workflow_spec"
+      "artifact": "policy_workspace_authority_contract"
+    },
+    {
+      "from": "MP0",
+      "to": "MP1",
+      "artifact": "planning_mode_contract"
     },
     {
       "from": "MP0",
       "to": "MP1",
       "artifact": "integration_repo_contract"
+    },
+    {
+      "from": "MP1",
+      "to": "MP2",
+      "artifact": "normalized_objective_register"
+    },
+    {
+      "from": "MP1",
+      "to": "MP2",
+      "artifact": "objective_semantic_analysis"
+    },
+    {
+      "from": "MP1",
+      "to": "MP2",
+      "artifact": "objective_dependency_gap_analysis"
     },
     {
       "from": "MP1",

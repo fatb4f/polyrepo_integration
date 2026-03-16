@@ -1,0 +1,5216 @@
+diff -ruN original/workspace/.templates/artifact_review.schema.json workspace/.templates/artifact_review.schema.json
+--- original/workspace/.templates/artifact_review.schema.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/.templates/artifact_review.schema.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,358 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "https://fatb4f.github.io/polyrepo_integration/schemas/artifact_review.schema.json",
++  "title": "Artifact Review Base Schema",
++  "type": "object",
++  "additionalProperties": false,
++  "required": [
++    "artifact_review"
++  ],
++  "properties": {
++    "artifact_review": {
++      "$ref": "#/$defs/artifact_review"
++    }
++  },
++  "$defs": {
++    "non_empty_string": {
++      "type": "string",
++      "minLength": 1
++    },
++    "token": {
++      "type": "string",
++      "pattern": "^[A-Za-z0-9_./:-]+$"
++    },
++    "token_list": {
++      "type": "array",
++      "items": {
++        "$ref": "#/$defs/token"
++      }
++    },
++    "string_list": {
++      "type": "array",
++      "items": {
++        "$ref": "#/$defs/non_empty_string"
++      }
++    },
++    "metadata": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "artifact_name",
++        "review_pass",
++        "assessment"
++      ],
++      "properties": {
++        "artifact_name": {
++          "$ref": "#/$defs/non_empty_string"
++        },
++        "review_pass": {
++          "type": "integer",
++          "minimum": 1
++        },
++        "assessment": {
++          "$ref": "#/$defs/token"
++        }
++      }
++    },
++    "execution_context": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "can_run_end_to_end_here",
++        "checked"
++      ],
++      "properties": {
++        "can_run_end_to_end_here": {
++          "type": "boolean"
++        },
++        "blocking_reason": {
++          "type": [
++            "string",
++            "null"
++          ]
++        },
++        "checked": {
++          "$ref": "#/$defs/token_list"
++        }
++      },
++      "allOf": [
++        {
++          "if": {
++            "properties": {
++              "can_run_end_to_end_here": {
++                "const": false
++              }
++            },
++            "required": [
++              "can_run_end_to_end_here"
++            ]
++          },
++          "then": {
++            "required": [
++              "blocking_reason"
++            ],
++            "properties": {
++              "blocking_reason": {
++                "$ref": "#/$defs/token"
++              }
++            }
++          }
++        }
++      ]
++    },
++    "summary": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "overall",
++        "maturity",
++        "main_remaining_risk"
++      ],
++      "properties": {
++        "overall": {
++          "$ref": "#/$defs/token"
++        },
++        "maturity": {
++          "$ref": "#/$defs/token"
++        },
++        "main_remaining_risk": {
++          "$ref": "#/$defs/token"
++        }
++      }
++    },
++    "severity_counts": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "critical",
++        "high",
++        "medium",
++        "low"
++      ],
++      "properties": {
++        "critical": {
++          "type": "integer",
++          "minimum": 0
++        },
++        "high": {
++          "type": "integer",
++          "minimum": 0
++        },
++        "medium": {
++          "type": "integer",
++          "minimum": 0
++        },
++        "low": {
++          "type": "integer",
++          "minimum": 0
++        }
++      }
++    },
++    "finding_summary": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "confirmed_fix_count",
++        "open_finding_count",
++        "severity_counts"
++      ],
++      "properties": {
++        "confirmed_fix_count": {
++          "type": "integer",
++          "minimum": 0
++        },
++        "open_finding_count": {
++          "type": "integer",
++          "minimum": 0
++        },
++        "severity_counts": {
++          "$ref": "#/$defs/severity_counts"
++        }
++      }
++    },
++    "confirmed_fix": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "issue",
++        "status",
++        "note"
++      ],
++      "properties": {
++        "issue": {
++          "$ref": "#/$defs/token"
++        },
++        "status": {
++          "type": "string",
++          "enum": [
++            "fixed",
++            "partial",
++            "open"
++          ]
++        },
++        "note": {
++          "$ref": "#/$defs/non_empty_string"
++        }
++      }
++    },
++    "evidence": {
++      "type": "object",
++      "additionalProperties": false,
++      "properties": {
++        "docs": {
++          "$ref": "#/$defs/string_list"
++        },
++        "code": {
++          "$ref": "#/$defs/string_list"
++        },
++        "artifacts": {
++          "$ref": "#/$defs/string_list"
++        }
++      }
++    },
++    "finding": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "id",
++        "severity",
++        "status",
++        "title",
++        "details",
++        "impact",
++        "recommended_actions"
++      ],
++      "properties": {
++        "id": {
++          "type": "string",
++          "pattern": "^F[0-9]+$"
++        },
++        "severity": {
++          "type": "string",
++          "enum": [
++            "low",
++            "medium",
++            "high",
++            "critical"
++          ]
++        },
++        "status": {
++          "type": "string",
++          "enum": [
++            "open",
++            "fixed",
++            "partial",
++            "deferred",
++            "closed",
++            "needs_review"
++          ]
++        },
++        "title": {
++          "$ref": "#/$defs/token"
++        },
++        "evidence": {
++          "$ref": "#/$defs/evidence"
++        },
++        "details": {
++          "$ref": "#/$defs/string_list"
++        },
++        "impact": {
++          "$ref": "#/$defs/non_empty_string"
++        },
++        "recommended_actions": {
++          "$ref": "#/$defs/token_list"
++        }
++      }
++    },
++    "verdict": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "status",
++        "reasons"
++      ],
++      "properties": {
++        "status": {
++          "$ref": "#/$defs/token"
++        },
++        "reasons": {
++          "$ref": "#/$defs/token_list"
++        }
++      }
++    },
++    "next_patch": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "priority",
++        "title",
++        "why"
++      ],
++      "properties": {
++        "priority": {
++          "type": "integer",
++          "minimum": 1
++        },
++        "title": {
++          "$ref": "#/$defs/token"
++        },
++        "why": {
++          "$ref": "#/$defs/non_empty_string"
++        }
++      }
++    },
++    "artifact_review": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "kind",
++        "metadata",
++        "execution_context",
++        "summary",
++        "finding_summary",
++        "confirmed_fixes",
++        "findings",
++        "verdict",
++        "next_patch_set"
++      ],
++      "properties": {
++        "kind": {
++          "$ref": "#/$defs/non_empty_string"
++        },
++        "metadata": {
++          "$ref": "#/$defs/metadata"
++        },
++        "execution_context": {
++          "$ref": "#/$defs/execution_context"
++        },
++        "summary": {
++          "$ref": "#/$defs/summary"
++        },
++        "finding_summary": {
++          "$ref": "#/$defs/finding_summary"
++        },
++        "confirmed_fixes": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/confirmed_fix"
++          }
++        },
++        "findings": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/finding"
++          }
++        },
++        "verdict": {
++          "$ref": "#/$defs/verdict"
++        },
++        "next_patch_set": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/next_patch"
++          }
++        }
++      }
++    }
++  }
++}
+diff -ruN original/workspace/.templates/polyrepo_integration.review.schema.json workspace/.templates/polyrepo_integration.review.schema.json
+--- original/workspace/.templates/polyrepo_integration.review.schema.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/.templates/polyrepo_integration.review.schema.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,31 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "https://fatb4f.github.io/polyrepo_integration/schemas/polyrepo_integration.review.schema.json",
++  "title": "Polyrepo Integration Artifact Review Profile",
++  "allOf": [
++    {
++      "$ref": "./artifact_review.schema.json"
++    },
++    {
++      "type": "object",
++      "properties": {
++        "artifact_review": {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "polyrepo_integration.artifact_review.v1"
++            },
++            "metadata": {
++              "type": "object",
++              "properties": {
++                "artifact_name": {
++                  "pattern": "^polyrepo_integration-.*\\.zip$"
++                }
++              }
++            }
++          }
++        }
++      }
++    }
++  ]
++}
+diff -ruN original/workspace/.templates/review.json.template workspace/.templates/review.json.template
+--- original/workspace/.templates/review.json.template	1970-01-01 00:00:00.000000000 +0000
++++ workspace/.templates/review.json.template	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,41 @@
++{
++  "artifact_review": {
++    "kind": "polyrepo_integration.artifact_review.v1",
++    "metadata": {
++      "artifact_name": "polyrepo_integration-main.zip",
++      "review_pass": 1,
++      "assessment": "initial_review"
++    },
++    "execution_context": {
++      "can_run_end_to_end_here": false,
++      "blocking_reason": "runtime_unavailable",
++      "checked": [
++        "archive_unpacked"
++      ]
++    },
++    "summary": {
++      "overall": "initial_assessment",
++      "maturity": "early",
++      "main_remaining_risk": "unreviewed_surface"
++    },
++    "finding_summary": {
++      "confirmed_fix_count": 0,
++      "open_finding_count": 0,
++      "severity_counts": {
++        "critical": 0,
++        "high": 0,
++        "medium": 0,
++        "low": 0
++      }
++    },
++    "confirmed_fixes": [],
++    "findings": [],
++    "verdict": {
++      "status": "needs_review",
++      "reasons": [
++        "populate_from_actual_review"
++      ]
++    },
++    "next_patch_set": []
++  }
++}
+diff -ruN original/workspace/.templates/review.schema.json workspace/.templates/review.schema.json
+--- original/workspace/.templates/review.schema.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/.templates/review.schema.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,5 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "https://fatb4f.github.io/polyrepo_integration/schemas/review.schema.json",
++  "$ref": "./polyrepo_integration.review.schema.json"
++}
+diff -ruN original/workspace/AGENTS.md workspace/AGENTS.md
+--- original/workspace/AGENTS.md	1970-01-01 00:00:00.000000000 +0000
++++ workspace/AGENTS.md	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,25 @@
++Treat the uploaded archive and its extracted workspace as the primary review surface.
++Work in the same workspace where the archive is extracted.
++Do not generate full review artifacts in chat UI.
++Write review outputs to file in the internal `/mnt` workspace, archive them there, and return only the file link plus a minimal status note in chat.
++Prefer machine-readable output first.
++Validate review outputs against the project review schema before finalizing.
++Keep findings severity-ordered.
++The bundled review contract lives under `.templates/`:
++- `.templates/artifact_review.schema.json`
++- `.templates/polyrepo_integration.review.schema.json`
++- `.templates/review.schema.json`
++- `.templates/review.json.template`
++
++For patch-based follow-up review:
++- treat the uploaded diff as a proposed change against the current packaged review surface
++- review whether the patch clears the named findings without inventing new file-absence defects
++- distinguish clearly between:
++  - findings still present in the packaged archive
++  - findings cleared by the patch if applied
++- keep the machine-readable review artifact on the project review contract; do not replace it with an ad hoc review schema
++- validate patch-review outputs against the same project review schema used for archive review
++- treat any `annotated diff patch` as a supplemental artifact, not as the machine-readable review artifact itself
++- carry patch-specific notes inside the conforming review artifact evidence, details, verdict reasons, or companion files instead of adding non-contract top-level fields
++- when asked to apply the patch, update the repo artifact and write the resulting `annotated diff patch` to file
++- name the `annotated diff patch` artifact after the originating commit hash
+diff -ruN original/workspace/analysis/README.md workspace/analysis/README.md
+--- original/workspace/analysis/README.md	1970-01-01 00:00:00.000000000 +0000
++++ workspace/analysis/README.md	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,8 @@
++# Analysis
++
++Integration-only analysis and validation artifacts land here.
++
++This packaged review surface may be intentionally trimmed.
++
++Review the analysis artifacts for internal rigor and contract clarity.
++Do not treat omitted repo surfaces or non-vendored authorities as defects by themselves.
+diff -ruN original/workspace/analysis/context/problem_set.clean.json workspace/analysis/context/problem_set.clean.json
+--- original/workspace/analysis/context/problem_set.clean.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/analysis/context/problem_set.clean.json	2026-03-16 03:24:05.980816497 +0000
+@@ -0,0 +1,316 @@
++{
++  "delimiter": "# The problem_set We need to define and integrate a policy first, streamline polyrepo workspace with ACM authority.",
++  "document": {
++    "problem_set": {
++      "statement": "We need to define and integrate a policy-first, streamlined polyrepo workspace under ACM authority.",
++      "expanded": "The system must establish policy as the controlling layer, make that policy drive the polyrepo workspace structure, and keep workspace control and consumer-repo planning aligned under one reproducible control model.",
++      "one_line": "We need a policy-first polyrepo architecture in which ACM and polyrepo_workspace integrate into one streamlined, reproducible system."
++    },
++    "cross_asset_application": {
++      "summary": "The three repos contribute to the same semantic state space but operate at different layers.",
++      "assets": {
++        "acm": {
++          "role": "policy authority source",
++          "responsibility": [
++            "define the governing policy/state model",
++            "define ontology and anchor semantics",
++            "define canonical schema authority",
++            "define delegation rules",
++            "define policy objects and hierarchy",
++            "define adaptation and reconciliation strategies"
++          ],
++          "compression": "ACM defines meaning, policy structure, and the rules for change and conflict."
++        },
++        "polyrepo_workspace": {
++          "role": "workspace authority target",
++          "responsibility": [
++            "define the desired functionality of the workspace",
++            "define required workspace atomics",
++            "define workspace-level interop semantics",
++            "define cross-repo lifecycle, registry, relations, lineage, and promotion semantics"
++          ],
++          "compression": "polyrepo_workspace defines what the workspace is and what it must know."
++        }
++      },
++      "integrated_statement": "ACM governs the model and polyrepo_workspace defines the operating contract for the initial integration surface."
++    },
++    "bigger_picture": {
++      "points": [
++        "All repos contribute to the same state space.",
++        "They are all still at an initial planning iteration.",
++        "Future costly refactors can be avoided if the three are semantically integrated at the policy plane."
++      ],
++      "implication": "Semantic integration should happen upstream at the level of policy objects, schemas, manifests, anchors, and relationship semantics rather than later through downstream file/layout refactors."
++    },
++    "core_model": {
++      "ontology_and_policy": {
++        "summary": "The integration problem is fundamentally ontology plus policy.",
++        "ontology_defines": [
++          "object types",
++          "identity",
++          "metadata anchors",
++          "allowed relationships",
++          "semantic roles across repos"
++        ],
++        "policy_defines": [
++          "required objects",
++          "required anchors",
++          "validation rules",
++          "promotion rules",
++          "controller behavior",
++          "admissible state transitions"
++        ]
++      },
++      "anchor_purpose": {
++        "summary": "Anchors are the semantic glue that keep manifests, schemas, policy objects, and generated assets machine-relatable across the workspace.",
++        "questions_answered": [
++          "which policy object governs this manifest",
++          "which workspace object this repo belongs to",
++          "which seed generated this artifact",
++          "which schema validates this object family",
++          "which relationships are declared vs derived",
++          "what promotion lineage produced this state"
++        ]
++      }
++    },
++    "acm_properties": {
++      "required_properties": [
++        "modularity",
++        "composability",
++        "adaptability"
++      ],
++      "modularity": {
++        "goal": "Refactoring a seed or implementing a new asset type does not require costly redactors.",
++        "design_rules": [
++          "use stable anchor schemas",
++          "use small scoped policy modules",
++          "use capability registration for asset types"
++        ],
++        "effect": "new asset types should be additive rather than requiring global rewrites"
++      },
++      "composability": {
++        "goal": "Policy stacks must compose safely.",
++        "design_rules": [
++          "policies must declare scope, inputs, outputs, dependencies, precedence, and conflict rules",
++          "kernel invariants always win",
++          "deny overrides allow",
++          "overlays cannot violate kernel or core invariants",
++          "unresolved conflict is invalid state"
++        ],
++        "effect": "policy growth remains coherent instead of becoming a policy pile"
++      },
++      "adaptability": {
++        "goal": "The system can adapt itself in a closed feedback loop under supervision.",
++        "design_rules": [
++          "adaptation targets should be parameters, module selection, bounded extensions, and registrations before kernel semantics",
++          "observe downstream failures and friction",
++          "evaluate against expected invariants and performance goals",
++          "propose bounded changes",
++          "gate changes through validation, replay/regression checks, and promotion"
++        ],
++        "effect": "ACM evolves without losing authority over system meaning"
++      },
++      "tight_formulation": "Modularity keeps ACM changeable, composability keeps ACM coherent, and adaptability keeps ACM alive."
++    },
++    "acm_layering": {
++      "target_shape": [
++        {
++          "layer": "semantic_kernel",
++          "purpose": "stable ontology and metadata anchors",
++          "contents": [
++            "object families",
++            "required identities",
++            "required anchors",
++            "relationship types",
++            "lifecycle states",
++            "always-on invariants"
++          ]
++        },
++        {
++          "layer": "policy_modules",
++          "purpose": "small bounded policy units operating on the semantic kernel",
++          "contents": [
++            "scope",
++            "inputs",
++            "outputs",
++            "invariants",
++            "dependencies",
++            "conflict rules"
++          ]
++        },
++        {
++          "layer": "supervisory_adaptation",
++          "purpose": "observe outcomes and propose bounded policy adjustments under promotion gates",
++          "contents": [
++            "drift detection",
++            "missing-anchor detection",
++            "policy/module change proposals",
++            "gated promotion"
++          ]
++        }
++      ]
++    },
++    "polyrepo_workspace_requirements": {
++      "desired_functionality": [
++        "define workspace atomics and repo registry semantics",
++        "carry the shared scaffold used to bootstrap review and analysis assets",
++        "define workspace-level lifecycle and promotion semantics",
++        "preserve lineage between workspace objects and consumer repos",
++        "support migration, validation, and promotion flows"
++      ],
++      "required_atomics": [
++        "workspace",
++        "repo",
++        "repo_class",
++        "seed",
++        "asset",
++        "manifest",
++        "schema",
++        "policy_reference",
++        "relationship",
++        "lineage_edge",
++        "validation_result",
++        "promotion_state",
++        "journal_or_observation_event"
++      ],
++      "summary": "polyrepo_workspace must define what the workspace must do and what irreducible objects it must know about to do it."
++    },
++    "governed_negotiation_contract": {
++      "summary": "The system resembles a governed consensus negotiation contract under asymmetric authority.",
++      "authority_structure": {
++        "acm": "governing authority surface",
++        "polyrepo_workspace": "constrained implementer for workspace semantics"
++      },
++      "consensus_layers": [
++        "ontological consensus",
++        "policy consensus",
++        "operational consensus"
++      ],
++      "coordination_model": "shared state-space contract with a policy-mediated coordination layer and a bounded renegotiation loop for adaptation"
++    },
++    "semantic_ownership": {
++      "summary": "Each controller must scope its semantic surface ownership.",
++      "semantic_surface": {
++        "first_degree_atoms": "atoms directly defined by a controller",
++        "second_degree_atoms": "atoms composing interop dependencies"
++      },
++      "examples_of_second_degree_atoms": [
++        "git commit semantics",
++        "github projects seeds",
++        "codeql seeds",
++        "git hooks"
++      ],
++      "ownership_rule": "A controller touching an atom is not the same as a controller owning its semantics.",
++      "first_degree_invariant": "A controller that owns a 1st-degree atom owns its authoritative schema by default, subject to any explicit delegated ownership defined by the governing policy layer.",
++      "authoritative_schema_invariant": {
++        "owner": "ACM",
++        "statement": "ACM owns the authoritative schema unless some bounded sub-surface is formally delegated for operational ownership.",
++        "delegation": "ACM can delegate operational ownership without transferring canonical schema authority unless explicitly stated."
++      },
++      "semantic_ownership_matrix_requirement": "The initial plan should include a semantic ownership matrix for each atom family recording degree, authoritative owner, subordinate/materializer, governing ACM anchors, allowed extensions, forbidden redefinitions, and reconciliation strategy."
++    },
++    "reconciliation_strategies": {
++      "required": true,
++      "reason": "Competing ownership will occur in a governed negotiation contract and must be resolved explicitly.",
++      "strategies": [
++        {
++          "name": "subordinate",
++          "description": "broader controller owns semantics; narrower controller may materialize or reference but cannot redefine anchors or invariants"
++        },
++        {
++          "name": "assimilate",
++          "description": "smaller controller is absorbed into the larger semantic surface when overlap becomes persistent and structural"
++        },
++        {
++          "name": "partition",
++          "description": "controllers own different dimensions of the same atom family, such as semantic meaning vs materialization mechanics"
++        },
++        {
++          "name": "delegate",
++          "description": "one controller owns the atom but formally delegates bounded sub-semantics to another"
++        },
++        {
++          "name": "deny_or_incompatible",
++          "description": "overlap is not admissible and must be rejected"
++        }
++      ],
++      "example": {
++        "atom_family": [
++          "repo manifest anchor requirements",
++          "repo class membership semantics",
++          "promotion-state lineage edges"
++        ],
++        "owner": "acm",
++        "competing_controller": "polyrepo_workspace",
++        "recommended_strategy": "delegate",
++        "alternative": "partition semantic meaning in ACM from workspace lifecycle mechanics in polyrepo_workspace when bounded delegation is insufficient"
++      }
++    },
++    "policy_object_system": {
++      "policy_object_types": [
++        "schema",
++        "manifest",
++        "anchor"
++      ],
++      "schema": "defines structural admissibility, required fields, required anchors, allowed relationships, delegation surface, and invariants",
++      "manifest": "defines declared instance state, applied schemas, policy stacks, dependencies, and ownership claims",
++      "anchor": "defines identity, semantic linkage, cross-object references, ownership attachment, lineage, delegation, and policy binding",
++      "hierarchy": [
++        "kernel",
++        "core_policy",
++        "domain_policy",
++        "overlay_or_operational_policy"
++      ],
++      "required_strategies": [
++        "adaptive",
++        "reconciliation"
++      ]
++    },
++    "policy_evaluation_dag": {
++      "requirement": "Applied policy must be expressible as an evaluation DAG.",
++      "why": [
++        "ordered evaluation",
++        "no circular authority",
++        "mechanical replay",
++        "explainability",
++        "safe composition"
++      ],
++      "node_classes": [
++        "schema_nodes",
++        "manifest_nodes",
++        "anchor_resolution_nodes",
++        "policy_evaluation_nodes",
++        "derived_decision_nodes",
++        "supervisory_feedback_nodes"
++      ],
++      "edge_semantics": [
++        "depends_on",
++        "governed_by",
++        "validated_by",
++        "resolved_through",
++        "composed_with",
++        "reconciled_by",
++        "promoted_after"
++      ],
++      "evaluation_phases": [
++        "structural_admissibility",
++        "semantic_binding",
++        "policy_application",
++        "decision_emission",
++        "supervisory_feedback"
++      ],
++      "summary": "Applied policy must be reducible to a deterministic evaluation DAG in which declared state is structurally validated, semantically bound through anchors, evaluated against ownership/delegation/composition/reconciliation policy, and reduced to governed decisions."
++    },
++    "initial_plan_requirements": {
++      "summary": "A solid initial plan should lock semantic ownership, ontology, policy objects, anchors, evaluation order, and reconciliation before implementation expands.",
++      "minimum_outputs": [
++        "cross-repo anchor schema or policy-plane ontology schema",
++        "semantic ownership matrix",
++        "policy object model",
++        "policy evaluation DAG",
++        "controller responsibility split across ACM and polyrepo_workspace"
++      ],
++      "ordering_principle": "First define who owns meaning, then define how workspace contracts are emitted and reviewed."
++    }
++  }
++}
+diff -ruN original/workspace/analysis/context/problem_set.raw.json workspace/analysis/context/problem_set.raw.json
+--- original/workspace/analysis/context/problem_set.raw.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/analysis/context/problem_set.raw.json	2026-03-16 03:24:05.981741738 +0000
+@@ -0,0 +1,385 @@
++{
++  "delimiter": "# The problem_set We need to define and integrate a policy first, streamline polyrepo workspace with ACM authority.",
++  "document": {
++    "preplan_tooling_objective": {
++      "objective_id": "D0",
++      "summary": "Before semantic objective ordering begins, the system needs a dedicated dependency-workflow toolset and a bounded integration canvas that can establish dependency taxonomy, dependency data structures, and dependency ordering across repos.",
++      "required_capabilities": [
++        "establish dependency taxonomy",
++        "establish dependency data structure",
++        "establish dependency ordering",
++        "establish a bounded integration canvas for cross-repo indexing and validation"
++      ],
++      "tool_workflow": {
++        "scip": {
++          "role": "semantic cross-repo linking evidence",
++          "responsibility": [
++            "provide symbol-level semantic linking across repos",
++            "surface definition/reference relationships as evidence inputs",
++            "support cross-repo semantic edge discovery"
++          ]
++        },
++        "ast_grep": {
++          "role": "structural extraction and pattern evidence",
++          "responsibility": [
++            "extract structural relationship candidates",
++            "find policy object, anchor, and manifest patterns",
++            "provide lightweight supplemental dependency evidence"
++          ]
++        },
++        "json_tool": {
++          "role": "canonical dependency contract actuator",
++          "responsibility": [
++            "define and emit dependency taxonomy artifacts",
++            "define and emit dependency graph data structures",
++            "emit canonical dependency ordering artifacts",
++            "own JSON-first validation and derivation"
++          ],
++          "augmentation": "CUE-validated DAG narrowing and cross-field constraint checks"
++        },
++        "networkx": {
++          "role": "dependency ordering engine",
++          "responsibility": [
++            "detect cycles",
++            "compute SCC reductions",
++            "compute topological and layered orderings",
++            "emit explainable ordering proofs"
++          ]
++        },
++        "integration_repo": {
++          "role": "bounded integration canvas",
++          "responsibility": [
++            "host a pinned cross-repo indexing and validation surface",
++            "carry the shared scaffold used to bootstrap review and analysis assets",
++            "provide one execution root for SCIP, ast-grep, json-tool, and networkx outputs",
++            "remain non-authoritative and avoid redefining upstream policy or workspace meaning"
++          ]
++        }
++      },
++      "ordering_rule": "D0 is the fixed pre-plan objective because canonical ordering of D1:D5 depends on a defined workflow and bounded integration canvas for dependency taxonomy, dependency data structures, and dependency ordering."
++    },
++    "problem_set": {
++      "statement": "We need to define and integrate a policy-first, streamlined polyrepo workspace under ACM authority.",
++      "expanded": "The system must establish policy as the controlling layer, make that policy drive the polyrepo workspace structure, and keep workspace control and consumer-repo planning aligned under one reproducible control model.",
++      "one_line": "We need a policy-first polyrepo architecture in which ACM and polyrepo_workspace integrate into one streamlined, reproducible system."
++    },
++    "cross_asset_application": {
++      "summary": "The three repos contribute to the same semantic state space but operate at different layers.",
++      "assets": {
++        "acm": {
++          "role": "policy authority source",
++          "responsibility": [
++            "define the governing policy/state model",
++            "define ontology and anchor semantics",
++            "define canonical schema authority",
++            "define delegation rules",
++            "define policy objects and hierarchy",
++            "define adaptation and reconciliation strategies"
++          ],
++          "compression": "ACM defines meaning, policy structure, and the rules for change and conflict."
++        },
++        "polyrepo_workspace": {
++          "role": "workspace authority target",
++          "responsibility": [
++            "define the desired functionality of the workspace",
++            "define required workspace atomics",
++            "define workspace-level interop semantics",
++            "define cross-repo lifecycle, registry, relations, lineage, and promotion semantics"
++          ],
++          "compression": "polyrepo_workspace defines what the workspace is and what it must know."
++        }
++      },
++      "integrated_statement": "ACM governs the model and polyrepo_workspace defines the operating contract for the initial integration surface."
++    },
++    "bigger_picture": {
++      "points": [
++        "All repos contribute to the same state space.",
++        "They are all still at an initial planning iteration.",
++        "Future costly refactors can be avoided if the three are semantically integrated at the policy plane."
++      ],
++      "implication": "Semantic integration should happen upstream at the level of policy objects, schemas, manifests, anchors, and relationship semantics rather than later through downstream file/layout refactors."
++    },
++    "core_model": {
++      "ontology_and_policy": {
++        "summary": "The integration problem is fundamentally ontology plus policy.",
++        "ontology_defines": [
++          "object types",
++          "identity",
++          "metadata anchors",
++          "allowed relationships",
++          "semantic roles across repos"
++        ],
++        "policy_defines": [
++          "required objects",
++          "required anchors",
++          "validation rules",
++          "promotion rules",
++          "controller behavior",
++          "admissible state transitions"
++        ]
++      },
++      "anchor_purpose": {
++        "summary": "Anchors are the semantic glue that keep manifests, schemas, policy objects, and generated assets machine-relatable across the workspace.",
++        "questions_answered": [
++          "which policy object governs this manifest",
++          "which workspace object this repo belongs to",
++          "which seed generated this artifact",
++          "which schema validates this object family",
++          "which relationships are declared vs derived",
++          "what promotion lineage produced this state"
++        ]
++      }
++    },
++    "acm_properties": {
++      "required_properties": [
++        "modularity",
++        "composability",
++        "adaptability"
++      ],
++      "modularity": {
++        "goal": "Refactoring a seed or implementing a new asset type does not require costly redactors.",
++        "design_rules": [
++          "use stable anchor schemas",
++          "use small scoped policy modules",
++          "use capability registration for asset types"
++        ],
++        "effect": "new asset types should be additive rather than requiring global rewrites"
++      },
++      "composability": {
++        "goal": "Policy stacks must compose safely.",
++        "design_rules": [
++          "policies must declare scope, inputs, outputs, dependencies, precedence, and conflict rules",
++          "kernel invariants always win",
++          "deny overrides allow",
++          "overlays cannot violate kernel or core invariants",
++          "unresolved conflict is invalid state"
++        ],
++        "effect": "policy growth remains coherent instead of becoming a policy pile"
++      },
++      "adaptability": {
++        "goal": "The system can adapt itself in a closed feedback loop under supervision.",
++        "design_rules": [
++          "adaptation targets should be parameters, module selection, bounded extensions, and registrations before kernel semantics",
++          "observe downstream failures and friction",
++          "evaluate against expected invariants and performance goals",
++          "propose bounded changes",
++          "gate changes through validation, replay/regression checks, and promotion"
++        ],
++        "effect": "ACM evolves without losing authority over system meaning"
++      },
++      "tight_formulation": "Modularity keeps ACM changeable, composability keeps ACM coherent, and adaptability keeps ACM alive."
++    },
++    "acm_layering": {
++      "target_shape": [
++        {
++          "layer": "semantic_kernel",
++          "purpose": "stable ontology and metadata anchors",
++          "contents": [
++            "object families",
++            "required identities",
++            "required anchors",
++            "relationship types",
++            "lifecycle states",
++            "always-on invariants"
++          ]
++        },
++        {
++          "layer": "policy_modules",
++          "purpose": "small bounded policy units operating on the semantic kernel",
++          "contents": [
++            "scope",
++            "inputs",
++            "outputs",
++            "invariants",
++            "dependencies",
++            "conflict rules"
++          ]
++        },
++        {
++          "layer": "supervisory_adaptation",
++          "purpose": "observe outcomes and propose bounded policy adjustments under promotion gates",
++          "contents": [
++            "drift_detection",
++            "missing-anchor detection",
++            "policy/module change proposals",
++            "gated promotion"
++          ]
++        }
++      ]
++    },
++    "polyrepo_workspace_requirements": {
++      "desired_functionality": [
++        "define workspace atomics and repo registry semantics",
++        "carry the shared scaffold used to bootstrap review and analysis assets",
++        "define workspace-level lifecycle and promotion semantics",
++        "preserve lineage between workspace objects and consumer repos",
++        "support migration, validation, and promotion flows"
++      ],
++      "required_atomics": [
++        "workspace",
++        "repo",
++        "repo_class",
++        "seed",
++        "asset",
++        "manifest",
++        "schema",
++        "policy_reference",
++        "relationship",
++        "lineage_edge",
++        "validation_result",
++        "promotion_state",
++        "journal_or_observation_event"
++      ],
++      "summary": "polyrepo_workspace must define what the workspace must do and what irreducible objects it must know about to do it."
++    },
++    "governed_negotiation_contract": {
++      "summary": "The system resembles a governed consensus negotiation contract under asymmetric authority.",
++      "authority_structure": {
++        "acm": "governing authority surface",
++        "polyrepo_workspace": "constrained implementer for workspace semantics"
++      },
++      "consensus_layers": [
++        "ontological consensus",
++        "policy consensus",
++        "operational consensus"
++      ],
++      "coordination_model": "shared state-space contract with a policy-mediated coordination layer and a bounded renegotiation loop for adaptation"
++    },
++    "semantic_ownership": {
++      "summary": "Each controller must scope its semantic surface ownership.",
++      "semantic_surface": {
++        "first_degree_atoms": "atoms directly defined by a controller",
++        "second_degree_atoms": "atoms composing interop dependencies"
++      },
++      "examples_of_second_degree_atoms": [
++        "git commit semantics",
++        "github projects seeds",
++        "codeql seeds",
++        "git hooks"
++      ],
++      "ownership_rule": "A controller touching an atom is not the same as a controller owning its semantics.",
++      "first_degree_invariant": "A controller that owns a 1st-degree atom owns its authoritative schema by default, subject to any explicit delegated ownership defined by the governing policy layer.",
++      "authoritative_schema_invariant": {
++        "owner": "ACM",
++        "statement": "ACM owns the authoritative schema unless some bounded sub-surface is formally delegated for operational ownership.",
++        "delegation": "ACM can delegate operational ownership without transferring canonical schema authority unless explicitly stated."
++      },
++      "semantic_ownership_matrix_requirement": "The initial plan should include a semantic ownership matrix for each atom family recording degree, authoritative owner, subordinate/materializer, governing ACM anchors, allowed extensions, forbidden redefinitions, and reconciliation strategy."
++    },
++    "reconciliation_strategies": {
++      "required": true,
++      "reason": "Competing ownership will occur in a governed negotiation contract and must be resolved explicitly.",
++      "strategies": [
++        {
++          "name": "subordinate",
++          "description": "broader controller owns semantics; narrower controller may materialize or reference but cannot redefine anchors or invariants"
++        },
++        {
++          "name": "assimilate",
++          "description": "smaller controller is absorbed into the larger semantic surface when overlap becomes persistent and structural"
++        },
++        {
++          "name": "partition",
++          "description": "controllers own different dimensions of the same atom family, such as semantic meaning vs materialization mechanics"
++        },
++        {
++          "name": "delegate",
++          "description": "one controller owns the atom but formally delegates bounded sub-semantics to another"
++        },
++        {
++          "name": "deny_or_incompatible",
++          "description": "overlap is not admissible and must be rejected"
++        }
++      ],
++      "example": {
++        "atom_family": [
++          "repo manifest anchor requirements",
++          "repo class membership semantics",
++          "promotion-state lineage edges"
++        ],
++        "owner": "acm",
++        "competing_controller": "polyrepo_workspace",
++        "recommended_strategy": "delegate",
++        "alternative": "partition semantic meaning in ACM from workspace lifecycle mechanics in polyrepo_workspace when bounded delegation is insufficient"
++      }
++    },
++    "policy_object_system": {
++      "policy_object_types": [
++        "schema",
++        "manifest",
++        "anchor"
++      ],
++      "schema": "defines structural admissibility, required fields, required anchors, allowed relationships, delegation surface, and invariants",
++      "manifest": "defines declared instance state, applied schemas, policy stacks, dependencies, and ownership claims",
++      "anchor": "defines identity, semantic linkage, cross-object references, ownership attachment, lineage, delegation, and policy binding",
++      "hierarchy": [
++        "kernel",
++        "core_policy",
++        "domain_policy",
++        "overlay_or_operational_policy"
++      ],
++      "required_strategies": [
++        "adaptive",
++        "reconciliation"
++      ]
++    },
++    "policy_evaluation_dag": {
++      "requirement": "Applied policy must be expressible as an evaluation DAG.",
++      "why": [
++        "ordered evaluation",
++        "no circular authority",
++        "mechanical replay",
++        "explainability",
++        "safe composition"
++      ],
++      "node_classes": [
++        "schema_nodes",
++        "manifest_nodes",
++        "anchor_resolution_nodes",
++        "policy_evaluation_nodes",
++        "derived_decision_nodes",
++        "supervisory_feedback_nodes"
++      ],
++      "edge_semantics": [
++        "depends_on",
++        "governed_by",
++        "validated_by",
++        "resolved_through",
++        "composed_with",
++        "reconciled_by",
++        "promoted_after"
++      ],
++      "evaluation_phases": [
++        "structural_admissibility",
++        "semantic_binding",
++        "policy_application",
++        "decision_emission",
++        "supervisory_feedback"
++      ],
++      "summary": "Applied policy must be reducible to a deterministic evaluation DAG in which declared state is structurally validated, semantically bound through anchors, evaluated against ownership/delegation/composition/reconciliation policy, and reduced to governed decisions."
++    },
++    "initial_plan_requirements": {
++      "summary": "A solid initial plan should lock semantic ownership, ontology, policy objects, anchors, evaluation order, and reconciliation before implementation expands.",
++      "first_deliverables": [
++        "D0 dependency-workflow specification composed from SCIP, ast-grep, json-tool plus CUE DAG validation, and networkx",
++        "ACM policy state space that fixes downstream seeds and relationships in advance",
++        "schema dictating required metadata anchors across manifests, schemas, and policy objects",
++        "ACM shaping contract for modularity, composability, and adaptability",
++        "polyrepo_workspace desired functionality and required atomics",
++        "semantic ownership matrix and reconciliation strategy catalog",
++        "policy object collection, hierarchy, and evaluation DAG"
++      ],
++      "minimum_outputs": [
++        "dependency workflow spec for taxonomy, dependency graph structure, and ordering",
++        "cross-repo anchor schema or policy-plane ontology schema",
++        "ACM shaping contract",
++        "polyrepo_workspace atomics and functionality contract",
++        "semantic ownership matrix",
++        "policy object model",
++        "policy evaluation DAG",
++        "controller responsibility split across ACM and polyrepo_workspace"
++      ],
++      "ordering_principle": "First define who owns meaning, then define how workspace contracts are emitted and reviewed."
++    }
++  }
++}
+diff -ruN original/workspace/analysis/diffs/0fe014f.diff workspace/analysis/diffs/0fe014f.diff
+--- original/workspace/analysis/diffs/0fe014f.diff	1970-01-01 00:00:00.000000000 +0000
++++ workspace/analysis/diffs/0fe014f.diff	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,123 @@
++diff --git a/analysis/meta_plan.json b/analysis/meta_plan.json
++index f4931a5..cbae98f 100644
++--- a/analysis/meta_plan.json
+++++ b/analysis/meta_plan.json
++@@ -25,8 +25,30 @@
++     "meta_stage_id_family": "MP#",
++     "meta_stage_semantics": "Meta-plan stages orchestrate reduction of the D0:D5 objective set; they are not objective ids and do not replace them."
++   },
+++  "artifact_contracts": {
+++    "input_objective_register": {
+++      "handle": "authority://policy_first/objective_register",
+++      "availability": "external_not_vendored",
+++      "description": "Authoritative pre-existing D0:D5 objective register referenced by the summary and upstream policy-first analysis."
+++    },
+++    "normalized_objective_register": {
+++      "produced_by": "MP1",
+++      "description": "Normalized objective register emitted after MP1 derives canonical ordering and semantic analysis outputs."
+++    },
+++    "micro_deliverable_set_register": {
+++      "set_id_family": "DS#",
+++      "required_fields": [
+++        "set_id",
+++        "parent_objective_ref",
+++        "acceptance_surface",
+++        "blocking_dependencies",
+++        "authority_boundary",
+++        "recomposition_constraints"
+++      ]
+++    }
+++  },
++   "source_artifacts": {
++-    "problem_set": {
+++    "real_problem_set": {
++       "handle": "authority://policy_first/real_problem_set",
++       "availability": "external_not_vendored"
++     },
++@@ -73,10 +95,11 @@
++       "inputs": [
++         "dependency_tool_workflow_spec",
++         "integration_repo_contract",
++-        "real_problem_set"
+++        "real_problem_set",
+++        "input_objective_register"
++       ],
++       "outputs": [
++-        "objective_register",
+++        "normalized_objective_register",
++         "objective_semantic_analysis",
++         "objective_dependency_gap_analysis",
++         "canonical_objective_order"
++@@ -121,7 +144,17 @@
++         "set_dependency_gap_analysis",
++         "last_round_set_analysis"
++       ],
++-      "gate": "set-level ambiguity is reduced enough to support narrow plan packets"
+++      "termination_predicate": {
+++        "max_recursion_depth": 3,
+++        "requires": [
+++          "no_unresolved_hard_dependency_edges",
+++          "no_new_set_splits_on_latest_pass",
+++          "ambiguity_score_at_or_below_threshold",
+++          "analysis_artifact_hash_stable_across_two_passes"
+++        ],
+++        "ambiguity_score_threshold": 0.2
+++      },
+++      "gate": "recursive set analysis stops only when the termination predicate is satisfied"
++     },
++     {
++       "stage_id": "MP4",
++@@ -140,7 +173,18 @@
++       "outputs": [
++         "per_set_plan_packets"
++       ],
++-      "gate": "each resulting PLAN packet validates and remains narrow enough for independent approval"
+++      "validation_authority": {
+++        "plan_packet_schema": "authority://plan/plan_packet.schema.json",
+++        "plan_packet_validator": "authority://plan/validate_plan_packet",
+++        "plan_skill_handle": "authority://plan/skill",
+++        "plan_validation_version": "v1",
+++        "narrowness_criteria": [
+++          "single_composable_set_scope",
+++          "explicit_inputs_outputs_and_gates",
+++          "independent_approval_surface"
+++        ]
+++      },
+++      "gate": "each resulting PLAN packet validates through the declared validation authority and remains narrow enough for independent approval"
++     }
++   ],
++   "ordering_invariants": [
++@@ -155,6 +199,33 @@
++     "micro_deliverable_set_register",
++     "last_round_set_analysis"
++   ],
+++  "stage_dependency_dag": [
+++    {
+++      "from": "MP0",
+++      "to": "MP1",
+++      "artifact": "dependency_tool_workflow_spec"
+++    },
+++    {
+++      "from": "MP0",
+++      "to": "MP1",
+++      "artifact": "integration_repo_contract"
+++    },
+++    {
+++      "from": "MP1",
+++      "to": "MP2",
+++      "artifact": "canonical_objective_order"
+++    },
+++    {
+++      "from": "MP2",
+++      "to": "MP3",
+++      "artifact": "micro_deliverable_set_register"
+++    },
+++    {
+++      "from": "MP3",
+++      "to": "MP4",
+++      "artifact": "last_round_set_analysis"
+++    }
+++  ],
++   "success_condition": "The meta-plan is complete when the objective-analysis layer has been reduced into validated per-set PLAN packets with no authority-boundary collapse.",
++   "next_artifact_family": "per_set_plan_packets"
++ }
+diff -ruN original/workspace/analysis/meta_plan.json workspace/analysis/meta_plan.json
+--- original/workspace/analysis/meta_plan.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/analysis/meta_plan.json	2026-03-16 03:23:00.967361463 +0000
+@@ -0,0 +1,293 @@
++{
++  "kind": "policy_first_meta_plan.v1",
++  "objective": "Reduce the policy-first polyrepo integration problem into execution-ready per-set PLAN packets without collapsing authority boundaries.",
++  "summary": "This meta-plan governs the transition from the top-level D0:D5 objective register to narrow, composable PLAN packets for the initial two-repo integration surface. It is a meta-planning layer for the bounded integration canvas spanning ACM and polyrepo_workspace, not an implementation plan for downstream consumer repos. In trimmed archive form, it should be reviewed for internal rigor rather than for the presence of omitted repo surfaces or vendored authorities.",
++  "scope": "meta_planning_only",
++  "review_boundary": {
++    "trimmed_archive": true,
++    "missing_path_items_are_not_findings": true,
++    "review_focus": [
++      "internal_stage_rigor",
++      "gate_definition_quality",
++      "output_contract_clarity",
++      "authority_boundary_consistency"
++    ]
++  },
++  "authority_model": {
++    "policy_authority": "acm",
++    "workspace_contract_authority": "polyrepo_workspace",
++    "bounded_integration_canvas": "polyrepo_integration"
++  },
++  "identifier_contract": {
++    "objective_id_family": "D#",
++    "objective_id_authority": "authority://policy_first/objective_analysis_pipeline",
++    "meta_stage_id_family": "MP#",
++    "meta_stage_semantics": "Meta-plan stages orchestrate reduction of the D0:D5 objective set; they are not objective ids and do not replace them."
++  },
++  "artifact_contracts": {
++    "input_objective_register": {
++      "handle": "authority://policy_first/objective_register",
++      "availability": "external_not_vendored",
++      "description": "Authoritative pre-existing D0:D5 objective register referenced by the summary and upstream policy-first analysis."
++    },
++    "normalized_objective_register": {
++      "produced_by": "MP1",
++      "description": "Normalized objective register emitted after MP1 derives canonical ordering plus semantic and dependency analysis for the two-repo integration surface."
++    },
++    "micro_deliverable_set_register": {
++      "set_id_family": "DS#",
++      "required_fields": [
++        "set_id",
++        "parent_objective_ref",
++        "acceptance_surface",
++        "blocking_dependencies",
++        "authority_boundary",
++        "recomposition_constraints"
++      ],
++      "description": "Register of bounded composable sets reduced from the ordered objectives using the normalized register together with semantic and dependency analysis evidence."
++    },
++    "set_analysis_evidence": {
++      "produced_by": "MP3",
++      "required_fields": [
++        "set_id",
++        "semantic_findings",
++        "dependency_findings",
++        "ambiguity_score",
++        "hard_dependency_edge_count",
++        "split_decision",
++        "normalized_hash"
++      ],
++      "normalization_rule": "canonical_json_sorted_keys_utf8_no_whitespace",
++      "ambiguity_score_rule": "open_questions_count / max(total_required_decisions, 1)"
++    }
++  },
++  "source_artifacts": {
++    "problem_set": {
++      "handle": "authority://policy_first/problem_set",
++      "availability": "external_not_vendored"
++    },
++    "objective_analysis_pipeline": {
++      "handle": "authority://policy_first/objective_analysis_pipeline",
++      "availability": "external_not_vendored"
++    },
++    "integration_manifest": {
++      "handle": "repo://project.manifest.json",
++      "availability": "bundled"
++    },
++    "review_rationale_log": {
++      "handle": "repo://review/review_pipeline.json",
++      "availability": "bundled"
++    }
++  },
++  "stages": [
++    {
++      "stage_id": "MP0",
++      "objective_refs": [
++        "D0"
++      ],
++      "title": "Fix D0 authority boundary for the two-repo surface",
++      "purpose": "Freeze the ACM-to-polyrepo_workspace authority boundary, planning mode contract, and bounded integration-canvas scope before ordering any downstream objective.",
++      "inputs": [
++        "problem_set",
++        "objective_analysis_pipeline",
++        "integration_manifest"
++      ],
++      "outputs": [
++        "policy_workspace_authority_contract",
++        "planning_mode_contract",
++        "integration_repo_contract"
++      ],
++      "gate": "ACM policy authority, polyrepo_workspace contract authority, and planning mode semantics are explicit"
++    },
++    {
++      "stage_id": "MP1",
++      "objective_refs": [
++        "D0",
++        "D1",
++        "D2",
++        "D3",
++        "D4",
++        "D5"
++      ],
++      "title": "Derive canonical objective ordering",
++      "purpose": "Treat D0:D5 as objectives, then derive canonical ordering for D1:D5 through semantic analysis plus dependency and gap analysis under the ACM/polyrepo_workspace boundary contract.",
++      "inputs": [
++        "policy_workspace_authority_contract",
++        "planning_mode_contract",
++        "integration_repo_contract",
++        "problem_set",
++        "input_objective_register"
++      ],
++      "outputs": [
++        "normalized_objective_register",
++        "objective_semantic_analysis",
++        "objective_dependency_gap_analysis",
++        "canonical_objective_order"
++      ],
++      "gate": "objective ordering is analysis-derived rather than assumed"
++    },
++    {
++      "stage_id": "MP2",
++      "objective_refs": [
++        "D1",
++        "D2",
++        "D3",
++        "D4",
++        "D5"
++      ],
++      "title": "Reduce objectives into micro-deliverable sets",
++      "purpose": "Reduce each ordered objective into bounded, composable micro-deliverable sets using the normalized register together with semantic and dependency analysis so acceptance surfaces and authority boundaries remain explicit.",
++      "inputs": [
++        "normalized_objective_register",
++        "objective_semantic_analysis",
++        "objective_dependency_gap_analysis",
++        "canonical_objective_order",
++        "review_rationale_log"
++      ],
++      "outputs": [
++        "micro_deliverable_set_register"
++      ],
++      "gate": "every ordered objective has one or more bounded micro-deliverable sets"
++    },
++    {
++      "stage_id": "MP3",
++      "objective_refs": [
++        "D1",
++        "D2",
++        "D3",
++        "D4",
++        "D5"
++      ],
++      "title": "Run recursive set analysis",
++      "purpose": "Apply the same semantic, dependency, and gap analysis to each micro-deliverable set until the final analysis layer is stable enough for plan generation.",
++      "inputs": [
++        "micro_deliverable_set_register"
++      ],
++      "outputs": [
++        "set_semantic_analysis",
++        "set_dependency_gap_analysis",
++        "last_round_set_analysis"
++      ],
++      "termination_predicate": {
++        "max_recursion_depth": 3,
++        "requires": [
++          "no_unresolved_hard_dependency_edges",
++          "no_new_set_splits_on_latest_pass",
++          "ambiguity_score_at_or_below_threshold",
++          "analysis_artifact_hash_stable_across_two_passes"
++        ],
++        "ambiguity_score_threshold": 0.2,
++        "ambiguity_score_contract": {
++          "formula": "open_questions_count / max(total_required_decisions, 1)",
++          "range": [
++            0,
++            1
++          ],
++          "decision_basis": "latest normalized set analysis artifacts"
++        },
++        "analysis_artifact_hash_contract": {
++          "artifact_family": [
++            "set_semantic_analysis",
++            "set_dependency_gap_analysis",
++            "last_round_set_analysis"
++          ],
++          "normalization_rule": "canonical_json_sorted_keys_utf8_no_whitespace",
++          "stability_rule": "all artifact hashes identical across the two most recent passes for the same set_id set"
++        }
++      },
++      "gate": "recursive set analysis stops only when the declared ambiguity and normalized-hash stability contracts are satisfied"
++    },
++    {
++      "stage_id": "MP4",
++      "objective_refs": [
++        "D1",
++        "D2",
++        "D3",
++        "D4",
++        "D5"
++      ],
++      "title": "Generate per-set PLAN packets",
++      "purpose": "Use the last-round set-analysis artifacts as direct inputs to the PLAN skill and generate one validated PLAN packet per composable set.",
++      "inputs": [
++        "last_round_set_analysis"
++      ],
++      "outputs": [
++        "per_set_plan_packets"
++      ],
++      "validation_authority": {
++        "plan_packet_schema": "authority://plan/plan_packet.schema.json",
++        "plan_packet_validator": "authority://plan/validate_plan_packet",
++        "plan_skill_handle": "authority://plan/skill",
++        "plan_validation_version": "v1",
++        "narrowness_criteria": [
++          "single_composable_set_scope",
++          "explicit_inputs_outputs_and_gates",
++          "independent_approval_surface"
++        ]
++      },
++      "gate": "each resulting PLAN packet validates through the declared validation authority and remains narrow enough for independent approval"
++    }
++  ],
++  "ordering_invariants": [
++    "D0 is always first because objective ordering depends on the ACM-to-polyrepo_workspace authority boundary, planning mode contract, and bounded integration-canvas contract.",
++    "No downstream migration or promotion work can start before semantic ownership, reconciliation, and policy-evaluation closure are reduced into approved micro-deliverable sets.",
++    "PLAN packets are downstream artifacts emitted only after recursive analysis stabilizes."
++  ],
++  "blocked_until": [
++    "policy_workspace_authority_contract",
++    "planning_mode_contract",
++    "integration_repo_contract",
++    "canonical_objective_order",
++    "micro_deliverable_set_register",
++    "last_round_set_analysis"
++  ],
++  "stage_dependency_dag": [
++    {
++      "from": "MP0",
++      "to": "MP1",
++      "artifact": "policy_workspace_authority_contract"
++    },
++    {
++      "from": "MP0",
++      "to": "MP1",
++      "artifact": "planning_mode_contract"
++    },
++    {
++      "from": "MP0",
++      "to": "MP1",
++      "artifact": "integration_repo_contract"
++    },
++    {
++      "from": "MP1",
++      "to": "MP2",
++      "artifact": "normalized_objective_register"
++    },
++    {
++      "from": "MP1",
++      "to": "MP2",
++      "artifact": "objective_semantic_analysis"
++    },
++    {
++      "from": "MP1",
++      "to": "MP2",
++      "artifact": "objective_dependency_gap_analysis"
++    },
++    {
++      "from": "MP1",
++      "to": "MP2",
++      "artifact": "canonical_objective_order"
++    },
++    {
++      "from": "MP2",
++      "to": "MP3",
++      "artifact": "micro_deliverable_set_register"
++    },
++    {
++      "from": "MP3",
++      "to": "MP4",
++      "artifact": "last_round_set_analysis"
++    }
++  ],
++  "success_condition": "The meta-plan is complete when the objective-analysis layer has been reduced into validated per-set PLAN packets with no authority-boundary collapse.",
++  "next_artifact_family": "per_set_plan_packets"
++}
+diff -ruN original/workspace/analysis/review_baseline/readme.md workspace/analysis/review_baseline/readme.md
+--- original/workspace/analysis/review_baseline/readme.md	1970-01-01 00:00:00.000000000 +0000
++++ workspace/analysis/review_baseline/readme.md	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,30 @@
++Artifacts:
++
++* [Machine-readable ontology JSON](sandbox:/mnt/data/polyrepo_integration-main_artifacts/semantic_ontology.foundation.v1.json)
++* [Companion Markdown](sandbox:/mnt/data/polyrepo_integration-main_artifacts/semantic_ontology.foundation.v1.md)
++* [Archived bundle](sandbox:/mnt/data/polyrepo_integration-main_artifacts/semantic_ontology.foundation.v1.tar.gz)
++
++UI summary:
++The reduced semantic foundation is now explicit. It centers the plan on controllers, object families, anchor vocabulary, relationship predicates, and quality properties, and it shows the current meta-plan is procedurally strong but still semantically thin around ownership matrix, anchor/schema contract, policy-object hierarchy, reconciliation attachment, and the policy-evaluation DAG.
++
++
++Artifacts:
++
++* [Machine-readable type/tool draft](sandbox:/mnt/data/polyrepo_integration-main_artifacts/semantic_types_and_json_tools.v1.json)
++* [Companion Markdown](sandbox:/mnt/data/polyrepo_integration-main_artifacts/semantic_types_and_json_tools.v1.md)
++* [Archived bundle](sandbox:/mnt/data/polyrepo_integration-main_artifacts/semantic_types_and_json_tools.v1.tar.gz)
++
++UI summary:
++Normalized core types are now reduced to `schema`, `manifest`, and `anchor`, with policy layers, evaluation-node classes, edge semantics, and phases separated cleanly. The key semantic DSAs are anchor registry, allowed-relation matrix, policy stack vector, dependency/evaluation DAG, ownership claim table, lineage chain, and reconciliation record. The current JSON stack covers validation and derivation well; JSON-LD remains the clean missing primitive for canonical semantic anchoring.
++
++
++Artifacts:
++
++* [Machine-readable process capture](sandbox:/mnt/data/polyrepo_integration-main_artifacts/semantic_authoring_backend_process.v1.json)
++* [Companion Markdown](sandbox:/mnt/data/polyrepo_integration-main_artifacts/semantic_authoring_backend_process.v1.md)
++* [Archived bundle](sandbox:/mnt/data/polyrepo_integration-main_artifacts/semantic_authoring_backend_process.v1.tar.gz)
++
++Status:
++
++* Captured the semantic reduction pipeline that transformed loose prose into authored semantic content.
++* Main conclusion: the plan should explicitly define this pipeline as `source grounding → prose segmentation → candidate extraction → normalization → ontology projection → semantic DSA derivation → tool binding → quality gating → authored emission`.
+diff -ruN original/workspace/analysis/review_baseline/toolstack_review.md workspace/analysis/review_baseline/toolstack_review.md
+--- original/workspace/analysis/review_baseline/toolstack_review.md	1970-01-01 00:00:00.000000000 +0000
++++ workspace/analysis/review_baseline/toolstack_review.md	2026-03-16 03:23:00.970335840 +0000
+@@ -0,0 +1,172 @@
++Yes. The adequate tools exist **now**.
++
++The key is to use them as a **layered control stack**, not as a flat toolbox. Your clean problem statement already defines the right shape for the current surface: ACM owns meaning and schema authority, and `polyrepo_workspace` owns workspace semantics plus the integration contract. The ordering rule is **“First define who owns meaning, then define how workspace contracts are emitted and reviewed.”**   
++
++## Recommended stack
++
++### 1. Canonical contract + derivation
++
++Use **JSON Schema + CUE**.
++
++* **JSON Schema** for boundary contracts, published artifact schemas, and validator interoperability. Draft 2020-12 explicitly supports dynamic references and bundling into compound schema documents. ([JSON Schema][1])
++* **CUE** for internal composition, constraint unification, defaults, and emitting concrete validated JSON/YAML. `cue export` emits only concrete data, while `cue vet` validates without emission. ([CUE][2])
++
++This matches your policy-object model of **schema / manifest / anchor** and the need for structural admissibility before downstream evaluation. 
++
++### 2. Policy controller
++
++Use **OPA/Rego**.
++
++OPA is explicitly designed to **decouple policy decision-making from enforcement**, and Rego is built to evaluate structured JSON-like data declaratively. That fits ownership, delegation, reconciliation, and promotion-gate decisions well. ([Open Policy Agent][3])
++
++This is the right place to encode:
++
++* ownership rules,
++* delegation rules,
++* reconciliation outcomes,
++* admissible transitions,
++* promotion allow/deny decisions.  
++
++### 3. Semantic anchoring / provenance
++
++Use **JSON-LD**, but only for identity and relations.
++
++Your own clean model says anchors are the glue that keep manifests, schemas, policy objects, and generated assets machine-relatable across the workspace.  JSON-LD is the right fit when you need stable IDs, typed relations, lineage, and provenance across repos. The JSON-LD WG was rechartered on **January 6, 2026** to maintain and extend the JSON-LD family. ([W3C][4])
++
++Use JSON-LD for:
++
++* anchor IDs,
++* cross-repo object identity,
++* lineage/provenance edges,
++* typed controller relationships.
++
++Do **not** use it as the main validation engine.
++
++### 4. Graph evaluation and ordering
++
++Use **NetworkX**.
++
++Your clean model requires policy to reduce to a deterministic evaluation DAG with ordered evaluation, no circular authority, replay, and explainability.  NetworkX already gives you:
++
++* SCC detection,
++* condensation,
++* topological sort,
++* topological generations,
++* DAG checks. ([NetworkX][5])
++
++So NetworkX is adequate for:
++
++* cycle detection in controller dependencies,
++* evaluation ordering,
++* layered execution plans,
++* explainable ordering proofs.
++
++### 5. Cross-repo evidence extraction
++
++Use **SCIP + ast-grep**.
++
++Your raw D0 already identified the right evidence pair:
++
++* **SCIP** for symbol-level semantic linking across repos,
++* **ast-grep** for structural extraction and pattern evidence. 
++
++That is still correct.
++
++* SCIP is Sourcegraph’s code intelligence protocol for precise code navigation and cross-repository semantic indexing. ([GitHub][6])
++* ast-grep is a structural search/rewrite and lint tool built around AST patterns across many languages. ([ast-grep.github.io][7])
++
++Use them as **evidence collectors**, not as semantic authorities.
++
++### 6. Operational shaping and CI glue
++
++Use **jq**.
++
++jq is still the right knife for:
++
++* projections,
++* normalization,
++* CI assertions,
++* manifest slicing,
++* diffs,
++* large-file streaming transforms. ([jqlang.org][8])
++
++Keep jq out of the role of “core truth system.”
++
++---
++
++## Minimal authority map
++
++### ACM
++
++Owns:
++
++* ontology,
++* anchor semantics,
++* authoritative schemas,
++* delegation rules,
++* policy objects and hierarchy. 
++
++### polyrepo_workspace
++
++Owns:
++
++* workspace atomics,
++* repo registry,
++* lineage/relations,
++* workspace lifecycle and promotion semantics,
++* integration-contract materialization for the initial planning surface. 
++
++### Tooling layer
++
++SCIP, ast-grep, jq, NetworkX:
++
++* discover,
++* project,
++* order,
++* explain,
++* validate operationally.
++
++They should **not** redefine upstream meaning. That is exactly the risk in the raw D0 framing. 
++
++---
++
++## Best practical answer
++
++For this project, the adequate tool stack is:
++
++**JSON Schema + CUE + OPA/Rego + JSON-LD + NetworkX + SCIP + ast-grep + jq**
++
++with these role boundaries:
++
++* **JSON Schema**: boundary contracts
++* **CUE**: internal derivation and constraint unification
++* **OPA/Rego**: controller policy decisions
++* **JSON-LD**: semantic IDs and provenance
++* **NetworkX**: evaluation DAG / SCC / ordering
++* **SCIP**: semantic code edges
++* **ast-grep**: structural evidence extraction
++* **jq**: projections and CI glue
++
++## What to avoid
++
++Do not let:
++
++* SCIP,
++* ast-grep,
++* jq,
++* or the integration repo
++
++become the place where meaning is decided.
++
++Your clean file is right: **meaning first, emission second**. 
++
++Some earlier uploads in the thread have expired. Re-upload them if you want them included in the next pass.
++
++[1]: https://json-schema.org/draft/2020-12?utm_source=chatgpt.com "JSON Schema"
++[2]: https://cuelang.org/docs/concept/using-the-cue-export-command/?utm_source=chatgpt.com "Using the cue export command | CUE"
++[3]: https://www.openpolicyagent.org/docs?utm_source=chatgpt.com "Open Policy Agent (OPA) | Open Policy Agent"
++[4]: https://www.w3.org/2026/01/json-ld-wg-charter.html?utm_source=chatgpt.com "JSON-LD Working Group Charter"
++[5]: https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.components.strongly_connected_components.html?utm_source=chatgpt.com "strongly_connected_components — NetworkX 3.6.1 documentation"
++[6]: https://github.com/sourcegraph/scip?utm_source=chatgpt.com "GitHub - sourcegraph/scip: SCIP Code Intelligence Protocol"
++[7]: https://ast-grep.github.io/?utm_source=chatgpt.com "ast-grep | structural search/rewrite tool for many languages"
++[8]: https://jqlang.org/manual/dev/?utm_source=chatgpt.com "jq Manual (development version)"
+diff -ruN original/workspace/modules/README.md workspace/modules/README.md
+--- original/workspace/modules/README.md	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/README.md	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,3 @@
++# Modules
++
++Pinned imported repo state and future submodule mounts land here.
+diff -ruN original/workspace/modules/asset-control-model/proposal_register.v1.json workspace/modules/asset-control-model/proposal_register.v1.json
+--- original/workspace/modules/asset-control-model/proposal_register.v1.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/asset-control-model/proposal_register.v1.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,367 @@
++{
++  "kind": "asset_control_model.proposal_register.v1",
++  "generated_at_utc": "2026-03-10T16:47:36Z",
++  "subject": "proposal_register/asset-control-model",
++  "source": "proposal_register/asset-control-model/spec_draft.v1.json",
++  "gate_policy": {
++    "rule": "FAIL if any required field missing/empty OR status != defined OR underspecified not empty",
++    "required_fields": [
++      "id",
++      "title",
++      "plane",
++      "owner",
++      "owning_process",
++      "execution",
++      "inputs",
++      "outputs",
++      "contracts",
++      "evidence_artifacts",
++      "failure_policy",
++      "should_be_skill",
++      "status"
++    ]
++  },
++  "proposals": [
++    {
++      "id": "ACM-001",
++      "title": "Per-Asset Authority Chain Model",
++      "plane": [
++        "contract"
++      ],
++      "owner": "spawn+tooling-policy",
++      "owning_process": "proposal-gated control inventory",
++      "execution": {
++        "mode": "proposal+gate",
++        "transport": "pull",
++        "trigger": [
++          "new control-oriented asset model requested"
++        ],
++        "entrypoint": "define a singular authority chain per controlled asset using the frozen asset_control_entry minimum field set, including authority, promotion, runtime source/projection, assurance, and rollback metadata"
++      },
++      "inputs": [
++        "session-context proposal family",
++        "session-context-runtime proposal family",
++        "runtime-trace-model proposal family",
++        "tooling-policy"
++      ],
++      "outputs": [
++        "asset-control-model proposal packet",
++        "gate result"
++      ],
++      "contracts": [
++        "proposal_register/asset-control-model/spec_draft.v1.json"
++      ],
++      "evidence_artifacts": [
++        "proposal_register/session-context/proposal_register.v1.json",
++        "proposal_register/session-context-runtime/proposal_register.v1.json"
++      ],
++      "failure_policy": "FAIL until the minimum asset_control_entry field set is frozen and treated as mandatory for controlled assets",
++      "should_be_skill": {
++        "value": false
++      },
++      "status": "defined",
++      "underspecified": [],
++      "completeness": {
++        "required_fields": [
++          "id",
++          "title",
++          "plane",
++          "owner",
++          "owning_process",
++          "execution",
++          "inputs",
++          "outputs",
++          "contracts",
++          "evidence_artifacts",
++          "failure_policy",
++          "should_be_skill",
++          "status"
++        ],
++        "missing_fields": [],
++        "empty_fields": [],
++        "is_complete": true
++      },
++      "gate": "PASS",
++      "concerns": [
++        "promotion",
++        "governance"
++      ]
++    },
++    {
++      "id": "ACM-002",
++      "title": "Policy Contract Runtime Plane Separation",
++      "plane": [
++        "policy",
++        "contract",
++        "runtime"
++      ],
++      "owner": "spawn+tooling-policy",
++      "owning_process": "proposal-gated control bundle design",
++      "execution": {
++        "mode": "proposal+gate",
++        "transport": "pull",
++        "trigger": [
++          "control planes need formal separation"
++        ],
++        "entrypoint": "define policy, contract, and runtime as the only primary planes and move secondary labels into concerns so generated prompt projections remain runtime artifacts, not authority surfaces"
++      },
++      "inputs": [
++        "artifact-contract-pattern proposal family",
++        "session-context-runtime proposal family",
++        "tooling-policy"
++      ],
++      "outputs": [
++        "three-plane control bundle model",
++        "gate result"
++      ],
++      "contracts": [
++        "proposal_register/asset-control-model/spec_draft.v1.json"
++      ],
++      "evidence_artifacts": [
++        "proposal_register/artifact-contract-pattern/proposal_register.v1.json",
++        "proposal_register/session-context-runtime/proposal_register.v1.json"
++      ],
++      "failure_policy": "FAIL until primary plane vocabulary is frozen and secondary labels are separated from plane assignment",
++      "should_be_skill": {
++        "value": false
++      },
++      "status": "defined",
++      "underspecified": [],
++      "completeness": {
++        "required_fields": [
++          "id",
++          "title",
++          "plane",
++          "owner",
++          "owning_process",
++          "execution",
++          "inputs",
++          "outputs",
++          "contracts",
++          "evidence_artifacts",
++          "failure_policy",
++          "should_be_skill",
++          "status"
++        ],
++        "missing_fields": [],
++        "empty_fields": [],
++        "is_complete": true
++      },
++      "gate": "PASS",
++      "concerns": [
++        "governance",
++        "projection"
++      ]
++    },
++    {
++      "id": "ACM-003",
++      "title": "Control Bundle Operationalization via .control",
++      "plane": [
++        "contract",
++        "runtime"
++      ],
++      "owner": "spawn+json-tool",
++      "owning_process": "proposal-gated control bundle",
++      "execution": {
++        "mode": "proposal+gate",
++        "transport": "pull",
++        "trigger": [
++          "git-root control bundle requested"
++        ],
++        "entrypoint": "define the .control v1 bundle inventory explicitly, including authored control objects, generated reports, and self-governance rules for the bundle itself"
++      },
++      "inputs": [
++        "asset-control-model proposal family",
++        "artifact-contract-pattern proposal family",
++        "json-tool proposal family"
++      ],
++      "outputs": [
++        "control bundle artifact family definition",
++        "gate result"
++      ],
++      "contracts": [
++        "proposal_register/asset-control-model/spec_draft.v1.json"
++      ],
++      "evidence_artifacts": [
++        "proposal_register/artifact-contract-pattern/proposal_register.v1.json",
++        "proposal_register/json-tool/proposal_register.v1.json"
++      ],
++      "failure_policy": "FAIL until the .control v1 authored/generated inventory and self-governance rules are explicit",
++      "should_be_skill": {
++        "value": false
++      },
++      "status": "defined",
++      "underspecified": [],
++      "completeness": {
++        "required_fields": [
++          "id",
++          "title",
++          "plane",
++          "owner",
++          "owning_process",
++          "execution",
++          "inputs",
++          "outputs",
++          "contracts",
++          "evidence_artifacts",
++          "failure_policy",
++          "should_be_skill",
++          "status"
++        ],
++        "missing_fields": [],
++        "empty_fields": [],
++        "is_complete": true
++      },
++      "gate": "PASS",
++      "concerns": [
++        "artifact",
++        "governance"
++      ]
++    },
++    {
++      "id": "ACM-004",
++      "title": "CUE Assertion Layer and Wrapped Validator Contract",
++      "plane": [
++        "contract",
++        "runtime"
++      ],
++      "owner": "json-tool+spawn",
++      "owning_process": "proposal-gated control validator",
++      "execution": {
++        "mode": "proposal+gate",
++        "transport": "pull",
++        "trigger": [
++          "cross-object control assertions requested"
++        ],
++        "entrypoint": "define spawnctl as the wrapped validator owner, pin severity classes and exit-code mapping, and require generation of control.report.v1.json after JSON Schema and CUE validation"
++      },
++      "inputs": [
++        "control bundle authored objects",
++        "cue assertion policy",
++        "severity policy"
++      ],
++      "outputs": [
++        "control validator contract",
++        "control report contract",
++        "gate result"
++      ],
++      "contracts": [
++        "proposal_register/asset-control-model/spec_draft.v1.json"
++      ],
++      "evidence_artifacts": [
++        "proposal_register/artifact-contract-pattern/proposal_register.v1.json",
++        "/home/_404/src/dotfiles/config/codex/skills/json-tool/SKILL.md"
++      ],
++      "failure_policy": "FAIL until wrapped validator ownership, severity classes, exit-code mapping, and report emission contract are pinned",
++      "should_be_skill": {
++        "value": false
++      },
++      "status": "defined",
++      "underspecified": [],
++      "completeness": {
++        "required_fields": [
++          "id",
++          "title",
++          "plane",
++          "owner",
++          "owning_process",
++          "execution",
++          "inputs",
++          "outputs",
++          "contracts",
++          "evidence_artifacts",
++          "failure_policy",
++          "should_be_skill",
++          "status"
++        ],
++        "missing_fields": [],
++        "empty_fields": [],
++        "is_complete": true
++      },
++      "gate": "PASS",
++      "concerns": [
++        "validation",
++        "interop"
++      ]
++    },
++    {
++      "id": "ACM-005",
++      "title": "Initial Scoped Asset Set for Control Assessment",
++      "plane": [
++        "runtime",
++        "contract",
++        "policy"
++      ],
++      "owner": "spawn+tooling-policy",
++      "owning_process": "proposal-gated control inventory rollout",
++      "execution": {
++        "mode": "proposal+gate",
++        "transport": "pull",
++        "trigger": [
++          "initial control assessment requested"
++        ],
++        "entrypoint": "bind the first control-assessed assets: session_context, prompt seeds and composed prompt, service-assurance triggers, git policy surface, and skill registry lifecycle, with session_context as the first fully populated exemplar"
++      },
++      "inputs": [
++        "asset-control-model proposal family",
++        "session-context proposal family",
++        "session-context-runtime proposal family",
++        "tooling-policy"
++      ],
++      "outputs": [
++        "initial asset set statement with a populated session_context control entry",
++        "gate result"
++      ],
++      "contracts": [
++        "proposal_register/asset-control-model/spec_draft.v1.json"
++      ],
++      "evidence_artifacts": [
++        "proposal_register/session-context/proposal_register.v1.json",
++        "proposal_register/session-context-runtime/proposal_register.v1.json",
++        "worker_packets/contracts/session_context_runtime/session_context_runtime.sync_surface.v1.json",
++        "dotfiles/units/user/spawnd-codex-session-refresh.path",
++        "dotfiles/units/user/spawnd-codex-session-refresh.service",
++        "/home/_404/src/dotfiles/config/codex/skills/tooling-policy/SKILL.md"
++      ],
++      "failure_policy": "FAIL until the initial scoped assets are explicit and session_context is fully populated as the first exemplar with severity and assurance action classification",
++      "should_be_skill": {
++        "value": false
++      },
++      "status": "defined",
++      "underspecified": [],
++      "completeness": {
++        "required_fields": [
++          "id",
++          "title",
++          "plane",
++          "owner",
++          "owning_process",
++          "execution",
++          "inputs",
++          "outputs",
++          "contracts",
++          "evidence_artifacts",
++          "failure_policy",
++          "should_be_skill",
++          "status"
++        ],
++        "missing_fields": [],
++        "empty_fields": [],
++        "is_complete": true
++      },
++      "gate": "PASS",
++      "concerns": [
++        "artifact",
++        "inventory",
++        "assurance"
++      ]
++    }
++  ],
++  "summary": {
++    "total": 5,
++    "defined": 5,
++    "partial": 0,
++    "PASS": 5,
++    "FAIL": 0
++  }
++}
+diff -ruN original/workspace/modules/asset-control-model/spec_draft.v1.json workspace/modules/asset-control-model/spec_draft.v1.json
+--- original/workspace/modules/asset-control-model/spec_draft.v1.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/asset-control-model/spec_draft.v1.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,283 @@
++{
++  "kind": "asset_control_model.spec_draft.v1",
++  "generated_at_utc": "2026-03-10T16:47:36Z",
++  "draft_id": "ACM-DRAFT-001",
++  "source_refs": [
++    "proposal_register/session-context/spec_draft.v1.json",
++    "proposal_register/session-context/proposal_register.v1.json",
++    "proposal_register/session-context-runtime/spec_draft.v1.json",
++    "proposal_register/session-context-runtime/proposal_register.v1.json",
++    "proposal_register/runtime-trace-model/spec_draft.v1.json",
++    "proposal_register/artifact-contract-pattern/spec_draft.v1.json",
++    "worker_packets/contracts/session_context_runtime/session_context_runtime.sync_surface.v1.json",
++    "dotfiles/units/user/spawnd-codex-session-refresh.path",
++    "dotfiles/units/user/spawnd-codex-session-refresh.service",
++    "spawn/README.md",
++    "/home/_404/src/dotfiles/config/codex/skills/tooling-policy/SKILL.md"
++  ],
++  "objective": "Define a control-oriented asset model that formalizes singular authority, promotion, runtime projection, and assurance for critical repo and runtime surfaces, then operationalize that model through a structured $git_root/.control bundle with authored JSON control objects, CUE assertions, and generated validation reports.",
++  "scope": {
++    "in": [
++      "per-asset authority chain from proposal gate to rollback shape",
++      "hard separation of policy, contract, and runtime planes",
++      "runtime source versus runtime projection modeling",
++      "assurance trigger, severity, and action classification",
++      "the .control bundle as the operationalized control surface for a git root",
++      "self-governance rules for the control bundle itself",
++      "initial scoped assets: session_context, prompt seeds and composed prompt, service-assurance triggers, git policy surface, and skill registry lifecycle"
++    ],
++    "out": [
++      "runtime implementation of spawn assurance or prompt composition",
++      "replacing JSON Schema as canonical leaf contract authority",
++      "granting workflow skills ownership of global policy surfaces",
++      "broad mutation from .path triggers without prior policy and contract definition",
++      "full host rollout beyond the initial scoped assets"
++    ]
++  },
++  "entities": [
++    {
++      "name": "asset_control_entry",
++      "role": "one controlled asset with singular authority, promotion, runtime, and assurance metadata"
++    },
++    {
++      "name": "control_bundle",
++      "role": "the .control directory containing authored control objects, assertions, and generated reports"
++    },
++    {
++      "name": "control_policy",
++      "role": "policy-plane object defining norms, allowed operations, and enforcement classes"
++    },
++    {
++      "name": "control_contracts",
++      "role": "contract-plane object defining controlled assets, promotion semantics, and schema references"
++    },
++    {
++      "name": "control_runtime",
++      "role": "runtime-plane object defining projections, triggers, assurance checks, and rollback behavior"
++    },
++    {
++      "name": "control_assertions",
++      "role": "CUE assertion layer that validates cross-object consistency without becoming the primary source of truth"
++    },
++    {
++      "name": "control_report",
++      "role": "generated validation and drift report emitted by the wrapped validator"
++    }
++  ],
++  "events": [
++    "control.bundle.validated",
++    "control.bundle.rejected",
++    "control.assurance.triggered",
++    "control.assurance.reported",
++    "control.drift.detected",
++    "control.rollback.requested"
++  ],
++  "constraints": [
++    "each controlled asset must have one singular authority owner and one explicit authority chain",
++    "policy, contract, and runtime are the only primary planes in v1; secondary labels must be expressed as concerns",
++    "runtime projection must be distinguished from runtime source for every controlled asset",
++    "authored control objects and generated control reports must be explicitly separated",
++    "promotion semantics must be represented in addition to promotion paths",
++    "the .control bundle must govern itself and must not become a self-exempt escape hatch",
++    "JSON Schema remains canonical for control object validity, while CUE assertions validate cross-object admissibility and consistency",
++    "spawnctl owns wrapped validation in v1; validation must occur before assurance actions",
++    "service assurance triggers must default to report/reconcile semantics and must not perform broad mutation unless pre-approved and deterministic",
++    "initial scoped assets must be listed explicitly, and session_context must be fully populated as the first control exemplar before later assets graduate into fully populated control entries",
++    "any root-level ACM extension must explicitly separate live-fact mutation from promotion-gated fidelity review before defining current and delta artifact families",
++    "any root-level ACM extension must freeze root-authority precedence and controller conflict resolution before drafting root-scoped schemas",
++    "any root-level ACM extension that defines current or delta artifact families must also define recomputation, tombstone, idempotence, ordering, and partial-failure behavior"
++  ],
++  "acceptance_criteria": [
++    "the proposal defines the only primary planes and separates secondary concerns from plane assignment",
++    "the proposal freezes the minimum asset_control_entry field set required for operational control",
++    "the proposal defines the .control authored/generated bundle inventory explicitly",
++    "the proposal pins validator ownership, severity classes, exit-code behavior, and report emission contract",
++    "the proposal names session_context as the first exemplar asset and fully populates its control entry without broadening into runtime implementation"
++  ],
++  "open_questions": [
++    "whether runtime should consume a promoted projection instead of the live worktree for all high-drift assets in v1",
++    "which of the remaining initially scoped assets should receive the second fully populated control entry after session_context"
++  ],
++  "plane_model": {
++    "primary_planes": [
++      "policy",
++      "contract",
++      "runtime"
++    ],
++    "concern_tags": [
++      "validation",
++      "interop",
++      "artifact",
++      "promotion",
++      "assurance",
++      "inventory",
++      "projection",
++      "governance"
++    ],
++    "rule": "Use only primary_planes for top-level plane assignment. Put secondary labels in concerns."
++  },
++  "asset_control_entry_minimum_fields": [
++    "asset_id",
++    "asset_class",
++    "authority_owner",
++    "writer",
++    "promotion_gate",
++    "promotion_path",
++    "promotion_actor",
++    "promotion_method",
++    "promotion_preconditions",
++    "runtime_consumer",
++    "runtime_source",
++    "runtime_projection",
++    "source_kind",
++    "projection_kind",
++    "projection_mutability",
++    "assurance_trigger",
++    "assurance_checks",
++    "failure_severity",
++    "assurance_action",
++    "rollback_shape"
++  ],
++  "promotion_semantics_fields": [
++    "promotion_gate",
++    "promotion_path",
++    "promotion_actor",
++    "promotion_method",
++    "promotion_preconditions"
++  ],
++  "control_bundle_v1": {
++    "bundle_root": "$git_root/.control",
++    "kind": "structured_control_bundle",
++    "authored": [
++      "control.meta.v1.json",
++      "control.index.v1.json",
++      "control.policy.v1.json",
++      "control.contracts.v1.json",
++      "control.runtime.v1.json",
++      "control.assertions.v1.cue"
++    ],
++    "generated": [
++      "control.report.v1.json"
++    ],
++    "rule": "The .control bundle is structured and versioned; generated reports are evidence only and not authority surfaces."
++  },
++  "validator_contract": {
++    "wrapper_owner": "spawnctl",
++    "non_owner_dependencies": [
++      "json-tool",
++      "cue"
++    ],
++    "severity_classes": [
++      "info",
++      "warn",
++      "block",
++      "critical"
++    ],
++    "exit_code_map": {
++      "info": 0,
++      "warn": 0,
++      "block": 2,
++      "critical": 3
++    },
++    "execution_order": [
++      "validate_authored_json_against_json_schema",
++      "evaluate_cue_assertions",
++      "emit_normalized_findings",
++      "write_control.report.v1.json",
++      "exit_by_highest_severity"
++    ],
++    "report_emission": {
++      "artifact": "control.report.v1.json",
++      "kind": "generated_evidence",
++      "required": true
++    }
++  },
++  "first_exemplar_asset": {
++    "asset_id": "session_context",
++    "why": "session_context is the first fully proposal-gated control exemplar and should be used to prove the asset-control model before broader rollout.",
++    "population_status": "fully_populated"
++  },
++  "initial_scoped_assets": {
++    "population_rule": "Each initial scoped asset must be explicitly listed. session_context is fully populated in v1 as the first control exemplar; the remaining scoped assets are declared now and require follow-on packets before they may graduate to fully populated control entries.",
++    "assets": [
++      {
++        "asset_id": "session_context",
++        "population_status": "fully_populated",
++        "control_entry": {
++          "asset_id": "session_context",
++          "asset_class": "spawn-owned operational context artifact family",
++          "authority_owner": "spawn",
++          "writer": "spawn session-context reconciler",
++          "promotion_gate": "proposal_register",
++          "promotion_path": [
++            "proposal_register/session-context/proposal_register.v1.json",
++            "proposal_register/session-context-runtime/proposal_register.v1.json",
++            "worker_packets/contracts/session_context/session_context_schema_deliverables.v1.json",
++            "worker_packets/contracts/session_context_runtime/session_context_runtime_contract_deliverables.v1.json"
++          ],
++          "promotion_actor": "spawn+json-tool",
++          "promotion_method": "proposal-gated packet acceptance followed by review-clean contract publication",
++          "promotion_preconditions": [
++            "proposal_register/session-context/proposal_register.v1.json remains PASS",
++            "proposal_register/session-context-runtime/proposal_register.v1.json remains PASS",
++            "worker_packets session_context schema and semantic regression fixtures remain green",
++            "runtime reconciliation continues to treat live thread authority as non-mutable in place"
++          ],
++          "runtime_consumer": "spawn session-context reconciler, fresh-session bootstrap, and downstream artifact consumers such as daily-reports",
++          "runtime_source": "spawn-owned authoritative operational session context, with ~/.config/codex/sessions and ~/.local/state/codex/meta/effective_prompt.txt treated as candidate inputs to reconciliation",
++          "runtime_projection": "CODEX_STATE/session_context/{current/session_context.v1.json,latest.json,diffs/,sync_events/,loader_reports/}",
++          "source_kind": "authoritative_runtime_state_with_candidate_file_inputs",
++          "projection_kind": "filesystem_projection_artifact_family",
++          "projection_mutability": "spawn-authoritative projection; current state is atomically replaced, evidence directories are append-only, and on-disk edits remain candidate inputs only",
++          "assurance_trigger": [
++            "manual: spawnctl codex-session refresh --wait",
++            "path: dotfiles/units/user/spawnd-codex-session-refresh.path",
++            "timer: proposal-pinned scheduled reconciliation trigger for the next spawn implementation slice"
++          ],
++          "assurance_checks": [
++            "validate the session_context contract family and runtime semantic rules before accepting projected state",
++            "emit session_context.sync_event.v1 for every reconcile request",
++            "emit fresh_session_loader_report.v1 for every fresh-session load, including no-op and failure cases",
++            "preserve the authority boundary that forbids in-place mutation of live thread authority"
++          ],
++          "failure_severity": "block",
++          "assurance_action": "report_and_reconcile",
++          "rollback_shape": "restore the last accepted CODEX_STATE/session_context/current/session_context.v1.json and latest.json pointer while preserving append-only sync_event and loader_report evidence",
++          "evidence_refs": [
++            "proposal_register/session-context/spec_draft.v1.json",
++            "proposal_register/session-context-runtime/spec_draft.v1.json",
++            "worker_packets/contracts/session_context_runtime/session_context_runtime.sync_surface.v1.json",
++            "worker_packets/contracts/session_context_runtime/session_context_runtime.emit_policy.v1.json",
++            "dotfiles/units/user/spawnd-codex-session-refresh.path",
++            "dotfiles/units/user/spawnd-codex-session-refresh.service",
++            "spawn/README.md"
++          ],
++          "notes": [
++            "the current operational refresh baseline already exists through spawnctl codex-session refresh and the spawnd session refresh units",
++            "this exemplar formalizes that baseline for control assessment and does not introduce a parallel refresh mechanism"
++          ]
++        }
++      },
++      {
++        "asset_id": "prompt_seeds_and_composed_prompt",
++        "population_status": "declared_initial_scope",
++        "why": "Prompt seeds and the composed prompt are already operationally tied to session refresh and should be assessed immediately after the session_context exemplar is accepted."
++      },
++      {
++        "asset_id": "service_assurance_triggers",
++        "population_status": "declared_initial_scope",
++        "why": "Service assurance triggers govern when report/reconcile behavior fires and must be modeled explicitly before broader automatic mutation is allowed."
++      },
++      {
++        "asset_id": "git_policy_surface",
++        "population_status": "declared_initial_scope",
++        "why": "Git policy defines promotion and rollback boundaries for controlled assets and is part of the first operational control perimeter."
++      },
++      {
++        "asset_id": "skill_registry_lifecycle",
++        "population_status": "declared_initial_scope",
++        "why": "Skill registry lifecycle affects tool and skill availability and should be controlled after session_context proves the model."
++      }
++    ]
++  }
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/draft.md workspace/modules/polyrepo_workspace/draft.md
+--- original/workspace/modules/polyrepo_workspace/draft.md	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/draft.md	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,100 @@
++# Polyrepo Workspace Tool Selection v1
++
++This note records the final tool recommendation after the control-spec correction in [polyrepo_workspace_v0.md](/home/_404/src/polyrepo_workspace/polyrepo_workspace_v0.md) and the delivery sequencing in [polyrepo_workspace_delivery_v0.md](/home/_404/src/polyrepo_workspace/polyrepo_workspace_delivery_v0.md).
++
++## Final Stack
++
++| Role | Tool | Decision | Why |
++| --- | --- | --- | --- |
++| Local multi-repo authority + execution | `gitopolis` | Primary | It matches the spec's authority model and fan-out execution needs. If unavailable, the controller degrades to read-only local inspection. |
++| Per-repo history UX | `git-branchless` | Add | Good fit for smartlog, restack, sync, and per-repo commit-stack hygiene. |
++| Tracking / projection plane | GitHub Projects | Keep | Strong operator-facing dashboard and projection surface, but not the authority plane. |
++| Git workflow policy support | `git-workflow-manager` | Keep, but narrow | Useful for branch/review/release policy support, not for workspace authority or lineage. |
++
++## Architectural Correction
++
++Cross-repo commit graphs are not the main identity mechanism.
++
++The controller uses:
++- durable identity = `change_id` + `item_id`
++- commit SHAs = observations
++- rebase/restack/force-push = new observations
++- SHA-to-SHA edges = overlay evidence, not durable lineage
++
++So:
++- yes, maintain a cross-repo commit observation graph
++- no, do not make it the authority plane
++
++## Ownership Boundaries
++
++### `gitopolis`
++
++Owns:
++- repo registry bootstrap
++- local repo inventory
++- local fan-out read/write execution
++- repo grouping and tagging
++- operator command surface
++
++### `git-branchless`
++
++Owns:
++- per-repo smartlog
++- restack / rebase repair
++- local patch-stack ergonomics
++- single-repo commit graph visualization
++
++### GitHub Projects
++
++Owns:
++- project items
++- custom projection fields such as `change_id`
++- assignee/state/dashboard views
++- dependency and cross-repo tracking visibility
++
++### `git-workflow-manager`
++
++Owns:
++- branching conventions
++- commit hygiene
++- PR flow
++- release-policy support
++
++Does not own:
++- workspace registry
++- cross-repo lineage
++- journaling
++- manifest authority
++
++## What Is Actually Missing
++
++The main gap is not another Git tool.
++
++The main missing layer is the local artifact/controller surface:
++- `workspace.manifest.json`
++- `repo_registry.json`
++- `repo_relations.json`
++- `change_lineage.json`
++- `commit_observations.json`
++- `run_journal.json`
++
++Those artifacts are the authority substrate. The tools operate beneath or beside them.
++
++## Fastest Credible Sequence
++
++The fastest credible path remains:
++
++1. `D0` freeze the control contract
++2. `D1` define schema-backed artifacts
++3. `D2` ship the read-only controller
++4. `D3` add GitHub projection
++5. `D4` add one narrow write workflow
++
++That gets a real operator-facing system into production before deeper policy modeling.
++
++## Immediate Next Move
++
++Turn `D1` into a concrete schema pack plus a minimal controller skeleton for:
++- `workspace inspect`
++- `workspace preflight`
++- `workspace journal show`
+diff -ruN original/workspace/modules/polyrepo_workspace/instances/seed/change_lineage.json workspace/modules/polyrepo_workspace/instances/seed/change_lineage.json
+--- original/workspace/modules/polyrepo_workspace/instances/seed/change_lineage.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/instances/seed/change_lineage.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,23 @@
++{
++  "artifact_family": "change_lineage",
++  "schema_version": "v1",
++  "instance_authority": "local_manifest",
++  "workspace_id": "ws-main",
++  "registry_id": "change-lineage.main",
++  "changes": [
++    {
++      "change_id": "WC-20260314-001",
++      "item_id": "org/platform#123",
++      "title": "Add cross-repo auth envelope",
++      "tracking_ids": [
++        "GH-PROJ-12:ITEM-44"
++      ],
++      "repo_ids": [
++        "api",
++        "web"
++      ],
++      "status": "active",
++      "current_run_id": "RUN-20260314-002"
++    }
++  ]
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/instances/seed/commit_observations.json workspace/modules/polyrepo_workspace/instances/seed/commit_observations.json
+--- original/workspace/modules/polyrepo_workspace/instances/seed/commit_observations.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/instances/seed/commit_observations.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,42 @@
++{
++  "artifact_family": "commit_observations",
++  "schema_version": "v1",
++  "instance_authority": "local_manifest",
++  "workspace_id": "ws-main",
++  "registry_id": "commit-observations.main",
++  "observations": [
++    {
++      "observation_id": "OBS-20260314-001",
++      "change_id": "WC-20260314-001",
++      "repo_id": "api",
++      "commit_oid": "abc1234",
++      "patch_id": "p_api_001",
++      "branch": "feat/WC-20260314-001",
++      "base_ref": "origin/main",
++      "observed_at": "2026-03-14T15:00:00Z",
++      "status": "superseded"
++    },
++    {
++      "observation_id": "OBS-20260314-002",
++      "change_id": "WC-20260314-001",
++      "repo_id": "api",
++      "commit_oid": "def5678",
++      "patch_id": "p_api_002",
++      "branch": "feat/WC-20260314-001",
++      "base_ref": "origin/main",
++      "observed_at": "2026-03-14T15:12:00Z",
++      "status": "current"
++    },
++    {
++      "observation_id": "OBS-20260314-003",
++      "change_id": "WC-20260314-001",
++      "repo_id": "web",
++      "commit_oid": "fedcba9",
++      "patch_id": "p_web_001",
++      "branch": "feat/WC-20260314-001",
++      "base_ref": "origin/main",
++      "observed_at": "2026-03-14T15:15:00Z",
++      "status": "current"
++    }
++  ]
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/instances/seed/repo_registry.json workspace/modules/polyrepo_workspace/instances/seed/repo_registry.json
+--- original/workspace/modules/polyrepo_workspace/instances/seed/repo_registry.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/instances/seed/repo_registry.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,52 @@
++{
++  "artifact_family": "repo_registry",
++  "schema_version": "v1",
++  "instance_authority": "local_manifest",
++  "workspace_id": "ws-main",
++  "registry_id": "repo-registry.main",
++  "repos": [
++    {
++      "repo_id": "api",
++      "name": "api",
++      "path": "~/ws/api",
++      "remote": "git@github.com:org/api.git",
++      "default_branch": "main",
++      "engine": "gitopolis",
++      "active": true,
++      "tracked_branch": "feat/WC-20260314-001",
++      "base_ref": "origin/main",
++      "tags": [
++        "backend",
++        "core"
++      ]
++    },
++    {
++      "repo_id": "web",
++      "name": "web",
++      "path": "~/ws/web",
++      "remote": "git@github.com:org/web.git",
++      "default_branch": "main",
++      "engine": "gitopolis",
++      "active": true,
++      "tracked_branch": "feat/WC-20260314-001",
++      "base_ref": "origin/main",
++      "tags": [
++        "frontend"
++      ]
++    },
++    {
++      "repo_id": "docs",
++      "name": "docs",
++      "path": "~/ws/docs",
++      "remote": "git@github.com:org/docs.git",
++      "default_branch": "main",
++      "engine": "gitopolis",
++      "active": true,
++      "tracked_branch": "docs/WC-20260314-001",
++      "base_ref": "origin/main",
++      "tags": [
++        "docs"
++      ]
++    }
++  ]
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/instances/seed/repo_relations.json workspace/modules/polyrepo_workspace/instances/seed/repo_relations.json
+--- original/workspace/modules/polyrepo_workspace/instances/seed/repo_relations.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/instances/seed/repo_relations.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,21 @@
++{
++  "artifact_family": "repo_relations",
++  "schema_version": "v1",
++  "instance_authority": "local_manifest",
++  "workspace_id": "ws-main",
++  "registry_id": "repo-relations.main",
++  "relations": [
++    {
++      "relation_id": "REL-001",
++      "type": "depends_on",
++      "from_repo_id": "web",
++      "to_repo_id": "api"
++    },
++    {
++      "relation_id": "REL-002",
++      "type": "mirrors",
++      "from_repo_id": "docs",
++      "to_repo_id": "api"
++    }
++  ]
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/instances/seed/run_journal.json workspace/modules/polyrepo_workspace/instances/seed/run_journal.json
+--- original/workspace/modules/polyrepo_workspace/instances/seed/run_journal.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/instances/seed/run_journal.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,90 @@
++{
++  "artifact_family": "run_journal",
++  "schema_version": "v1",
++  "instance_authority": "local_manifest",
++  "workspace_id": "ws-main",
++  "registry_id": "run-journal.main",
++  "runs": [
++    {
++      "run_id": "RUN-20260314-001",
++      "operation_class": "READ",
++      "operation_name": "workspace.inspect",
++      "status": "succeeded",
++      "requested_change_ids": [
++        "WC-20260314-001"
++      ],
++      "targeted_repo_ids": [
++        "api",
++        "web",
++        "docs"
++      ],
++      "preflight": [
++        {
++          "repo_id": "api",
++          "state": "CLEAN"
++        },
++        {
++          "repo_id": "web",
++          "state": "CLEAN"
++        },
++        {
++          "repo_id": "docs",
++          "state": "CLEAN"
++        }
++      ],
++      "completed_repo_ids": [
++        "api",
++        "web",
++        "docs"
++      ],
++      "pending_repo_ids": [],
++      "failures": [],
++      "emitted_observation_ids": [
++        "OBS-20260314-001",
++        "OBS-20260314-002",
++        "OBS-20260314-003"
++      ],
++      "rollback_mode": "none",
++      "started_at": "2026-03-14T15:05:00Z",
++      "completed_at": "2026-03-14T15:05:03Z"
++    },
++    {
++      "run_id": "RUN-20260314-002",
++      "operation_class": "WRITE",
++      "operation_name": "branch.prepare",
++      "status": "blocked",
++      "requested_change_ids": [
++        "WC-20260314-001"
++      ],
++      "targeted_repo_ids": [
++        "api",
++        "web"
++      ],
++      "preflight": [
++        {
++          "repo_id": "api",
++          "state": "CLEAN"
++        },
++        {
++          "repo_id": "web",
++          "state": "DIRTY"
++        }
++      ],
++      "completed_repo_ids": [],
++      "pending_repo_ids": [
++        "api",
++        "web"
++      ],
++      "failures": [
++        {
++          "repo_id": "web",
++          "reason": "dirty_worktree"
++        }
++      ],
++      "emitted_observation_ids": [],
++      "rollback_mode": "none",
++      "started_at": "2026-03-14T15:20:00Z",
++      "completed_at": "2026-03-14T15:20:02Z"
++    }
++  ]
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/instances/seed/workspace.manifest.json workspace/modules/polyrepo_workspace/instances/seed/workspace.manifest.json
+--- original/workspace/modules/polyrepo_workspace/instances/seed/workspace.manifest.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/instances/seed/workspace.manifest.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,23 @@
++{
++  "artifact_family": "workspace.manifest",
++  "schema_version": "v1",
++  "instance_authority": "local_manifest",
++  "workspace_id": "ws-main",
++  "engine": "gitopolis",
++  "tracking": {
++    "project_id": "GH-PROJ-12",
++    "projection_mode": "projection_only"
++  },
++  "policies": {
++    "allow_dirty": false,
++    "continue_on_error": false,
++    "rollback_mode": "none"
++  },
++  "registries": {
++    "repo_registry": "repo_registry.json",
++    "repo_relations": "repo_relations.json",
++    "change_lineage": "change_lineage.json",
++    "commit_observations": "commit_observations.json",
++    "run_journal": "run_journal.json"
++  }
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/polyrepo_workspace_delivery_v0.md workspace/modules/polyrepo_workspace/polyrepo_workspace_delivery_v0.md
+--- original/workspace/modules/polyrepo_workspace/polyrepo_workspace_delivery_v0.md	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/polyrepo_workspace_delivery_v0.md	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,285 @@
++# Polyrepo Workspace Delivery v0
++
++## Purpose
++
++Define a fast path from control-spec to production through stacked mini-deliverables.
++
++This document assumes the control contract in [polyrepo_workspace_v0.md](/home/_404/src/polyrepo_workspace/polyrepo_workspace_v0.md) and focuses on:
++- MVP scope
++- fastest credible path to production
++- iterative expansion into fuller schema-backed policy models
++
++## Delivery Principles
++
++1. Build the authority plane first.
++2. Prefer usable, reviewable contracts over broad feature coverage.
++3. Ship read and preflight surfaces before write automation.
++4. Treat GitHub Projects as projection only until local authority is stable.
++5. Add policy depth by iteration, not in the first cut.
++
++## MVP Definition
++
++The MVP is not a proof of concept.
++
++The MVP is the minimum production-capable controller that can:
++- load a local manifest as sole authority
++- model repo registry, repo relations, change lineage, and commit observations
++- classify repo preflight state
++- execute read fan-out safely
++- deny unsafe writes deterministically
++- journal every controller run
++- project local state outward without surrendering authority
++
++The MVP does not need:
++- automatic GitHub writeback
++- full policy DSL coverage
++- compensating rollback automation
++- complex reconcile logic
++- broad multi-engine support
++
++## Production Goal
++
++The first production target is:
++
++> one operator can safely inspect, preflight, track, and project a small polyrepo workspace from a local authority manifest, with write operations gated by explicit preflight and journal semantics.
++
++That is enough to be real infrastructure, even before deeper policy formalization lands.
++
++## Mini-Deliverable Stack
++
++### D0: Control Contract Freeze
++
++Goal:
++- freeze the authority, lineage, observation, and execution model
++
++Primary artifacts:
++- [polyrepo_workspace_v0.md](/home/_404/src/polyrepo_workspace/polyrepo_workspace_v0.md)
++
++Acceptance:
++- authority plane and projection plane are distinct
++- durable identity is not SHA-based
++- write workflows are explicitly journaled, not atomic
++
++Defers:
++- machine-validated schemas
++- runtime implementation
++
++### D1: Manifest and Registry Schema MVP
++
++Goal:
++- define the minimum canonical artifact family
++
++Required artifact families:
++- `workspace.manifest.json`
++- `repo_registry.json`
++- `repo_relations.json`
++- `change_lineage.json`
++- `commit_observations.json`
++- `run_journal.json`
++
++Required schema work:
++- JSON Schema for each artifact family
++- one seed instance per family
++
++Acceptance:
++- each artifact has one canonical schema authority
++- each artifact has one canonical instance authority
++- all core joins validate locally
++
++Defers:
++- CUE policy narrowing
++- GitHub integration
++
++### D2: Read-Only Controller MVP
++
++Goal:
++- get to production quickly with a safe read-only controller
++
++Minimum command surface:
++- `workspace inspect`
++- `workspace export-graph`
++- `workspace preflight`
++- `workspace exec-read`
++- `workspace journal show`
++
++Behavior:
++- load manifest
++- enumerate repos
++- classify preflight state
++- emit journal for each run
++- never mutate repo state
++
++Acceptance:
++- controller runs cleanly against a real local workspace
++- preflight classification works across all target repos
++- read fan-out failures are collected, not hidden
++
++Defers:
++- write execution
++- GitHub projection
++
++### D3: Projection MVP
++
++Goal:
++- project local authority into GitHub Projects without introducing writeback
++
++Minimum scope:
++- project item export
++- status projection
++- change-to-project linking
++- repo membership projection
++
++Acceptance:
++- local authority state can be rendered into GitHub Projects
++- projection can be repeated idempotently
++- no GitHub-side edits mutate local state
++
++Defers:
++- reconcile/import
++- bidirectional sync
++
++### D4: Single-Workflow Write MVP
++
++Goal:
++- introduce the smallest production-safe write lane
++
++Scope:
++- one write workflow class
++- one tracked branch policy
++- sequential execution only
++- stop on first failure
++
++Suggested first workflow:
++- branch prepare or branch pin update
++
++Required controls:
++- preflight gate
++- journal emission
++- explicit failure classification
++- no implicit rollback
++
++Acceptance:
++- one write workflow can run safely across a small workspace
++- failures leave a usable journal and clear pending/completed state
++
++Defers:
++- push
++- multi-step mutation orchestration
++- compensating rollback
++
++### D5: Change-Lineage Workflow MVP
++
++Goal:
++- make cross-repo work identity operational
++
++Scope:
++- stable `change_id`
++- stable `item_id`
++- per-repo commit observations
++- latest-valid-observation resolution
++
++Acceptance:
++- one cross-repo change can be tracked through rebases without losing lineage
++- observations remain historical evidence
++- current state can be computed from observations
++
++Defers:
++- issue automation
++- PR automation
++
++### D6: Reconcile Patch Mode
++
++Goal:
++- allow controlled GitHub-to-local proposals without breaking authority
++
++Scope:
++- read GitHub Project field changes
++- emit proposed manifest patch
++- require review before apply
++
++Acceptance:
++- reconcile output is patch-shaped and reviewable
++- no direct authority mutation occurs from GitHub input
++
++Defers:
++- auto-apply
++- field-level conflict resolution beyond patch generation
++
++### D7: Policy Model Expansion
++
++Goal:
++- deepen policy only after the controller is already useful
++
++Candidate policy families:
++- branch policy
++- divergence policy
++- dirty-worktree policy
++- write permission policy
++- rollback eligibility policy
++- projection field policy
++
++Recommended layering:
++- JSON Schema for canonical shape
++- CUE for narrowing and cross-field constraints
++- rendered docs only as projection
++
++Acceptance:
++- controller behavior can be derived from schema-backed policy artifacts
++- policy families are versioned independently from runtime code
++
++## Fastest Path to Production
++
++The shortest credible production sequence is:
++
++1. `D0` freeze the control contract
++2. `D1` define schema-backed core artifacts
++3. `D2` ship the read-only controller
++4. `D3` add GitHub projection
++5. `D4` add one narrow write workflow
++
++That gets a real operator-facing system into production before deeper policy work.
++
++## What Not To Do In The MVP
++
++Do not:
++- treat GitHub as authority
++- build bidirectional sync first
++- model all Git workflows up front
++- add multiple workspace engines
++- mix speculative policy DSL work into the first controller delivery
++- make cross-repo writes look transactional
++
++## Artifact Authority Rules
++
++For each new artifact family introduced in this stack, define:
++- schema authority
++- instance authority
++- actuation authority
++- rendering boundary
++
++The default rule is:
++- JSON Schema = canonical structure
++- local JSON artifact = canonical state
++- controller = actuator
++- GitHub/UI/docs = projection
++
++## Suggested Iteration Rhythm
++
++Each iteration should produce:
++- one new canonical artifact family or one new command family
++- one validation path
++- one acceptance sample
++- one explicit defer list for the next iteration
++
++That keeps the loop cumulative and reviewable.
++
++## Exit Condition For MVP
++
++The MVP is done when:
++- local manifest authority is real
++- core schemas exist and validate
++- read-only controller works against a real workspace
++- GitHub projection works without writeback
++- one write workflow is safely gated and journaled
++
++Everything after that is expansion, not prerequisite.
+diff -ruN original/workspace/modules/polyrepo_workspace/polyrepo_workspace_v0.md workspace/modules/polyrepo_workspace/polyrepo_workspace_v0.md
+--- original/workspace/modules/polyrepo_workspace/polyrepo_workspace_v0.md	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/polyrepo_workspace_v0.md	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,296 @@
++# Polyrepo Workspace v0
++
++## Purpose
++
++Define the minimum control contract for a local-first polyrepo workspace controller.
++
++Delivery sequencing for this contract is defined in [polyrepo_workspace_delivery_v0.md](/home/_404/src/polyrepo_workspace/polyrepo_workspace_delivery_v0.md).
++
++This spec is for:
++- repo registry and repo relations
++- cross-repo tracking and lineage
++- safe fan-out execution
++- GitHub Project projection
++
++This spec is not for:
++- release policy details
++- CI/CD pipeline design
++- per-repo branching conventions beyond what the controller must validate
++
++## Core Invariants
++
++1. **Authority invariant**
++   The local manifest is the only authority plane.
++2. **Projection invariant**
++   GitHub Projects is a tracking and projection plane, not the authority plane.
++3. **Identity invariant**
++   Cross-repo lineage is identified by stable `change_id` and `item_id`, not by commit SHA.
++4. **Observation invariant**
++   Commit SHAs are observations attached to lineage, not durable identity.
++5. **Execution invariant**
++   Multi-repo writes are journaled workflows, not distributed transactions.
++6. **Selection invariant**
++   `gitopolis` is the primary workspace engine. If unavailable, the controller degrades to read-only local inspection.
++
++## Control Planes
++
++| Plane | Role | Authority |
++| --- | --- | --- |
++| Authority plane | Repo registry, relations, policies, branch/base pins, tracking IDs, lineage, observations | Local manifest only |
++| Projection plane | Dashboard, status, assignee/state, cross-repo visibility | GitHub Projects |
++
++### Write Direction
++
++Default write direction is:
++
++```text
++local manifest -> GitHub Projects
++```
++
++Automatic GitHub-to-local writeback is forbidden.
++
++## Reconcile Modes
++
++Two modes are allowed:
++
++1. **Projection-only**
++   GitHub Projects is read-only from the controller's perspective.
++2. **Proposed-writeback**
++   The controller may read GitHub field changes and generate a reviewable reconcile patch against the local manifest.
++
++No mode may mutate local authority state implicitly.
++
++## Required Registries and Graphs
++
++The workspace maintains five distinct structures.
++
++### 1. Repo Registry
++
++Canonical inventory of local repos.
++
++Required fields:
++- `repo_id`
++- `name`
++- `path`
++- `remote`
++- `default_branch`
++- `engine`
++- `active`
++
++### 2. Repo Relationship Graph
++
++Cross-repo topology and dependency semantics.
++
++Allowed relation examples:
++- `depends_on`
++- `uses_schema_from`
++- `publishes_to`
++- `mirrors`
++- `owned_with`
++
++### 3. Tracking Graph
++
++External work items and operator-facing tracking entities.
++
++Examples:
++- issue
++- PR
++- packet
++- project item
++
++### 4. Change Lineage Graph
++
++Durable cross-repo work identity.
++
++Required IDs:
++- `change_id`
++- `item_id`
++- optional `run_id`
++
++### 5. Commit Observation Graph
++
++Per-repo observed commits tied to lineage at a point in time.
++
++Required IDs:
++- `observation_id`
++- `change_id`
++- `repo_id`
++
++## Identity Model
++
++### Stable IDs
++
++- `workspace_id`: workspace authority root
++- `repo_id`: canonical repo identity
++- `tracking_id`: external issue/PR/project item identity
++- `change_id`: durable cross-repo work identity
++- `observation_id`: point-in-time commit observation
++- `run_id`: optional execution run / controller invocation identity
++
++### Rule
++
++Only `change_id`, `item_id`, and other registry IDs are durable join keys.
++
++Commit SHAs, branches, and patch IDs are observations.
++
++## Schema Sketches
++
++### Manifest
++
++```yaml
++workspace_id: ws-main
++engine: gitopolis
++repos:
++  - repo_id: api
++    path: /src/api
++    remote: git@github.com:org/api.git
++    default_branch: main
++    branch_policy:
++      tracked_branch: feat/WC-20260314-001
++      base_ref: origin/main
++tracking:
++  project_id: GH-PROJ-12
++policies:
++  allow_dirty: false
++  continue_on_error: false
++```
++
++### Change Lineage
++
++```yaml
++change_id: WC-20260314-001
++item_id: org/platform#123
++title: Add cross-repo auth envelope
++repos:
++  - repo_id: api
++  - repo_id: web
++tracking_ids:
++  - GH-PROJ-12:ITEM-44
++```
++
++### Commit Observation
++
++```yaml
++observation_id: OBS-20260314-001
++change_id: WC-20260314-001
++repo_id: api
++commit_oid: abc1234
++patch_id: p_api_001
++branch: feat/WC-20260314-001
++base_ref: origin/main
++observed_at: 2026-03-14T15:00:00Z
++status: current
++```
++
++## Rewrite-Safe Lineage Rules
++
++- Rebases, restacks, and force-pushes create new observations.
++- Old observations remain valid historical evidence unless explicitly invalidated.
++- The controller resolves current state from the latest valid observation for a tracked branch/ref.
++- Synthetic edges between raw SHAs are never treated as durable lineage.
++
++## Repo Preflight State Machine
++
++Every target repo must be classified before any operation.
++
++Allowed states:
++- `CLEAN`
++- `DIRTY`
++- `DETACHED`
++- `DIVERGED`
++- `MISSING`
++- `UNBORN`
++- `CONFLICTED`
++
++### Write Gate
++
++Write fan-out is denied unless all targeted repos satisfy:
++- repo exists
++- branch policy matches, or detached mode is explicitly allowed
++- expected base ref is known
++- no uncommitted changes, unless `allow_dirty: true`
++- no merge or rebase conflict state
++- divergence policy is satisfied
++
++## Operation Classes
++
++| Class | Examples | Default concurrency | Failure policy |
++| --- | --- | ---: | --- |
++| READ | status, fetch metadata, graph export | parallel | continue and collect failures |
++| WRITE | branch create, pull/rebase, commit, tag, push | sequential | stop on first failure |
++
++`continue_on_error` for writes must be explicit.
++
++## Journaled Execution Contract
++
++Multi-repo operations are journaled workflows.
++
++Each run records:
++- `run_id`
++- requested operation
++- targeted repos
++- preflight state per repo
++- completed repos
++- failed repo and reason
++- pending repos
++- emitted observations
++- suggested compensating actions
++
++### Rollback
++
++Implicit rollback is forbidden.
++
++Allowed rollback modes:
++1. `none`
++2. `compensating`
++
++`compensating` rollback requires an explicit inverse action declared in policy.
++
++## GitHub Project Projection Mapping
++
++GitHub Projects is a projection of local authority state.
++
++Project fields should map from local authority records, for example:
++- `change_id` -> project custom field
++- `item_id` -> source issue/PR field
++- status -> derived from journal / manifest state
++- assignee -> operator-facing projection
++- linked repos -> derived from change lineage membership
++
++GitHub field edits do not mutate the manifest directly.
++
++In proposed-writeback mode, imported changes must be emitted as a reconcile patch.
++
++## Tooling Model
++
++- Primary workspace engine: `gitopolis`
++- Optional per-repo history UX: `git-branchless`
++- Tracking/projection UI: GitHub Projects
++- Existing `git-workflow-manager` may remain as narrowed release-policy support
++
++If `gitopolis` is unavailable:
++- allow read-only inspection
++- deny write workflows
++
++No parity fallback to `mr` or `git for-each-repo`.
++
++## Minimum Command Surface
++
++- `workspace inspect`
++- `workspace export-graph`
++- `workspace preflight`
++- `workspace exec-read`
++- `workspace exec-write`
++- `workspace project-sync`
++- `workspace project-reconcile`
++- `workspace journal show <run_id>`
++
++## Acceptance Criteria
++
++This spec is minimally satisfied when:
++- one local manifest can describe multiple repos and their relations
++- one change can be tracked across multiple repos without using SHAs as identity
++- rebases create new observations without destroying lineage
++- write fan-out is blocked on failed preflight
++- every write run emits a journal
++- GitHub Projects can be projected from local state without becoming the authority
+diff -ruN original/workspace/modules/polyrepo_workspace/schemas/change_lineage.schema.json workspace/modules/polyrepo_workspace/schemas/change_lineage.schema.json
+--- original/workspace/modules/polyrepo_workspace/schemas/change_lineage.schema.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/schemas/change_lineage.schema.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,96 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "polyrepo_workspace/schemas/change_lineage.schema.json",
++  "title": "change_lineage",
++  "type": "object",
++  "additionalProperties": false,
++  "required": [
++    "artifact_family",
++    "schema_version",
++    "instance_authority",
++    "workspace_id",
++    "registry_id",
++    "changes"
++  ],
++  "properties": {
++    "artifact_family": {
++      "const": "change_lineage"
++    },
++    "schema_version": {
++      "const": "v1"
++    },
++    "instance_authority": {
++      "const": "local_manifest"
++    },
++    "workspace_id": {
++      "type": "string",
++      "pattern": "^ws-[a-z0-9][a-z0-9_-]*$"
++    },
++    "registry_id": {
++      "type": "string",
++      "pattern": "^change-lineage\\.[a-z0-9_-]+$"
++    },
++    "changes": {
++      "type": "array",
++      "minItems": 1,
++      "items": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "change_id",
++          "item_id",
++          "title",
++          "tracking_ids",
++          "repo_ids",
++          "status",
++          "current_run_id"
++        ],
++        "properties": {
++          "change_id": {
++            "type": "string",
++            "pattern": "^WC-[0-9]{8}-[0-9]{3}$"
++          },
++          "item_id": {
++            "type": "string",
++            "minLength": 1
++          },
++          "title": {
++            "type": "string",
++            "minLength": 1
++          },
++          "tracking_ids": {
++            "type": "array",
++            "minItems": 1,
++            "uniqueItems": true,
++            "items": {
++              "type": "string",
++              "minLength": 1
++            }
++          },
++          "repo_ids": {
++            "type": "array",
++            "minItems": 1,
++            "uniqueItems": true,
++            "items": {
++              "type": "string",
++              "pattern": "^[a-z][a-z0-9_-]*$"
++            }
++          },
++          "status": {
++            "type": "string",
++            "enum": [
++              "planned",
++              "active",
++              "blocked",
++              "completed"
++            ]
++          },
++          "current_run_id": {
++            "type": "string",
++            "pattern": "^RUN-[0-9]{8}-[0-9]{3}$"
++          }
++        }
++      }
++    }
++  }
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/schemas/commit_observations.schema.json workspace/modules/polyrepo_workspace/schemas/commit_observations.schema.json
+--- original/workspace/modules/polyrepo_workspace/schemas/commit_observations.schema.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/schemas/commit_observations.schema.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,95 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "polyrepo_workspace/schemas/commit_observations.schema.json",
++  "title": "commit_observations",
++  "type": "object",
++  "additionalProperties": false,
++  "required": [
++    "artifact_family",
++    "schema_version",
++    "instance_authority",
++    "workspace_id",
++    "registry_id",
++    "observations"
++  ],
++  "properties": {
++    "artifact_family": {
++      "const": "commit_observations"
++    },
++    "schema_version": {
++      "const": "v1"
++    },
++    "instance_authority": {
++      "const": "local_manifest"
++    },
++    "workspace_id": {
++      "type": "string",
++      "pattern": "^ws-[a-z0-9][a-z0-9_-]*$"
++    },
++    "registry_id": {
++      "type": "string",
++      "pattern": "^commit-observations\\.[a-z0-9_-]+$"
++    },
++    "observations": {
++      "type": "array",
++      "minItems": 1,
++      "items": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "observation_id",
++          "change_id",
++          "repo_id",
++          "commit_oid",
++          "patch_id",
++          "branch",
++          "base_ref",
++          "observed_at",
++          "status"
++        ],
++        "properties": {
++          "observation_id": {
++            "type": "string",
++            "pattern": "^OBS-[0-9]{8}-[0-9]{3}$"
++          },
++          "change_id": {
++            "type": "string",
++            "pattern": "^WC-[0-9]{8}-[0-9]{3}$"
++          },
++          "repo_id": {
++            "type": "string",
++            "pattern": "^[a-z][a-z0-9_-]*$"
++          },
++          "commit_oid": {
++            "type": "string",
++            "pattern": "^[a-f0-9]{7,40}$"
++          },
++          "patch_id": {
++            "type": "string",
++            "minLength": 1
++          },
++          "branch": {
++            "type": "string",
++            "minLength": 1
++          },
++          "base_ref": {
++            "type": "string",
++            "minLength": 1
++          },
++          "observed_at": {
++            "type": "string",
++            "format": "date-time"
++          },
++          "status": {
++            "type": "string",
++            "enum": [
++              "current",
++              "superseded",
++              "invalidated"
++            ]
++          }
++        }
++      }
++    }
++  }
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/schemas/repo_registry.schema.json workspace/modules/polyrepo_workspace/schemas/repo_registry.schema.json
+--- original/workspace/modules/polyrepo_workspace/schemas/repo_registry.schema.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/schemas/repo_registry.schema.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,97 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "polyrepo_workspace/schemas/repo_registry.schema.json",
++  "title": "repo_registry",
++  "type": "object",
++  "additionalProperties": false,
++  "required": [
++    "artifact_family",
++    "schema_version",
++    "instance_authority",
++    "workspace_id",
++    "registry_id",
++    "repos"
++  ],
++  "properties": {
++    "artifact_family": {
++      "const": "repo_registry"
++    },
++    "schema_version": {
++      "const": "v1"
++    },
++    "instance_authority": {
++      "const": "local_manifest"
++    },
++    "workspace_id": {
++      "type": "string",
++      "pattern": "^ws-[a-z0-9][a-z0-9_-]*$"
++    },
++    "registry_id": {
++      "type": "string",
++      "pattern": "^repo-registry\\.[a-z0-9_-]+$"
++    },
++    "repos": {
++      "type": "array",
++      "minItems": 1,
++      "items": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "repo_id",
++          "name",
++          "path",
++          "remote",
++          "default_branch",
++          "engine",
++          "active",
++          "tracked_branch",
++          "base_ref",
++          "tags"
++        ],
++        "properties": {
++          "repo_id": {
++            "type": "string",
++            "pattern": "^[a-z][a-z0-9_-]*$"
++          },
++          "name": {
++            "type": "string",
++            "minLength": 1
++          },
++          "path": {
++            "type": "string",
++            "minLength": 1
++          },
++          "remote": {
++            "type": "string",
++            "minLength": 1
++          },
++          "default_branch": {
++            "type": "string",
++            "minLength": 1
++          },
++          "engine": {
++            "const": "gitopolis"
++          },
++          "active": {
++            "type": "boolean"
++          },
++          "tracked_branch": {
++            "type": "string",
++            "minLength": 1
++          },
++          "base_ref": {
++            "type": "string",
++            "minLength": 1
++          },
++          "tags": {
++            "type": "array",
++            "items": {
++              "type": "string",
++              "minLength": 1
++            }
++          }
++        }
++      }
++    }
++  }
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/schemas/repo_relations.schema.json workspace/modules/polyrepo_workspace/schemas/repo_relations.schema.json
+--- original/workspace/modules/polyrepo_workspace/schemas/repo_relations.schema.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/schemas/repo_relations.schema.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,71 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "polyrepo_workspace/schemas/repo_relations.schema.json",
++  "title": "repo_relations",
++  "type": "object",
++  "additionalProperties": false,
++  "required": [
++    "artifact_family",
++    "schema_version",
++    "instance_authority",
++    "workspace_id",
++    "registry_id",
++    "relations"
++  ],
++  "properties": {
++    "artifact_family": {
++      "const": "repo_relations"
++    },
++    "schema_version": {
++      "const": "v1"
++    },
++    "instance_authority": {
++      "const": "local_manifest"
++    },
++    "workspace_id": {
++      "type": "string",
++      "pattern": "^ws-[a-z0-9][a-z0-9_-]*$"
++    },
++    "registry_id": {
++      "type": "string",
++      "pattern": "^repo-relations\\.[a-z0-9_-]+$"
++    },
++    "relations": {
++      "type": "array",
++      "items": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "relation_id",
++          "type",
++          "from_repo_id",
++          "to_repo_id"
++        ],
++        "properties": {
++          "relation_id": {
++            "type": "string",
++            "pattern": "^REL-[0-9]{3}$"
++          },
++          "type": {
++            "type": "string",
++            "enum": [
++              "depends_on",
++              "uses_schema_from",
++              "publishes_to",
++              "mirrors",
++              "owned_with"
++            ]
++          },
++          "from_repo_id": {
++            "type": "string",
++            "pattern": "^[a-z][a-z0-9_-]*$"
++          },
++          "to_repo_id": {
++            "type": "string",
++            "pattern": "^[a-z][a-z0-9_-]*$"
++          }
++        }
++      }
++    }
++  }
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/schemas/run_journal.schema.json workspace/modules/polyrepo_workspace/schemas/run_journal.schema.json
+--- original/workspace/modules/polyrepo_workspace/schemas/run_journal.schema.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/schemas/run_journal.schema.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,190 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "polyrepo_workspace/schemas/run_journal.schema.json",
++  "title": "run_journal",
++  "type": "object",
++  "additionalProperties": false,
++  "required": [
++    "artifact_family",
++    "schema_version",
++    "instance_authority",
++    "workspace_id",
++    "registry_id",
++    "runs"
++  ],
++  "properties": {
++    "artifact_family": {
++      "const": "run_journal"
++    },
++    "schema_version": {
++      "const": "v1"
++    },
++    "instance_authority": {
++      "const": "local_manifest"
++    },
++    "workspace_id": {
++      "type": "string",
++      "pattern": "^ws-[a-z0-9][a-z0-9_-]*$"
++    },
++    "registry_id": {
++      "type": "string",
++      "pattern": "^run-journal\\.[a-z0-9_-]+$"
++    },
++    "runs": {
++      "type": "array",
++      "minItems": 1,
++      "items": {
++        "type": "object",
++        "additionalProperties": false,
++        "required": [
++          "run_id",
++          "operation_class",
++          "operation_name",
++          "status",
++          "requested_change_ids",
++          "targeted_repo_ids",
++          "preflight",
++          "completed_repo_ids",
++          "pending_repo_ids",
++          "failures",
++          "emitted_observation_ids",
++          "rollback_mode",
++          "started_at",
++          "completed_at"
++        ],
++        "properties": {
++          "run_id": {
++            "type": "string",
++            "pattern": "^RUN-[0-9]{8}-[0-9]{3}$"
++          },
++          "operation_class": {
++            "type": "string",
++            "enum": [
++              "READ",
++              "WRITE"
++            ]
++          },
++          "operation_name": {
++            "type": "string",
++            "minLength": 1
++          },
++          "status": {
++            "type": "string",
++            "enum": [
++              "started",
++              "succeeded",
++              "blocked",
++              "failed",
++              "partial"
++            ]
++          },
++          "requested_change_ids": {
++            "type": "array",
++            "uniqueItems": true,
++            "items": {
++              "type": "string",
++              "pattern": "^WC-[0-9]{8}-[0-9]{3}$"
++            }
++          },
++          "targeted_repo_ids": {
++            "type": "array",
++            "uniqueItems": true,
++            "items": {
++              "type": "string",
++              "pattern": "^[a-z][a-z0-9_-]*$"
++            }
++          },
++          "preflight": {
++            "type": "array",
++            "items": {
++              "type": "object",
++              "additionalProperties": false,
++              "required": [
++                "repo_id",
++                "state"
++              ],
++              "properties": {
++                "repo_id": {
++                  "type": "string",
++                  "pattern": "^[a-z][a-z0-9_-]*$"
++                },
++                "state": {
++                  "type": "string",
++                  "enum": [
++                    "CLEAN",
++                    "DIRTY",
++                    "DETACHED",
++                    "DIVERGED",
++                    "MISSING",
++                    "UNBORN",
++                    "CONFLICTED"
++                  ]
++                }
++              }
++            }
++          },
++          "completed_repo_ids": {
++            "type": "array",
++            "uniqueItems": true,
++            "items": {
++              "type": "string",
++              "pattern": "^[a-z][a-z0-9_-]*$"
++            }
++          },
++          "pending_repo_ids": {
++            "type": "array",
++            "uniqueItems": true,
++            "items": {
++              "type": "string",
++              "pattern": "^[a-z][a-z0-9_-]*$"
++            }
++          },
++          "failures": {
++            "type": "array",
++            "items": {
++              "type": "object",
++              "additionalProperties": false,
++              "required": [
++                "repo_id",
++                "reason"
++              ],
++              "properties": {
++                "repo_id": {
++                  "type": "string",
++                  "pattern": "^[a-z][a-z0-9_-]*$"
++                },
++                "reason": {
++                  "type": "string",
++                  "minLength": 1
++                }
++              }
++            }
++          },
++          "emitted_observation_ids": {
++            "type": "array",
++            "uniqueItems": true,
++            "items": {
++              "type": "string",
++              "pattern": "^OBS-[0-9]{8}-[0-9]{3}$"
++            }
++          },
++          "rollback_mode": {
++            "type": "string",
++            "enum": [
++              "none",
++              "compensating"
++            ]
++          },
++          "started_at": {
++            "type": "string",
++            "format": "date-time"
++          },
++          "completed_at": {
++            "type": "string",
++            "format": "date-time"
++          }
++        }
++      }
++    }
++  }
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/schemas/workspace.manifest.schema.json workspace/modules/polyrepo_workspace/schemas/workspace.manifest.schema.json
+--- original/workspace/modules/polyrepo_workspace/schemas/workspace.manifest.schema.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/schemas/workspace.manifest.schema.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,113 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "polyrepo_workspace/schemas/workspace.manifest.schema.json",
++  "title": "workspace.manifest",
++  "type": "object",
++  "additionalProperties": false,
++  "required": [
++    "artifact_family",
++    "schema_version",
++    "instance_authority",
++    "workspace_id",
++    "engine",
++    "tracking",
++    "policies",
++    "registries"
++  ],
++  "properties": {
++    "artifact_family": {
++      "const": "workspace.manifest"
++    },
++    "schema_version": {
++      "const": "v1"
++    },
++    "instance_authority": {
++      "const": "local_manifest"
++    },
++    "workspace_id": {
++      "type": "string",
++      "pattern": "^ws-[a-z0-9][a-z0-9_-]*$"
++    },
++    "engine": {
++      "const": "gitopolis"
++    },
++    "tracking": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "project_id",
++        "projection_mode"
++      ],
++      "properties": {
++        "project_id": {
++          "type": "string",
++          "minLength": 1
++        },
++        "projection_mode": {
++          "type": "string",
++          "enum": [
++            "projection_only",
++            "proposed_writeback"
++          ]
++        }
++      }
++    },
++    "policies": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "allow_dirty",
++        "continue_on_error",
++        "rollback_mode"
++      ],
++      "properties": {
++        "allow_dirty": {
++          "type": "boolean"
++        },
++        "continue_on_error": {
++          "type": "boolean"
++        },
++        "rollback_mode": {
++          "type": "string",
++          "enum": [
++            "none",
++            "compensating"
++          ]
++        }
++      }
++    },
++    "registries": {
++      "type": "object",
++      "additionalProperties": false,
++      "required": [
++        "repo_registry",
++        "repo_relations",
++        "change_lineage",
++        "commit_observations",
++        "run_journal"
++      ],
++      "properties": {
++        "repo_registry": {
++          "type": "string",
++          "const": "repo_registry.json"
++        },
++        "repo_relations": {
++          "type": "string",
++          "const": "repo_relations.json"
++        },
++        "change_lineage": {
++          "type": "string",
++          "const": "change_lineage.json"
++        },
++        "commit_observations": {
++          "type": "string",
++          "const": "commit_observations.json"
++        },
++        "run_journal": {
++          "type": "string",
++          "const": "run_journal.json"
++        }
++      }
++    }
++  }
++}
+diff -ruN original/workspace/modules/polyrepo_workspace/scripts/validate_d1.py workspace/modules/polyrepo_workspace/scripts/validate_d1.py
+--- original/workspace/modules/polyrepo_workspace/scripts/validate_d1.py	1970-01-01 00:00:00.000000000 +0000
++++ workspace/modules/polyrepo_workspace/scripts/validate_d1.py	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,188 @@
++#!/usr/bin/env python3
++from __future__ import annotations
++
++import json
++from datetime import datetime, timezone
++from pathlib import Path
++
++import jsonschema
++
++
++ROOT = Path(__file__).resolve().parent.parent
++SCHEMAS = ROOT / "schemas"
++SEED = ROOT / "instances" / "seed"
++REPORT = ROOT / "validation" / "d1.validation_report.json"
++
++FILES = {
++    "workspace.manifest": ("workspace.manifest.schema.json", "workspace.manifest.json"),
++    "repo_registry": ("repo_registry.schema.json", "repo_registry.json"),
++    "repo_relations": ("repo_relations.schema.json", "repo_relations.json"),
++    "change_lineage": ("change_lineage.schema.json", "change_lineage.json"),
++    "commit_observations": ("commit_observations.schema.json", "commit_observations.json"),
++    "run_journal": ("run_journal.schema.json", "run_journal.json"),
++}
++
++
++def load_json(path: Path) -> dict:
++    return json.loads(path.read_text(encoding="utf-8"))
++
++
++def check(name: str, passed: bool, detail: str) -> dict:
++    return {"name": name, "passed": passed, "detail": detail}
++
++
++def main() -> int:
++    schema_checks: list[dict] = []
++    join_checks: list[dict] = []
++    docs: dict[str, dict] = {}
++
++    for artifact_name, (schema_file, instance_file) in FILES.items():
++        schema = load_json(SCHEMAS / schema_file)
++        instance = load_json(SEED / instance_file)
++        docs[artifact_name] = instance
++        try:
++            jsonschema.Draft202012Validator(schema).validate(instance)
++            schema_checks.append(check(artifact_name, True, f"{instance_file} matches {schema_file}"))
++        except jsonschema.ValidationError as exc:
++            schema_checks.append(check(artifact_name, False, str(exc)))
++
++    manifest = docs["workspace.manifest"]
++    repo_registry = docs["repo_registry"]
++    repo_relations = docs["repo_relations"]
++    change_lineage = docs["change_lineage"]
++    commit_observations = docs["commit_observations"]
++    run_journal = docs["run_journal"]
++
++    workspace_id = manifest["workspace_id"]
++    workspace_match = all(
++        doc["workspace_id"] == workspace_id
++        for doc in [
++            repo_registry,
++            repo_relations,
++            change_lineage,
++            commit_observations,
++            run_journal,
++        ]
++    )
++    join_checks.append(
++        check(
++            "workspace_id_alignment",
++            workspace_match,
++            "all artifacts share the manifest workspace_id",
++        )
++    )
++
++    registry_files_match = manifest["registries"] == {
++        "repo_registry": "repo_registry.json",
++        "repo_relations": "repo_relations.json",
++        "change_lineage": "change_lineage.json",
++        "commit_observations": "commit_observations.json",
++        "run_journal": "run_journal.json",
++    }
++    join_checks.append(
++        check(
++            "manifest_registry_refs",
++            registry_files_match,
++            "workspace manifest registry refs match the seeded artifact file names",
++        )
++    )
++
++    repo_ids = [repo["repo_id"] for repo in repo_registry["repos"]]
++    repo_id_set = set(repo_ids)
++    join_checks.append(
++        check("repo_ids_unique", len(repo_ids) == len(repo_id_set), "repo_ids are unique")
++    )
++
++    valid_relations = all(
++        relation["from_repo_id"] in repo_id_set and relation["to_repo_id"] in repo_id_set
++        for relation in repo_relations["relations"]
++    )
++    join_checks.append(
++        check(
++            "relation_repo_refs",
++            valid_relations,
++            "all repo relation endpoints resolve to repo_registry repo_ids",
++        )
++    )
++
++    change_ids = [change["change_id"] for change in change_lineage["changes"]]
++    change_id_set = set(change_ids)
++    valid_change_repos = all(
++        set(change["repo_ids"]).issubset(repo_id_set) for change in change_lineage["changes"]
++    )
++    join_checks.append(
++        check(
++            "change_repo_refs",
++            valid_change_repos,
++            "all change_lineage repo_ids resolve to repo_registry repo_ids",
++        )
++    )
++
++    observation_ids = [observation["observation_id"] for observation in commit_observations["observations"]]
++    observation_id_set = set(observation_ids)
++    valid_observation_refs = all(
++        observation["repo_id"] in repo_id_set and observation["change_id"] in change_id_set
++        for observation in commit_observations["observations"]
++    )
++    join_checks.append(
++        check(
++            "observation_refs",
++            valid_observation_refs,
++            "all commit observations resolve to repo_registry repo_ids and change_lineage change_ids",
++        )
++    )
++
++    current_keys: list[tuple[str, str, str]] = [
++        (observation["change_id"], observation["repo_id"], observation["branch"])
++        for observation in commit_observations["observations"]
++        if observation["status"] == "current"
++    ]
++    join_checks.append(
++        check(
++            "current_observation_uniqueness",
++            len(current_keys) == len(set(current_keys)),
++            "at most one current observation exists per change_id/repo_id/branch tuple",
++        )
++    )
++
++    valid_run_refs = True
++    for run in run_journal["runs"]:
++        if not set(run["targeted_repo_ids"]).issubset(repo_id_set):
++            valid_run_refs = False
++        if not {entry["repo_id"] for entry in run["preflight"]}.issubset(repo_id_set):
++            valid_run_refs = False
++        if not set(run["completed_repo_ids"]).issubset(repo_id_set):
++            valid_run_refs = False
++        if not set(run["pending_repo_ids"]).issubset(repo_id_set):
++            valid_run_refs = False
++        if not {entry["repo_id"] for entry in run["failures"]}.issubset(repo_id_set):
++            valid_run_refs = False
++        if not set(run["requested_change_ids"]).issubset(change_id_set):
++            valid_run_refs = False
++        if not set(run["emitted_observation_ids"]).issubset(observation_id_set):
++            valid_run_refs = False
++    join_checks.append(
++        check(
++            "run_journal_refs",
++            valid_run_refs,
++            "run_journal repo, change, and observation references resolve locally",
++        )
++    )
++
++    all_pass = all(item["passed"] for item in schema_checks + join_checks)
++    report = {
++        "report_id": "d1-schema-pack-validation",
++        "generated_at": datetime.now(timezone.utc).isoformat(),
++        "all_pass": all_pass,
++        "schema_checks": schema_checks,
++        "join_checks": join_checks,
++    }
++
++    REPORT.parent.mkdir(parents=True, exist_ok=True)
++    REPORT.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
++    print(json.dumps(report, indent=2))
++    return 0 if all_pass else 1
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff -ruN original/workspace/project.manifest.json workspace/project.manifest.json
+--- original/workspace/project.manifest.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/project.manifest.json	2026-03-16 03:23:00.968136695 +0000
+@@ -0,0 +1,200 @@
++{
++  "kind": "project_manifest.v1",
++  "project_id": "polyrepo_integration",
++  "repo": {
++    "path": "/home/_404/src/polyrepo_integration",
++    "role": "bounded_integration_canvas",
++    "summary": "Trimmed integration repo for two-repo meta-planning, review artifacts, and cross-repo contract context.",
++    "primary_surfaces": [
++      "analysis/",
++      "review/",
++      ".templates/"
++    ],
++    "authorities": {
++      "policy": "acm",
++      "workspace": "polyrepo_workspace"
++    }
++  },
++  "review_anchors": [
++    {
++      "id": "problem_statement",
++      "kind": "objective",
++      "description": "The normalized problem statement is the primary objective anchor for review and planning.",
++      "source_path": "analysis/context/problem_set.clean.json",
++      "selector": "document.problem_set.one_line"
++    },
++    {
++      "id": "acm_modularity",
++      "kind": "quality",
++      "description": "ACM must preserve modularity as a required shaping quality.",
++      "source_path": "analysis/context/problem_set.clean.json",
++      "selector": "document.acm_properties.modularity.goal"
++    },
++    {
++      "id": "acm_composability",
++      "kind": "quality",
++      "description": "ACM must preserve composability as a required shaping quality.",
++      "source_path": "analysis/context/problem_set.clean.json",
++      "selector": "document.acm_properties.composability.goal"
++    },
++    {
++      "id": "acm_adaptability",
++      "kind": "quality",
++      "description": "ACM must preserve adaptability as a required shaping quality.",
++      "source_path": "analysis/context/problem_set.clean.json",
++      "selector": "document.acm_properties.adaptability.goal"
++    },
++    {
++      "id": "workspace_required_atomics",
++      "kind": "object_property",
++      "description": "polyrepo_workspace must retain the required workspace atomics named by the normalized problem-set context.",
++      "source_path": "analysis/context/problem_set.clean.json",
++      "selector": "document.polyrepo_workspace_requirements.required_atomics"
++    }
++  ],
++  "workflow": {
++    "kind": "artifact_dag.v1",
++    "entry_nodes": [
++      "problem_set_raw",
++      "problem_set_context",
++      "project_manifest_context",
++      "review_history",
++      "git_log_context"
++    ],
++    "nodes": [
++      {
++        "id": "problem_set_raw",
++        "kind": "artifact",
++        "path": "analysis/context/problem_set.raw.json"
++      },
++      {
++        "id": "problem_set_context",
++        "kind": "artifact",
++        "path": "analysis/context/problem_set.clean.json"
++      },
++      {
++        "id": "project_manifest_context",
++        "kind": "artifact",
++        "path": "project.manifest.json"
++      },
++      {
++        "id": "review_history",
++        "kind": "artifact",
++        "path": "review/review_pipeline.json"
++      },
++      {
++        "id": "git_log_context",
++        "kind": "artifact",
++        "path": "review/git_log.json"
++      },
++      {
++        "id": "current_meta_plan",
++        "kind": "artifact",
++        "path": "analysis/meta_plan.json"
++      },
++      {
++        "id": "bootstrap_meta_plan",
++        "kind": "stage",
++        "requires": [
++          "problem_set_raw",
++          "problem_set_context",
++          "project_manifest_context",
++          "review_history",
++          "git_log_context"
++        ],
++        "produces": [
++          "analysis/meta_plan.json"
++        ]
++      },
++      {
++        "id": "revise_meta_plan",
++        "kind": "stage",
++        "requires": [
++          "current_meta_plan",
++          "problem_set_context",
++          "project_manifest_context",
++          "review_history",
++          "git_log_context"
++        ],
++        "produces": [
++          "analysis/meta_plan.json"
++        ]
++      },
++      {
++        "id": "review_submitted_head",
++        "kind": "stage",
++        "requires": [
++          "revise_meta_plan",
++          "review_history",
++          "git_log_context"
++        ],
++        "produces": [
++          "review/review_pipeline.json"
++        ]
++      }
++    ],
++    "edges": [
++      {
++        "from": "problem_set_raw",
++        "to": "bootstrap_meta_plan"
++      },
++      {
++        "from": "problem_set_context",
++        "to": "bootstrap_meta_plan"
++      },
++      {
++        "from": "project_manifest_context",
++        "to": "bootstrap_meta_plan"
++      },
++      {
++        "from": "review_history",
++        "to": "bootstrap_meta_plan"
++      },
++      {
++        "from": "git_log_context",
++        "to": "bootstrap_meta_plan"
++      },
++      {
++        "from": "current_meta_plan",
++        "to": "revise_meta_plan"
++      },
++      {
++        "from": "problem_set_context",
++        "to": "revise_meta_plan"
++      },
++      {
++        "from": "project_manifest_context",
++        "to": "revise_meta_plan"
++      },
++      {
++        "from": "review_history",
++        "to": "revise_meta_plan"
++      },
++      {
++        "from": "git_log_context",
++        "to": "revise_meta_plan"
++      },
++      {
++        "from": "revise_meta_plan",
++        "to": "review_submitted_head"
++      },
++      {
++        "from": "review_history",
++        "to": "review_submitted_head"
++      },
++      {
++        "from": "git_log_context",
++        "to": "review_submitted_head"
++      }
++    ],
++    "determinism": {
++      "rule": "a stage may run only when all inbound dependencies are present",
++      "context_rule": "raw context may preserve source ambiguity; planning and review anchors should read the normalized context artifact",
++      "mode_rule": "bootstrap_meta_plan derives the first packaged plan from context; revise_meta_plan operates only when a current meta plan is already present",
++      "append_only_artifacts": [
++        "review/review_pipeline.json",
++        "review/git_log.json"
++      ]
++    }
++  }
++}
+diff -ruN original/workspace/review/git_log.json workspace/review/git_log.json
+--- original/workspace/review/git_log.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/review/git_log.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,214 @@
++{
++  "kind": "project_git_log_tracker.v1",
++  "project_id": "polyrepo_integration",
++  "generated_at": "2026-03-15T19:26:14.043211+00:00",
++  "repo_path": "/home/_404/src/polyrepo_integration",
++  "remote_url": "https://github.com/fatb4f/polyrepo_integration.git",
++  "head_commit": {
++    "commit": "0eb5a581b03e74be572049b2d9b37c2a1291e6c5",
++    "short": "0eb5a58",
++    "date": "2026-03-15T15:24:04-04:00",
++    "subject": "Add context and review manifest surfaces"
++  },
++  "timeline": [
++    {
++      "ordinal": 1,
++      "commit": "037ba692f46d56a67eafaebca3773045a0c9d2de",
++      "short": "037ba69",
++      "date": "2026-03-15T00:19:16-04:00",
++      "subject": "Add bounded integration meta-plan",
++      "classification": "unclassified",
++      "effects": [
++        "Add bounded integration meta-plan"
++      ]
++    },
++    {
++      "ordinal": 2,
++      "commit": "51fc41839ff1097afe1a804508453a3b3f342aff",
++      "short": "51fc418",
++      "date": "2026-03-15T00:28:59-04:00",
++      "subject": "Fix offline review validation and validator outputs",
++      "classification": "unclassified",
++      "effects": [
++        "Fix offline review validation and validator outputs"
++      ]
++    },
++    {
++      "ordinal": 3,
++      "commit": "7e26bf87a74d2b3db0339be60761dc2499c21c7b",
++      "short": "7e26bf8",
++      "date": "2026-03-15T00:45:17-04:00",
++      "subject": "Apply review corrections to integration bundle",
++      "classification": "unclassified",
++      "effects": [
++        "Apply review corrections to integration bundle"
++      ]
++    },
++    {
++      "ordinal": 4,
++      "commit": "2f157d7121497728246cba1403b1a5a59cfcca97",
++      "short": "2f157d7",
++      "date": "2026-03-15T00:58:22-04:00",
++      "subject": "Refocus review instructions on project surface",
++      "classification": "scaffold_reset",
++      "effects": [
++        "Refocus review instructions on project surface"
++      ]
++    },
++    {
++      "ordinal": 5,
++      "commit": "22c5c34410cc386ddd67b2285e2ba5372023fcc2",
++      "short": "22c5c34",
++      "date": "2026-03-15T01:10:49-04:00",
++      "subject": "Tighten review coverage and prune json_tool surface",
++      "classification": "scaffold_reset",
++      "effects": [
++        "Tighten review coverage and prune json_tool surface"
++      ]
++    },
++    {
++      "ordinal": 6,
++      "commit": "a7ea87639cb294d0afa1e155e39743db46936ac8",
++      "short": "a7ea876",
++      "date": "2026-03-15T01:22:58-04:00",
++      "subject": "Simplify integration scaffold and json tool surface",
++      "classification": "scaffold_reset",
++      "effects": [
++        "Narrowed the repo to the trimmed integration surface.",
++        "Reduced the packaged project-owned files to analysis, modules, and tools."
++      ]
++    },
++    {
++      "ordinal": 7,
++      "commit": "def15762bc7b88a748e045396165445e1300b6d1",
++      "short": "def1576",
++      "date": "2026-03-15T01:38:36-04:00",
++      "subject": "Simplify manifest review contract",
++      "classification": "review_contract",
++      "effects": [
++        "Simplified the review contract around the trimmed integration surface."
++      ]
++    },
++    {
++      "ordinal": 8,
++      "commit": "008484c3ecaa6682098eea59887ee4150ea0507f",
++      "short": "008484c",
++      "date": "2026-03-15T01:43:32-04:00",
++      "subject": "Clarify review handling for missing path items",
++      "classification": "review_boundary",
++      "effects": [
++        "Made absent or future-reserved path items non-findings by review contract."
++      ]
++    },
++    {
++      "ordinal": 9,
++      "commit": "c94100d72ef16bf2f999addddbd188047814018d",
++      "short": "c94100d",
++      "date": "2026-03-15T01:48:42-04:00",
++      "subject": "ETJmYRJANRTG",
++      "classification": "unclassified",
++      "effects": [
++        "ETJmYRJANRTG"
++      ]
++    },
++    {
++      "ordinal": 10,
++      "commit": "9f7ec6e027ef10aedfc619a1696b3ea8e701a318",
++      "short": "9f7ec6e",
++      "date": "2026-03-15T01:58:40-04:00",
++      "subject": "tjtjym",
++      "classification": "unclassified",
++      "effects": [
++        "tjtjym"
++      ]
++    },
++    {
++      "ordinal": 11,
++      "commit": "26873625e0e71df9bb089a7b3041d73884bb993f",
++      "short": "2687362",
++      "date": "2026-03-15T02:00:27-04:00",
++      "subject": "Clarify trimmed archive review boundary",
++      "classification": "review_boundary",
++      "effects": [
++        "Explicitly scoped the trimmed archive review surface to internal rigor rather than omitted files."
++      ]
++    },
++    {
++      "ordinal": 12,
++      "commit": "0fe014f37c5da266904ede666a069db11f7c7342",
++      "short": "0fe014f",
++      "date": "2026-03-15T02:11:12-04:00",
++      "subject": "Tighten meta plan control contracts",
++      "classification": "meta_plan_contract",
++      "effects": [
++        "Added objective-register provenance, micro-deliverable set contract fields, and stage dependency DAG.",
++        "Added MP3 termination predicate and MP4 validation authority."
++      ]
++    },
++    {
++      "ordinal": 13,
++      "commit": "bd367287413ad799d3d04f73d7797c25f67fa02c",
++      "short": "bd36728",
++      "date": "2026-03-15T02:12:15-04:00",
++      "subject": "Rename meta plan diff to commit hash",
++      "classification": "artifact_hygiene",
++      "effects": [
++        "Aligned the stored diff artifact name with the originating commit hash."
++      ]
++    },
++    {
++      "ordinal": 14,
++      "commit": "da741d4d085e495a4508aea99820bc3abd7cb04c",
++      "short": "da741d4",
++      "date": "2026-03-15T02:24:26-04:00",
++      "subject": "Harden patch review artifact contract",
++      "classification": "review_contract",
++      "effects": [
++        "Required patch-review artifacts to stay on the shipped project review schema.",
++        "Positioned annotated diff patches as supplemental artifacts."
++      ]
++    },
++    {
++      "ordinal": 15,
++      "commit": "ab56264abd6cf108b1a638673a0b5a70c8deba6b",
++      "short": "ab56264",
++      "date": "2026-03-15T14:30:07-04:00",
++      "subject": "review templates",
++      "classification": "review_contract",
++      "effects": [
++        "Bundled the review schema and template surface into the trimmed repo archive."
++      ]
++    },
++    {
++      "ordinal": 16,
++      "commit": "0eb5a581b03e74be572049b2d9b37c2a1291e6c5",
++      "short": "0eb5a58",
++      "date": "2026-03-15T15:24:04-04:00",
++      "subject": "Add context and review manifest surfaces",
++      "classification": "review_contract",
++      "effects": [
++        "Add context and review manifest surfaces"
++      ]
++    }
++  ],
++  "current_state": {
++    "status": "active",
++    "phase": "review_objects_in_repo",
++    "summary": "The repo now carries an evolving review pipeline object and a companion git-log object under review/ while concrete review artifacts remain local.",
++    "authoritative_artifacts": [
++      "/home/_404/src/polyrepo_integration/AGENTS.md",
++      "/home/_404/src/polyrepo_integration/.templates/artifact_review.schema.json",
++      "/home/_404/src/polyrepo_integration/.templates/polyrepo_integration.review.schema.json",
++      "/home/_404/src/polyrepo_integration/.templates/review.schema.json",
++      "/home/_404/src/polyrepo_integration/.templates/review.json.template",
++      "/home/_404/src/polyrepo_integration/analysis/meta_plan.json",
++      "/home/_404/src/polyrepo_integration/review/review_pipeline.json",
++      "/home/_404/src/polyrepo_integration/review/git_log.json"
++    ],
++    "open_items": [
++      "Append one review_pipeline entry per submitted HEAD review instead of replacing prior entries.",
++      "Keep the local review artifact and tracker symlink aligned with the latest appended review entry.",
++      "Promote the git-log object as the canonical incremental context surface for future review corrections."
++    ]
++  }
++}
+diff -ruN original/workspace/review/polyrepo_integration_review_20260316T030500Z/manifest.json workspace/review/polyrepo_integration_review_20260316T030500Z/manifest.json
+--- original/workspace/review/polyrepo_integration_review_20260316T030500Z/manifest.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/review/polyrepo_integration_review_20260316T030500Z/manifest.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,20 @@
++{
++  "files": [
++    {
++      "path": "review.json",
++      "sha256": "9054c5fda91f4fcd576f92f741a7c2bdb0335a8319529b995a6e6094d189d326",
++      "bytes": 6778
++    },
++    {
++      "path": "review.md",
++      "sha256": "85613946812709cd8fa61ab7d5ce6e51408878bcb454b2d6639636324f908a8d",
++      "bytes": 2847
++    },
++    {
++      "path": "validation.json",
++      "sha256": "2e287733a32dfdcb42a4849b2123f25da67709f517fe52dd4743b06e3629c0c1",
++      "bytes": 291
++    }
++  ],
++  "self_sha256": "00217d51d77383ed80f138ca65988c67050afa4d8132f42d002958d6fdea3656"
++}
+diff -ruN original/workspace/review/polyrepo_integration_review_20260316T030500Z/review.json workspace/review/polyrepo_integration_review_20260316T030500Z/review.json
+--- original/workspace/review/polyrepo_integration_review_20260316T030500Z/review.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/review/polyrepo_integration_review_20260316T030500Z/review.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,145 @@
++{
++  "artifact_review": {
++    "kind": "polyrepo_integration.artifact_review.v1",
++    "metadata": {
++      "artifact_name": "polyrepo_integration-polyrepo_workspace-HEAD.zip",
++      "review_pass": 1,
++      "assessment": "submitted_head_review"
++    },
++    "execution_context": {
++      "can_run_end_to_end_here": false,
++      "blocking_reason": "external_authorities_not_packaged",
++      "checked": [
++        "archive_unpacked",
++        "schema_surface_loaded",
++        "trimmed_archive_boundary_read",
++        "workflow_and_meta_plan_reviewed"
++      ]
++    },
++    "summary": {
++      "overall": "revision_required",
++      "maturity": "early",
++      "main_remaining_risk": "non_replayable_meta_planning_contract"
++    },
++    "finding_summary": {
++      "confirmed_fix_count": 2,
++      "open_finding_count": 3,
++      "severity_counts": {
++        "critical": 0,
++        "high": 2,
++        "medium": 1,
++        "low": 0
++      }
++    },
++    "confirmed_fixes": [
++      {
++        "issue": "mp4_validation_authority_declared",
++        "status": "fixed",
++        "note": "analysis/meta_plan.json:181-190 now declares the plan packet schema, validator, skill handle, validation version, and narrowness criteria for MP4 output validation."
++      },
++      {
++        "issue": "artifact_contract_coverage_improved",
++        "status": "partial",
++        "note": "analysis/meta_plan.json:28-48 adds artifact contracts for input_objective_register and micro_deliverable_set_register, but MP1 and MP3 analysis outputs still lack field-level output contracts."
++      }
++    ],
++    "findings": [
++      {
++        "id": "F1",
++        "severity": "high",
++        "status": "open",
++        "title": "mp2_drops_mp1_analysis_outputs",
++        "evidence": {
++          "docs": [
++            "analysis/meta_plan.json:34-48",
++            "analysis/meta_plan.json:97-131"
++          ]
++        },
++        "details": [
++          "MP1 emits normalized_objective_register, objective_semantic_analysis, objective_dependency_gap_analysis, and canonical_objective_order in analysis/meta_plan.json:105-110.",
++          "MP2 then reduces objectives into DS# micro-deliverable sets, but its inputs are limited to canonical_objective_order and review_rationale_log in analysis/meta_plan.json:124-129.",
++          "That leaves the DS# register without a declared dependency on the semantic and dependency analyses that should justify blocking_dependencies, authority_boundary, and recomposition_constraints."
++        ],
++        "impact": "Micro-deliverable sets can be generated from ordering alone, which breaks the stated goal of preserving dependency closure and authority boundaries before downstream PLAN packet generation.",
++        "recommended_actions": [
++          "feed_objective_semantic_analysis_into_mp2",
++          "feed_objective_dependency_gap_analysis_into_mp2",
++          "define_mp2_derivation_rules_for_ds_fields"
++        ]
++      },
++      {
++        "id": "F2",
++        "severity": "high",
++        "status": "open",
++        "title": "bootstrap_replay_contract_is_not_machine_recoverable",
++        "evidence": {
++          "docs": [
++            "project.manifest.json:63-168",
++            "analysis/meta_plan.json:59-80"
++          ],
++          "artifacts": [
++            "project.manifest.json",
++            "analysis/meta_plan.json"
++          ]
++        },
++        "details": [
++          "The workflow marks objective_analysis_context (analysis/meta_plan.json) as an entry artifact in project.manifest.json:65-69, then requires objective_analysis_context for draft_meta_plan in project.manifest.json:97-108 even though the same stage also produces analysis/meta_plan.json.",
++          "Because the determinism rule says a stage may run only when all inbound dependencies are present in project.manifest.json:161-167, the packaged DAG models only revision of an already-existing meta plan and does not expose a first-pass bootstrap path.",
++          "The same bootstrap surface is further blurred because MP0 depends on integration_manifest, but analysis/meta_plan.json:59-61 points that source at repo://.project.manifest.json and marks it not_packaged_in_trimmed_archive even though project.manifest.json is bundled at the repo root."
++        ],
++        "impact": "A reviewer or controller cannot replay the initial planning transition from the shipped archive without inferring missing mode distinctions and source resolution rules.",
++        "recommended_actions": [
++          "split_bootstrap_and_revision_workflow_modes",
++          "remove_meta_plan_self_dependency_from_draft_stage",
++          "bind_integration_manifest_to_project_manifest_json"
++        ]
++      },
++      {
++        "id": "F3",
++        "severity": "medium",
++        "status": "open",
++        "title": "mp3_termination_metrics_are_unbound",
++        "evidence": {
++          "docs": [
++            "analysis/meta_plan.json:142-163"
++          ]
++        },
++        "details": [
++          "MP3 now names a termination predicate, but the archive never defines how ambiguity_score is computed, what artifact family is hashed for stability, or how pass-to-pass equivalence is normalized before comparing hashes.",
++          "The gate therefore names conditions such as ambiguity_score_at_or_below_threshold and analysis_artifact_hash_stable_across_two_passes without a recoverable measurement or evidence contract."
++        ],
++        "impact": "Recursive analysis may stop or continue based on reviewer judgment instead of a mechanically replayable rule, which weakens the handoff into MP4 PLAN packet generation.",
++        "recommended_actions": [
++          "define_ambiguity_score_measurement_contract",
++          "define_last_round_set_analysis_hashing_scheme",
++          "emit_mp3_pass_evidence_for_termination"
++        ]
++      }
++    ],
++    "verdict": {
++      "status": "revise",
++      "reasons": [
++        "mp2_missing_semantic_and_dependency_inputs",
++        "bootstrap_replay_path_is_ambiguous",
++        "mp3_termination_gate_is_not_mechanically_bound"
++      ]
++    },
++    "next_patch_set": [
++      {
++        "priority": 1,
++        "title": "wire_mp2_to_mp1_analysis_outputs",
++        "why": "The DS# reduction stage needs the semantic and dependency products of MP1 to justify bounded sets and preserve authority-boundary intent."
++      },
++      {
++        "priority": 2,
++        "title": "separate_bootstrap_from_revision_flow",
++        "why": "The current artifact DAG cannot replay first-pass meta-plan generation without assuming an already-existing analysis/meta_plan.json."
++      },
++      {
++        "priority": 3,
++        "title": "formalize_mp3_termination_evidence",
++        "why": "MP3 must bind ambiguity scoring and hash stability to explicit evidence so MP4 consumes a deterministic last-round analysis artifact."
++      }
++    ]
++  }
++}
+diff -ruN original/workspace/review/polyrepo_integration_review_20260316T030500Z/review.md workspace/review/polyrepo_integration_review_20260316T030500Z/review.md
+--- original/workspace/review/polyrepo_integration_review_20260316T030500Z/review.md	1970-01-01 00:00:00.000000000 +0000
++++ workspace/review/polyrepo_integration_review_20260316T030500Z/review.md	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,41 @@
++# Review
++
++- Uploaded archive: `polyrepo_workspace-HEAD.zip`
++- Schema-normalized artifact name: `polyrepo_integration-polyrepo_workspace-HEAD.zip`
++- Verdict: `REVISE`
++
++## Confirmed progress
++
++1. `analysis/meta_plan.json:181-190` now declares MP4 validation authority and narrowness criteria.
++2. `analysis/meta_plan.json:28-48` improves artifact-contract coverage for the objective register input and DS# register, but only partially.
++
++## Findings
++
++### F1 — High — MP2 drops MP1 analysis outputs
++
++- `analysis/meta_plan.json:105-110` makes MP1 emit `normalized_objective_register`, `objective_semantic_analysis`, `objective_dependency_gap_analysis`, and `canonical_objective_order`.
++- `analysis/meta_plan.json:124-129` then lets MP2 operate on only `canonical_objective_order` plus `review_rationale_log`.
++- The DS# register contract at `analysis/meta_plan.json:38-47` still expects dependency- and boundary-sensitive fields such as `blocking_dependencies`, `authority_boundary`, and `recomposition_constraints`.
++
++**Why it matters:** MP2 can currently derive bounded sets from ordering alone, which is too weak for the stated dependency/authority-preserving purpose.
++
++### F2 — High — Bootstrap replay contract is not machine-recoverable
++
++- `project.manifest.json:65-69` declares `objective_analysis_context` as an entry artifact, but `project.manifest.json:97-108` also requires that same artifact for `draft_meta_plan` while the stage produces `analysis/meta_plan.json` again.
++- `project.manifest.json:161-167` says stages may run only when inbound dependencies are already present, so the DAG only models revision of a pre-existing meta plan and does not expose a first-pass generation path.
++- `analysis/meta_plan.json:59-61` also points `integration_manifest` at `repo://.project.manifest.json` and marks it `not_packaged_in_trimmed_archive`, even though `project.manifest.json` is actually bundled at repo root.
++
++**Why it matters:** the shipped archive does not let a controller replay the initial meta-plan bootstrap path without inferring missing mode distinctions and source resolution rules.
++
++### F3 — Medium — MP3 termination metrics are unbound
++
++- `analysis/meta_plan.json:152-160` names `ambiguity_score_at_or_below_threshold` and `analysis_artifact_hash_stable_across_two_passes`.
++- The archive never defines how `ambiguity_score` is computed, what artifact family is hashed, or how pass-to-pass normalization is performed before comparing hashes.
++
++**Why it matters:** recursion stop/continue decisions remain judgment-based instead of mechanically replayable.
++
++## Recommended next patch set
++
++1. Wire MP2 to the semantic and dependency outputs of MP1.
++2. Split bootstrap and revision workflow modes and bind `integration_manifest` to `project.manifest.json`.
++3. Define MP3 scoring/hash evidence so termination can be replayed.
+diff -ruN original/workspace/review/polyrepo_integration_review_20260316T030500Z/validation.json workspace/review/polyrepo_integration_review_20260316T030500Z/validation.json
+--- original/workspace/review/polyrepo_integration_review_20260316T030500Z/validation.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/review/polyrepo_integration_review_20260316T030500Z/validation.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,10 @@
++{
++  "schema": "/mnt/data/review_work/.templates/review.schema.json",
++  "valid": true,
++  "error_count": 0,
++  "errors": [],
++  "reviewed_archive": {
++    "uploaded_filename": "polyrepo_workspace-HEAD.zip",
++    "normalized_artifact_name": "polyrepo_integration-polyrepo_workspace-HEAD.zip"
++  }
++}
+diff -ruN original/workspace/review/review_pipeline.json workspace/review/review_pipeline.json
+--- original/workspace/review/review_pipeline.json	1970-01-01 00:00:00.000000000 +0000
++++ workspace/review/review_pipeline.json	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,66 @@
++{
++  "kind": "project_review_pipeline.v1",
++  "project_id": "polyrepo_integration",
++  "generated_at": "2026-03-15T18:48:51+00:00",
++  "source_markdown": "/home/_404/src/ops/control_plane/tracker/review_pipeline.md",
++  "entries": [
++    {
++      "sequence": 1,
++      "source_heading": "polyrepo_integration",
++      "status": "initial_main_branch_review_generated",
++      "assessment": "An initial contract-valid main-branch review artifact was generated for the trimmed archive review surface.",
++      "artifact_path": "/home/_404/Downloads/polyrepo_integration-main-review/review.json",
++      "subject_archive": "polyrepo_integration-main.zip",
++      "head_commit": "ab56264",
++      "findings": [
++        "stage_output_contracts_underdefined",
++        "mp2_discards_upstream_analysis_dependencies",
++        "mp3_termination_predicate_not_machine_recoverable"
++      ],
++      "severity_counts": {
++        "high": 2,
++        "medium": 1,
++        "low": 0
++      }
++    },
++    {
++      "sequence": 2,
++      "source_heading": "polyrepo_integration",
++      "status": "review_corrected_and_tracker_linked",
++      "assessment": "The review was corrected after identifying analytical overreach on contract coverage and is preserved locally with a tracker symlink.",
++      "artifact_path": "/home/_404/Downloads/polyrepo_integration-main-review/review.json",
++      "tracker_link": "/home/_404/src/ops/control_plane/tracker/polyrepo_integration/main_review",
++      "corrections_applied": [
++        "narrowed F1 from blocker-level defect to medium contract-coverage gap",
++        "kept F2 as the main blocking traceability issue",
++        "kept F3 as a medium reproducibility issue around MP3 termination"
++      ],
++      "findings": [
++        "stage_output_contract_coverage_incomplete",
++        "mp2_discards_upstream_analysis_dependencies",
++        "mp3_termination_predicate_not_machine_recoverable"
++      ],
++      "severity_counts": {
++        "high": 1,
++        "medium": 2,
++        "low": 0
++      },
++      "final_judgment": "The corrected review is contract-valid, locally preserved, and tracker-linked."
++    },
++    {
++      "sequence": 3,
++      "source_heading": "polyrepo_integration",
++      "status": "evolving_review_object_established",
++      "assessment": "The in-repo review object is now the evolving review history for submitted HEAD reviews, with each new review appended as a new entry rather than replacing the prior assessment.",
++      "object_path": "/home/_404/src/polyrepo_integration/review/review_pipeline.json",
++      "counterpart_git_log_object": "/home/_404/src/polyrepo_integration/review/git_log.json",
++      "append_rule": "append_one_entry_per_submitted_head_review",
++      "head_anchor": "ab56264",
++      "storage_model": [
++        "keep the evolving review object in-repo under review/",
++        "keep the concrete review artifact local",
++        "link the local artifact into the tracker surface when useful"
++      ]
++    }
++  ]
++}
+diff -ruN original/workspace/review/update_git_log.py workspace/review/update_git_log.py
+--- original/workspace/review/update_git_log.py	1970-01-01 00:00:00.000000000 +0000
++++ workspace/review/update_git_log.py	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,123 @@
++#!/usr/bin/env python3
++
++import json
++import subprocess
++from datetime import datetime, timezone
++from pathlib import Path
++
++
++REPO = Path("/home/_404/src/polyrepo_integration")
++OUT = REPO / "review" / "git_log.json"
++
++
++def git(*args: str) -> str:
++    return subprocess.check_output(["git", "-C", str(REPO), *args], text=True)
++
++
++def load_existing() -> dict:
++    if OUT.exists():
++        return json.loads(OUT.read_text())
++    return {}
++
++
++def classify(subject: str) -> str:
++    lowered = subject.lower()
++    if "review contract" in lowered or "review templates" in lowered:
++        return "review_contract"
++    if "manifest" in lowered:
++        return "review_contract"
++    if "boundary" in lowered:
++        return "review_boundary"
++    if "meta plan" in lowered:
++        return "meta_plan_contract"
++    if "diff" in lowered:
++        return "artifact_hygiene"
++    if "scaffold" in lowered or "surface" in lowered:
++        return "scaffold_reset"
++    if "context" in lowered or "review manifest" in lowered:
++        return "context_surface"
++    return "unclassified"
++
++
++def default_effects(subject: str) -> list[str]:
++    return [subject]
++
++
++def build() -> dict:
++    existing = load_existing()
++    existing_timeline = {
++        item["commit"]: item for item in existing.get("timeline", [])
++    }
++    current_state = existing.get("current_state", {})
++
++    remote_url = git("remote", "get-url", "origin").strip()
++    lines = git("log", "--pretty=format:%H%x1f%h%x1f%aI%x1f%s", "-n", "16").splitlines()
++    commits = []
++    for ordinal, line in enumerate(reversed(lines), start=1):
++        full, short, date, subject = line.split("\x1f")
++        prev = existing_timeline.get(full, {})
++        commits.append(
++            {
++                "ordinal": ordinal,
++                "commit": full,
++                "short": short,
++                "date": date,
++                "subject": subject,
++                "classification": prev.get("classification", classify(subject)),
++                "effects": prev.get("effects", default_effects(subject)),
++            }
++        )
++
++    head_full, head_short, head_date, head_subject = lines[0].split("\x1f")
++    return {
++        "kind": "project_git_log_tracker.v1",
++        "project_id": "polyrepo_integration",
++        "generated_at": datetime.now(timezone.utc).isoformat(),
++        "repo_path": str(REPO),
++        "remote_url": remote_url,
++        "head_commit": {
++            "commit": head_full,
++            "short": head_short,
++            "date": head_date,
++            "subject": head_subject,
++        },
++        "timeline": commits,
++        "current_state": {
++            "status": "active",
++            "phase": current_state.get("phase", "review_objects_in_repo"),
++            "summary": current_state.get(
++                "summary",
++                "The repo carries evolving review and git-log objects under review/ while concrete review artifacts may remain local.",
++            ),
++            "authoritative_artifacts": current_state.get(
++                "authoritative_artifacts",
++                [
++                    str(REPO / "AGENTS.md"),
++                    str(REPO / ".templates" / "artifact_review.schema.json"),
++                    str(REPO / ".templates" / "polyrepo_integration.review.schema.json"),
++                    str(REPO / ".templates" / "review.schema.json"),
++                    str(REPO / ".templates" / "review.json.template"),
++                    str(REPO / "analysis" / "meta_plan.json"),
++                    str(REPO / "project.manifest.json"),
++                    str(REPO / "review" / "review_pipeline.json"),
++                    str(REPO / "review" / "git_log.json"),
++                ],
++            ),
++            "open_items": current_state.get(
++                "open_items",
++                [
++                    "Append one review_pipeline entry per submitted HEAD review instead of replacing prior entries.",
++                    "Keep the local review artifact and tracker symlink aligned with the latest appended review entry.",
++                    "Promote the git-log object as the canonical incremental context surface for future review corrections.",
++                ],
++            ),
++        },
++    }
++
++
++def main() -> None:
++    OUT.write_text(json.dumps(build(), indent=2) + "\n")
++
++
++if __name__ == "__main__":
++    main()
+diff -ruN original/workspace/tools/json_tool/stack.md workspace/tools/json_tool/stack.md
+--- original/workspace/tools/json_tool/stack.md	1970-01-01 00:00:00.000000000 +0000
++++ workspace/tools/json_tool/stack.md	2026-03-16 03:15:58.000000000 +0000
+@@ -0,0 +1,15 @@
++# Stack
++
++Layered contract-first JSON stack:
++- canonical contracts: `JSON Schema`
++- constraint/unification + interlingua: `CUE`
++- wrangling: `jq`, `jaq`
++- invariant facts: `CEL`
++- authorization: `OPA/Rego`
++- rendering: `MiniJinja`
++
++Rules:
++- keep `JSON Schema` as canonical accepted-artifact authority
++- treat `JSON Schema -> CUE` as the primary interop direction
++- use `jq` as the default wrangling engine
++- use `CEL` only for deterministic facts over already-shaped objects

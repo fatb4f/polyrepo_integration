@@ -1,5 +1,5 @@
 {
-  "delimiter": "# The problem_set We need to define and integrate a policy first, streamline polyrepo workspace with repo bootstrapping.",
+  "delimiter": "# The problem_set We need to define and integrate a policy first, streamline polyrepo workspace with ACM authority.",
   "document": {
     "preplan_tooling_objective": {
       "objective_id": "D0",
@@ -59,9 +59,9 @@
       "ordering_rule": "D0 is the fixed pre-plan objective because canonical ordering of D1:D5 depends on a defined workflow and bounded integration canvas for dependency taxonomy, dependency data structures, and dependency ordering."
     },
     "problem_set": {
-      "statement": "We need to define and integrate a policy-first, streamlined polyrepo workspace with repo bootstrapping.",
-      "expanded": "The system must establish policy as the controlling layer, make that policy drive the polyrepo workspace structure, and make repo creation/bootstrap a native outcome of that policy layer so scaffold, workspace control, and consumer repo setup converge on one control model.",
-      "one_line": "We need a policy-first polyrepo architecture in which workspace control and repo bootstrapping are integrated into one streamlined, reproducible system."
+      "statement": "We need to define and integrate a policy-first, streamlined polyrepo workspace under ACM authority.",
+      "expanded": "The system must establish policy as the controlling layer, make that policy drive the polyrepo workspace structure, and keep workspace control and consumer-repo planning aligned under one reproducible control model.",
+      "one_line": "We need a policy-first polyrepo architecture in which ACM and polyrepo_workspace integrate into one streamlined, reproducible system."
     },
     "cross_asset_application": {
       "summary": "The three repos contribute to the same semantic state space but operate at different layers.",
@@ -87,20 +87,9 @@
             "define cross-repo lifecycle, registry, relations, lineage, and promotion semantics"
           ],
           "compression": "polyrepo_workspace defines what the workspace is and what it must know."
-        },
-        "git_asset": {
-          "role": "bootstrap integrator and materialization surface",
-          "responsibility": [
-            "define the requirements surface for materializing policy and workspace design into repo state",
-            "define bootstrap input/output contract",
-            "define generated asset packaging semantics",
-            "define repo-local file emission contract",
-            "define manifest instantiation mechanics"
-          ],
-          "compression": "git_asset defines what must be supplied, emitted, and validated to instantiate the model into repo reality."
         }
       },
-      "integrated_statement": "ACM governs the model, polyrepo_workspace defines the operating contract, and git_asset generates that contract into real repos and workspace assets."
+      "integrated_statement": "ACM governs the model and polyrepo_workspace defines the operating contract for the initial integration surface."
     },
     "bigger_picture": {
       "points": [
@@ -220,12 +209,11 @@
     },
     "polyrepo_workspace_requirements": {
       "desired_functionality": [
-        "represent a multi-repo workspace as one controlled system",
-        "register repos and repo classes",
-        "express cross-repo dependencies and lineage",
-        "track workspace-local authority and generated state",
-        "support bootstrap, migration, validation, and promotion flows",
-        "preserve workspace observability and change history"
+        "define workspace atomics and repo registry semantics",
+        "carry the shared scaffold used to bootstrap review and analysis assets",
+        "define workspace-level lifecycle and promotion semantics",
+        "preserve lineage between workspace objects and consumer repos",
+        "support migration, validation, and promotion flows"
       ],
       "required_atomics": [
         "workspace",
@@ -244,26 +232,11 @@
       ],
       "summary": "polyrepo_workspace must define what the workspace must do and what irreducible objects it must know about to do it."
     },
-    "git_asset_requirements_surface": {
-      "required_definitions": [
-        "required inputs",
-        "required metadata",
-        "required anchors",
-        "required schemas",
-        "required policy bindings",
-        "required outputs",
-        "required validation steps",
-        "required generated file families",
-        "required lineage and provenance capture"
-      ],
-      "summary": "git_asset is the actuation contract that defines what must be present so that a repo or asset can be safely generated, migrated, or refreshed."
-    },
     "governed_negotiation_contract": {
       "summary": "The system resembles a governed consensus negotiation contract under asymmetric authority.",
       "authority_structure": {
         "acm": "governing authority surface",
-        "polyrepo_workspace": "constrained implementer for workspace semantics",
-        "git_asset": "constrained implementer/materializer for repo bootstrap"
+        "polyrepo_workspace": "constrained implementer for workspace semantics"
       },
       "consensus_layers": [
         "ontological consensus",
@@ -320,14 +293,14 @@
       ],
       "example": {
         "atom_family": [
-          "git commit semantics",
-          "github projects/codeql seed relationships",
-          "git hooks"
+          "repo manifest anchor requirements",
+          "repo class membership semantics",
+          "promotion-state lineage edges"
         ],
-        "owner": "polyrepo_workspace",
-        "competing_controller": "git_asset",
-        "recommended_strategy": "subordinate",
-        "alternative": "assimilate if git_asset overlap grows enough to justify absorption into polyrepo_workspace"
+        "owner": "acm",
+        "competing_controller": "polyrepo_workspace",
+        "recommended_strategy": "delegate",
+        "alternative": "partition semantic meaning in ACM from workspace lifecycle mechanics in polyrepo_workspace when bounded delegation is insufficient"
       }
     },
     "policy_object_system": {
@@ -393,7 +366,6 @@
         "schema dictating required metadata anchors across manifests, schemas, and policy objects",
         "ACM shaping contract for modularity, composability, and adaptability",
         "polyrepo_workspace desired functionality and required atomics",
-        "git_asset requirements surface",
         "semantic ownership matrix and reconciliation strategy catalog",
         "policy object collection, hierarchy, and evaluation DAG"
       ],
@@ -402,13 +374,12 @@
         "cross-repo anchor schema or policy-plane ontology schema",
         "ACM shaping contract",
         "polyrepo_workspace atomics and functionality contract",
-        "git_asset requirements surface",
         "semantic ownership matrix",
         "policy object model",
         "policy evaluation DAG",
-        "controller responsibility split across ACM, polyrepo_workspace, and git_asset"
+        "controller responsibility split across ACM and polyrepo_workspace"
       ],
-      "ordering_principle": "First define the dependency-workflow toolchain and authority boundaries, then define policy state space and anchors, then shape ACM, then define workspace and bootstrap contracts, then define semantic ownership, then define who emits files."
+      "ordering_principle": "First define who owns meaning, then define how workspace contracts are emitted and reviewed."
     }
   }
 }

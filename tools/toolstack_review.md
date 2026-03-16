@@ -1,6 +1,6 @@
 Yes. The adequate tools exist **now**.
 
-The key is to use them as a **layered control stack**, not as a flat toolbox. Your clean problem statement already defines the right shape: ACM owns meaning and schema authority, `polyrepo_workspace` owns workspace semantics, `git_asset` owns materialization, and the ordering rule is **“First define who owns meaning, then define who emits files.”**   
+The key is to use them as a **layered control stack**, not as a flat toolbox. Your clean problem statement already defines the right shape for the current surface: ACM owns meaning and schema authority, and `polyrepo_workspace` owns workspace semantics plus the integration contract. The ordering rule is **“First define who owns meaning, then define how workspace contracts are emitted and reviewed.”**   
 
 ## Recommended stack
 
@@ -113,15 +113,8 @@ Owns:
 * workspace atomics,
 * repo registry,
 * lineage/relations,
-* workspace lifecycle and promotion semantics. 
-
-### git_asset
-
-Owns:
-
-* bootstrap input/output contract,
-* file emission contract,
-* generated packaging and validation surface. 
+* workspace lifecycle and promotion semantics,
+* integration-contract materialization for the initial planning surface. 
 
 ### Tooling layer
 
